@@ -1,0 +1,35 @@
+{
+  "name": "2026-new",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "portfolio",
+    "react",
+    "motion",
+    "vite"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "Portfolio website built with React, Vite, and canvas-driven motion.",
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "eslint": "^9.39.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^17.4.0",
+    "vite": "^7.3.1"
+  }
+}

@@ -1,3 +1,4 @@
+import { forwardRef } from 'react'
 import bg3 from './assets/figma/bg3-analog.png'
 import bg2 from './assets/figma/bg2-ai-playground.png'
 import bg1 from './assets/figma/bg1-latest-work.png'
@@ -8,9 +9,9 @@ const BG_BY_STATE = {
   work: bg1,
 }
 
-export default function LandingBackground({ activeId }) {
+const LandingBackground = forwardRef(function LandingBackground({ activeId }, ref) {
   return (
-    <div className="landing-bg" aria-hidden="true">
+    <div ref={ref} className="landing-bg" aria-hidden="true">
       {Object.entries(BG_BY_STATE).map(([id, image]) => (
         <div
           key={id}
@@ -20,4 +21,6 @@ export default function LandingBackground({ activeId }) {
       ))}
     </div>
   )
-}
+})
+
+export default LandingBackground

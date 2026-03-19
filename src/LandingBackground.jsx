@@ -1,7 +1,7 @@
-import { forwardRef } from 'react'
-import bg3 from './assets/figma/bg3-analog.png'
-import bg2 from './assets/figma/bg2-ai-playground.png'
-import bg1 from './assets/figma/bg1-latest-work.png'
+import bg3 from '../bg/bg3.png'
+import bg2 from '../bg/bg2.png'
+import bg1 from '../bg/bg1.png'
+import Dither from './components/Dither/Dither'
 
 const BG_BY_STATE = {
   analogue: bg3,
@@ -9,9 +9,9 @@ const BG_BY_STATE = {
   work: bg1,
 }
 
-const LandingBackground = forwardRef(function LandingBackground({ activeId }, ref) {
+function LandingBackground({ activeId }) {
   return (
-    <div ref={ref} className="landing-bg" aria-hidden="true">
+    <div className="landing-bg" aria-hidden="true">
       {Object.entries(BG_BY_STATE).map(([id, image]) => (
         <div
           key={id}
@@ -19,8 +19,22 @@ const LandingBackground = forwardRef(function LandingBackground({ activeId }, re
           style={{ backgroundImage: `url(${image})` }}
         />
       ))}
+
+      <div className="landing-bg__dither-shell">
+        <Dither
+          waveColor={[0.5, 0.5, 0.5]}
+          disableAnimation={false}
+          enableMouseInteraction
+          mouseRadius={0.3}
+          colorNum={2.5}
+          pixelSize={2}
+          waveAmplitude={0.3}
+          waveFrequency={2.5}
+          waveSpeed={0.02}
+        />
+      </div>
     </div>
   )
-})
+}
 
 export default LandingBackground

@@ -1,0 +1,14 @@
+prefix=/Users/wingzeng/ffmpeg
+exec_prefix=${prefix}
+libdir=/Users/wingzeng/ffmpeg/lib
+includedir=/Users/wingzeng/ffmpeg/include
+
+Name: libavutil
+Description: FFmpeg utility library
+Version: 60.26.100
+Requires: 
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavutil -lm -lz -framework VideoToolbox -pthread -framework CoreFoundation -framework CoreMedia -framework CoreVideo -framework CoreServices
+Libs.private: 
+Cflags: -I${includedir}

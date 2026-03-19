@@ -1,79 +1,157 @@
-import { startTransition, useState } from 'react'
+import { startTransition, useEffect, useState } from 'react'
+import LandingBackground from './LandingBackground'
 import MorphStage from './MorphStage'
-import {
-  MORPH_FRAMES,
-  ORDER_BY_ACTIVE,
-  STATE_BY_ID,
-  STATES,
-  SWITCH_SLOTS,
-} from './content'
+import { STATE_BY_ID, TRANSITION_IMAGES, getBreakpointId } from './content'
+
+function getInitialStateId() {
+  if (typeof window === 'undefined') {
+    return 'work'
+  }
+
+  const candidate = new URLSearchParams(window.location.search).get('state')
+
+  if (candidate && STATE_BY_ID[candidate]) {
+    return candidate
+  }
+
+  return 'work'
+}
+
+function getViewportState() {
+  if (typeof window === 'undefined') {
+    return {
+      breakpointId: 'desktop',
+      height: 1080,
+      width: 1280,
+    }
+  }
+
+  return {
+    breakpointId: getBreakpointId(window.innerWidth),
+    height: window.innerHeight,
+    width: window.innerWidth,
+  }
+}
+
+function getSurfaceMetrics(viewport, frame) {
+  // +4px safety margin prevents hairline gaps at viewport edges
+  const scale = Math.max(
+    (viewport.width + 4) / frame.width,
+    (viewport.height + 4) / frame.height,
+  )
+  const width = frame.width * scale
+  const height = frame.height * scale
+
+  return {
+    height,
+    left: (viewport.width - width) / 2,
+    scale,
+    top: height > viewport.height ? 0 : (viewport.height - height) / 2,
+    width,
+  }
+}
 
 export default function App() {
-  const [activeId, setActiveId] = useState('work')
+  const [activeId, setActiveId] = useState(() => getInitialStateId())
+  const [viewport, setViewport] = useState(() => getViewportState())
 
   const activeState = STATE_BY_ID[activeId]
-  const orderedStates = ORDER_BY_ACTIVE[activeId].map((id) => STATE_BY_ID[id])
+  const activeLayout = activeState.layouts[viewport.breakpointId]
+  const surface = getSurfaceMetrics(viewport, activeLayout.frame)
+  const morphContentTopPx = activeLayout.nav.top + 79 + 24
+
+  useEffect(() => {
+    const handleResize = () => {
+      setViewport(getViewportState())
+    }
+
+    handleResize()
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
 
   return (
-    <main
-      className="landing"
-      style={{
-        '--gradient-bottom': activeState.gradientBottom,
-        '--active-fill': activeState.activeFill,
-        '--active-text': activeState.activeText,
-      }}
-    >
-      <div className="landing__noise" aria-hidden="true" />
-
-      <header className="landing__header">
-        <h1>Wing Zeng</h1>
-        <p>8+yoe AI Product Designer</p>
-      </header>
-
-      <section className="landing__switcher" aria-label="Category switcher">
-        {orderedStates.map((state, index) => {
-          const isActive = state.id === activeId
-
-          return (
-            <button
-              key={state.id}
-              type="button"
-              aria-pressed={isActive}
-              className={`landing__pill${isActive ? ' is-active' : ''}`}
-              style={SWITCH_SLOTS[index]}
-              onClick={() => {
-                if (state.id === activeId) {
-                  return
-                }
-
-                startTransition(() => {
-                  setActiveId(state.id)
-                })
-              }}
-            >
-              {state.pillLabel}
-            </button>
-          )
-        })}
-      </section>
-
-      <section
-        className={`landing__scene landing__scene--${activeState.id}`}
+    <main className="landing">
+      <LandingBackground activeId={activeId} />
+      <div
+        className="landing__surface-shell"
         style={{
-          '--blob-color': activeState.blobColor,
-          '--blob-transform': activeState.blobTransform,
-          '--blob-width': activeState.blobWidth,
-          '--blob-height': activeState.blobHeight,
-          '--shadow-color': activeState.shadowColor,
-          '--shadow-transform': activeState.shadowTransform,
-          '--shadow-width': activeState.shadowWidth,
-          '--shadow-height': activeState.shadowHeight,
+          height: `${surface.height}px`,
+          left: `${surface.left}px`,
+          top: `${surface.top}px`,
+          width: `${surface.width}px`,
         }}
       >
-        <div className="landing__shadow" aria-hidden="true" />
-        <div className="landing__blob" aria-hidden="true" />
-        <MorphStage activeId={activeId} states={STATES} morphFrames={MORPH_FRAMES} />
-      </section>
+        <div
+          className="landing__surface"
+          style={{
+            height: `${activeLayout.frame.height}px`,
+            transform: `scale(${surface.scale})`,
+            width: `${activeLayout.frame.width}px`,
+          }}
+        >
+          <header
+            className={`landing__header${activeLayout.header.variant === 'mobile' ? ' is-mobile' : ''}`}
+            style={{
+              top: `${activeLayout.header.top}px`,
+              width: `${activeLayout.header.width}px`,
+            }}
+          >
+            <h1>Wing Zeng</h1>
+            <p>8+yoe AI Product Designer</p>
+          </header>
+
+          <nav
+            className={`landing__switcher${activeLayout.header.variant === 'mobile' ? ' is-mobile' : ''}`}
+            aria-label="Category switcher"
+            style={{
+              gap: `${activeLayout.nav.gap}px`,
+              top: `${activeLayout.nav.top}px`,
+            }}
+          >
+            {activeLayout.nav.buttons.map((buttonLayout) => {
+              const state = STATE_BY_ID[buttonLayout.id]
+              const isActive = buttonLayout.id === activeId
+
+              return (
+                <button
+                  key={buttonLayout.id}
+                  type="button"
+                  aria-label={state.navLabel}
+                  aria-pressed={isActive}
+                  className={`landing__pill${isActive ? ' is-active' : ''}${buttonLayout.showLabel ? '' : ' is-icon-only'}`}
+                  style={{
+                    background: isActive ? activeState.activeFill : undefined,
+                    border: isActive ? activeState.activeBorder : undefined,
+                    color: isActive ? activeState.activeText : undefined,
+                    width: `${buttonLayout.width}px`,
+                  }}
+                  onClick={() => {
+                    if (buttonLayout.id === activeId) {
+                      return
+                    }
+
+                    startTransition(() => {
+                      setActiveId(buttonLayout.id)
+                    })
+                  }}
+                >
+                  {buttonLayout.showLabel ? <span className="landing__pill-label">{state.navLabel}</span> : null}
+                </button>
+              )
+            })}
+          </nav>
+
+          <MorphStage
+            activeId={activeId}
+            contentTopPx={morphContentTopPx}
+            transitionImages={TRANSITION_IMAGES}
+          />
+        </div>
+      </div>
     </main>
   )
 }

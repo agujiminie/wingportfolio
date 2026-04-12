@@ -76,7 +76,7 @@ body {
   min-width: 320px;
   overflow: hidden;
   background: transparent;
-  zoom: 0.9;
+  zoom: 1;
 }
 
 #root {
@@ -139,10 +139,13 @@ video {
 .landing__surface {
   position: absolute;
   inset: 0;
+  display: grid;
+  justify-items: center;
   overflow: hidden;
   isolation: isolate;
   transform-origin: top left;
   background: transparent;
+  text-align: center;
 }
 
 /* Fixed full-page background image per active section */
@@ -187,11 +190,13 @@ html::after {
 
 .landing__header {
   position: absolute;
-  left: 50%;
+  left: 0;
+  right: 0;
   z-index: 5;
   display: grid;
+  align-items: center;
   justify-items: center;
-  transform: translateX(-50%);
+  margin-inline: auto;
   text-align: center;
   color: #363636;
 }
@@ -224,12 +229,14 @@ html::after {
 
 .landing__switcher {
   position: absolute;
-  left: 50%;
+  left: 0;
+  right: 0;
   z-index: 5;
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: translateX(-50%);
+  width: fit-content;
+  margin-inline: auto;
 }
 
 .landing__pill {
@@ -245,6 +252,7 @@ html::after {
   font-size: 19px;
   font-weight: 600;
   line-height: 28.5px;
+  text-align: center;
   text-transform: uppercase;
   white-space: nowrap;
   cursor: pointer;
@@ -307,17 +315,21 @@ html::after {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   overflow: hidden;
   box-sizing: border-box;
+  text-align: center;
 }
 
 .morph-demo__canvas-wrapper {
   flex: 1 1 auto;
   min-height: 0;
   width: 100%;
+  max-width: 720px;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-inline: auto;
 }
 
 .morph-demo__canvas {

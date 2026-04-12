@@ -1,22 +1,26 @@
 import bg3 from '../bg/bg3.png'
 import bg2 from '../bg/bg2.png'
-import bg1 from '../bg/bg1.png'
+import bg1 from '../bg/bg1-replacement.png'
 import Dither from './components/Dither/Dither'
 
 const BG_BY_STATE = {
-  analogue: bg3,
-  playground: bg2,
-  work: bg1,
+  analogue: { image: bg3 },
+  playground: { image: bg2 },
+  work: { image: bg1 },
 }
 
 function LandingBackground({ activeId }) {
   return (
     <div className="landing-bg" aria-hidden="true">
-      {Object.entries(BG_BY_STATE).map(([id, image]) => (
+      {Object.entries(BG_BY_STATE).map(([id, background]) => (
         <div
           key={id}
           className={`landing-bg__layer${activeId === id ? ' is-visible' : ''}`}
-          style={{ backgroundImage: `url(${image})` }}
+          style={{
+            backgroundImage: `url(${background.image})`,
+            backgroundPosition: background.position ?? 'center',
+            backgroundSize: background.size ?? 'cover',
+          }}
         />
       ))}
 

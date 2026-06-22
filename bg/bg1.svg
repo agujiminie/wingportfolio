@@ -1,0 +1,31 @@
+<svg width="1824" height="1368" viewBox="0 0 1824 1368" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1284 1084) rotate(-144) scale(1280 1160)">
+      <stop stop-color="#D8D3BF" />
+      <stop offset="1" stop-color="#C8C3AF" />
+    </radialGradient>
+    <linearGradient id="ring" x1="1118" y1="688" x2="1688" y2="1368" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#DEC86D" />
+      <stop offset="1" stop-color="#D6B655" />
+    </linearGradient>
+    <linearGradient id="gold" x1="1018" y1="1218" x2="1798" y2="1018" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#CDA540" />
+      <stop offset="1" stop-color="#E1BE59" />
+    </linearGradient>
+    <linearGradient id="gray" x1="1294" y1="812" x2="1804" y2="1048" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#B7BDA8" />
+      <stop offset="1" stop-color="#ADB39C" />
+    </linearGradient>
+    <linearGradient id="small" x1="1604" y1="1118" x2="1804" y2="1368" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E4C56B" />
+      <stop offset="1" stop-color="#D4B45B" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1824" height="1368" fill="url(#bg)" />
+
+  <ellipse cx="1324" cy="1046" rx="462" ry="632" transform="rotate(20 1324 1046)" fill="url(#ring)" fill-opacity="0.54" />
+  <ellipse cx="1316" cy="948" rx="604" ry="256" transform="rotate(-18 1316 948)" fill="url(#gold)" fill-opacity="0.78" />
+  <ellipse cx="1544" cy="708" rx="412" ry="286" transform="rotate(8 1544 708)" fill="url(#gray)" fill-opacity="0.62" />
+  <ellipse cx="1654" cy="1018" rx="156" ry="218" transform="rotate(12 1654 1018)" fill="url(#small)" fill-opacity="0.92" />
+</svg>

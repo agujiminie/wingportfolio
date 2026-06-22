@@ -1,0 +1,17 @@
+node_modules
+dist
+.DS_Store
+.vite
+.tmp-codex-home
+.playwright-cli
+test-results
+output
+.claude
+.agents
+.env
+.env.*
+output/playwright
+/*.png
+/*.jpg
+/*.jpeg
+/*.mp4

@@ -2,6 +2,9 @@
 
 React 19 + Vite project. UI is built to match Figma designs and reference sites pixel-for-pixel.
 
+> **New session? Read [HANDOFF.md](HANDOFF.md) first** — it has the current project
+> state, the Curie demo architecture, and the agreed next steps.
+
 ## Figma Fidelity Policy (always on)
 
 Goal: every UI I build or change should match its Figma reference as closely as possible, and I should verify this **automatically** — the user should not have to ask for a review each time.

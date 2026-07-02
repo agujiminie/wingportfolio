@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&family=Kode+Mono:wght@400;600&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -74,7 +74,8 @@ body {
   min-height: 100dvh;
   margin: 0;
   min-width: 320px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: transparent;
   zoom: 1;
 }
@@ -110,42 +111,37 @@ video {
   min-height: 100%;
   min-height: 100vh;
   min-height: 100dvh;
-  overflow: hidden;
+  overflow: visible;
   background: transparent;
+}
+
+/* One hero viewport of scroll before the second screen rises into view. */
+.landing__spacer {
+  position: relative;
+  z-index: 1;
+  height: 100vh;
+  height: 100dvh;
+  pointer-events: none;
 }
 
 .landing::before {
   display: none;
 }
 
-.landing__surface-shell {
-  position: absolute;
-  z-index: 2;
-  overflow: hidden;
-}
-
-/* UI layer — sits above canvas, never tilts */
-.landing__ui-shell {
-  z-index: 4;
-  pointer-events: none;
-  will-change: unset;
-  transform: none !important;
-}
-
-.landing__ui-shell button {
-  pointer-events: auto;
-}
-
-.landing__surface {
-  position: absolute;
+/* Morph canvas layer — full viewport, centered purely with CSS so it stays
+   dead-center on any viewport size (no JS resize handling involved). */
+.landing__stage {
+  position: fixed;
   inset: 0;
-  display: grid;
-  justify-items: center;
+  z-index: 2;
+  pointer-events: none;
   overflow: hidden;
-  isolation: isolate;
-  transform-origin: top left;
-  background: transparent;
-  text-align: center;
+  /* Fades out on scroll; driven by App's scroll handler (Method B). The short
+     transition smooths the fade so it stays graceful even when the scroll handler
+     updates --fade in coarse steps (e.g. throttled rAF), instead of snapping. */
+  opacity: var(--fade, 1);
+  transition: opacity 220ms ease-out;
+  will-change: opacity;
 }
 
 /* Fixed full-page background image per active section */
@@ -188,100 +184,226 @@ html::after {
   display: none;
 }
 
-.landing__header {
+/* ── Viewport-framing overlay ─────────────────────────────────────────── */
+.frame {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  --frame-margin: clamp(20px, 3.2vw, 60px);
+  /* Vertical inset for the top row. Tuned so the bar lands at the shadcn-style
+     compact header height (~56px / h-14): inset on each side ≈ (56 - ~30)/2. */
+  --frame-top: clamp(11px, 1vw, 14px);
+  /* Compact header height; the top-row items center on its mid-line. */
+  --bar-h: calc(var(--frame-top) * 2 + 30px);
+  font-family: "Geist Variable", "Inter", system-ui, sans-serif;
+}
+
+.frame__panel {
   position: absolute;
+  pointer-events: auto;
+}
+
+/* Translucent top bar — compact background that stays pinned at the top. It is
+   transparent while the hero sits at the top and fades in once the page scrolls,
+   so the nav stays legible over content. No blur, no border (intentional). */
+.frame__topbar {
+  position: absolute;
+  top: 0;
   left: 0;
   right: 0;
-  z-index: 5;
-  display: grid;
+  height: var(--bar-h);
+  pointer-events: none;
+  /* Solid, matching the second-screen panel (--ss-panel) so the bar reads as a
+     seamless continuation of it once the panel scrolls up under the nav. */
+  background: #edf0ee;
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.frame__topbar.is-scrolled {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame__topbar,
+  .landing__stage,
+  .frame__headline-panel {
+    transition: none;
+  }
+}
+
+/* Top-left brand — vertically centered on the bar mid-line */
+.frame__brand {
+  top: calc(var(--bar-h) / 2);
+  left: var(--frame-margin);
+  transform: translateY(-50%);
+  display: flex;
   align-items: center;
-  justify-items: center;
-  margin-inline: auto;
-  text-align: center;
+  gap: 12px;
+}
+
+.frame__brand-mark {
+  display: flex;
   color: #363636;
 }
 
-.landing__header h1,
-.landing__header p {
-  margin: 0;
+.frame__brand-name {
+  font-family: "Kode Mono", monospace;
+  font-size: 20px;
   font-weight: 400;
+  color: #363636;
 }
 
-.landing__header h1 {
-  font-size: 48px;
-  line-height: 90px;
-}
-
-.landing__header p {
-  font-size: 16px;
-  line-height: 20px;
-}
-
-.landing__header.is-mobile h1 {
-  font-size: 24px;
-  line-height: 31px;
-}
-
-.landing__header.is-mobile p {
-  font-size: 13px;
-  line-height: 17px;
-}
-
-.landing__switcher {
-  position: absolute;
-  left: 0;
-  right: 0;
-  z-index: 5;
+/* Top-right icon buttons — vertically centered on the bar mid-line */
+.frame__cta {
+  top: calc(var(--bar-h) / 2);
+  right: var(--frame-margin);
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: fit-content;
-  margin-inline: auto;
+  gap: 18px;
 }
 
-.landing__pill {
-  display: flex;
+.frame__cta-btn {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 79px;
-  padding-inline: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 16777200px;
-  background: rgba(100, 100, 100, 0.1);
-  color: #fff;
-  font-size: 19px;
-  font-weight: 600;
-  line-height: 28.5px;
-  text-align: center;
-  text-transform: uppercase;
-  white-space: nowrap;
+  color: rgba(0, 0, 0, 0.72);
+  text-decoration: none;
   cursor: pointer;
-  backdrop-filter: blur(10px);
-  transition:
-    background-color 320ms ease,
-    border-color 320ms ease,
-    color 320ms ease,
-    width 420ms cubic-bezier(0.2, 0.95, 0.28, 1),
-    transform 220ms ease,
-    filter 220ms ease;
+  transition: color 200ms ease, transform 200ms ease;
 }
 
-.landing__pill:hover,
-.landing__pill:focus-visible {
+.frame__cta-btn:hover,
+.frame__cta-btn:focus-visible {
+  color: #111;
   transform: translateY(-1px);
   outline: none;
 }
 
-.landing__pill.is-active {
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+/* Top-center — nav (part of the top bar), centered on the bar mid-line */
+.frame__nav-panel {
+  top: calc(var(--bar-h) / 2);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: max-content;
 }
 
-.landing__pill.is-icon-only {
-  padding-inline: 0;
+/* Bottom-left — hero headline (reference: large display type anchored bottom-left) */
+.frame__headline-panel {
+  left: var(--frame-margin);
+  bottom: var(--frame-margin);
+  max-width: min(58vw, 860px);
+  /* Dismisses as soon as scrolling starts: --title-fade snaps 1 → 0 just past
+     the top, and this transition turns that snap into a quick fade. Independent
+     of the morph canvas (--fade), which keeps its gradual scroll-linked fade. */
+  opacity: var(--title-fade, 1);
+  transition: opacity 220ms ease-out;
+  pointer-events: none;
 }
 
-.landing__pill-label {
+.frame__headline {
+  margin: 0;
+  font-family: "Kode Mono", monospace;
+  font-weight: 400;
+  font-size: clamp(27px, 4vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  text-transform: capitalize;
+  color: rgba(77, 59, 6, 0.7);
+  animation: headline-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.frame__headline-line {
   display: block;
+}
+
+@keyframes headline-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.frame__nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.frame__nav-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 16777200px;
+  background: transparent;
+  font-family: "Kode Mono", monospace;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.65);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 280ms ease,
+    border-color 280ms ease,
+    color 280ms ease,
+    transform 200ms ease;
+}
+
+.frame__nav-item:hover,
+.frame__nav-item:focus-visible {
+  color: #111;
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.frame__nav-item.is-active {
+  padding: 6px 24px;
+  font-family: "Kode Mono", monospace;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.frame__nav-item.is-active:hover {
+  transform: none;
+}
+
+/* Tablet / mobile — clear the side panels off the canvas */
+@media (max-width: 1024px) {
+  .morph-stage {
+    --morph-side-reserve: 64px;
+    --morph-max-size: 560px;
+  }
+
+  .frame__headline-panel {
+    max-width: min(60vw, 560px);
+  }
+}
+
+@media (max-width: 600px) {
+  /* Nav drops to the bottom; headline sits just above it. Reset the vertical
+     centering transform (only horizontal centering applies at the bottom). */
+  .frame__nav-panel {
+    top: auto;
+    bottom: var(--frame-margin);
+    transform: translateX(-50%);
+  }
+
+  .frame__headline-panel {
+    bottom: calc(var(--frame-margin) + 64px);
+    max-width: calc(100vw - 2 * var(--frame-margin));
+  }
+
+  .frame__headline {
+    font-size: clamp(21px, 6.4vw, 37px);
+  }
 }
 
 /* Morph canvas under nav (category pills drive scrub) */
@@ -290,15 +412,15 @@ html::after {
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  --morph-y-lift: 72px;
-  --morph-bottom-padding: 56px;
-  --morph-max-size: 620px;
+  /* Horizontal room kept clear for the left/right edge panels. */
+  --morph-side-reserve: 600px;
+  --morph-max-size: 640px;
   --morph-view-size: clamp(
-    260px,
+    240px,
     min(
       var(--morph-max-size),
-      calc(100vw - 64px),
-      calc(100dvh - var(--morph-content-top, 320px) - var(--morph-bottom-padding) + var(--morph-y-lift))
+      calc(100vw - var(--morph-side-reserve)),
+      calc(100dvh - 200px)
     ),
     var(--morph-max-size)
   );
@@ -320,14 +442,11 @@ html::after {
 
 .morph-demo__column {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: var(--morph-bottom-padding);
-  top: calc(var(--morph-content-top, 320px) - var(--morph-y-lift));
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   overflow: hidden;
   box-sizing: border-box;
   text-align: center;
@@ -352,6 +471,339 @@ html::after {
   aspect-ratio: 1;
   display: block;
   object-fit: contain;
+}
+
+/* ══ Second screen — solid panel that scrolls up over the fixed hero ══════
+   z-index 3: above the morph canvas (2), below the framing overlay (4) so the
+   top nav stays pinned on top. The cutout is a transparent "window" with a giant
+   box-shadow painting the panel colour around it (Method B). */
+.second-screen {
+  position: relative;
+  z-index: 3;
+  --ss-panel: #edf0ee;          /* solid panel colour (tweak to taste) */
+  --ss-ink: #363636;
+  --ss-edge: #d6d6d6;           /* Figma token neutral/border/1 */
+  /* Shopify-style responsive container (matched to the "Sidekick works with
+     your apps" section): content capped at --ss-content and centred; gutters
+     grow on wide screens and shrink fluidly on small ones. At ~2000px this
+     yields ~340px gutters; at 1440 ~60px — the same behaviour as Shopify. */
+  --ss-content: 1320px;
+  --ss-gutter: clamp(24px, 4vw, 80px);
+  --ss-pad: max(var(--ss-gutter), calc((100% - var(--ss-content)) / 2));
+  font-family: "Geist Variable", "Inter", system-ui, sans-serif;
+  color: var(--ss-ink);
+}
+
+/* — Current work: holds the intro + the cutout window — */
+.second-screen__current {
+  position: relative;
+  overflow: hidden;             /* clips the window's 100vmax box-shadow */
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  /* Top-aligned like the Shopify section: content sits a fixed distance below
+     the panel top instead of floating in the vertical centre. */
+  justify-content: flex-start;
+  gap: clamp(28px, 4vh, 44px);
+  padding: clamp(64px, 8vh, 88px) var(--ss-pad) clamp(48px, 8vh, 110px);
+}
+
+.second-screen__intro {
+  position: relative;
+  z-index: 2;                   /* above the window's box-shadow */
+}
+
+.second-screen__label {
+  margin: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ss-edge);
+  font-family: "Geist Variable", system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.second-screen__intro-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: clamp(24px, 5vw, 72px);
+  margin-top: 24px;
+}
+
+.second-screen__title {
+  margin: 0;
+  flex: 1 1 auto;
+  max-width: 640px;             /* Figma title box 638px → wraps to 2 lines */
+  font-family: "Kode Mono", monospace;
+  font-weight: 700;
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1.05;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+  color: var(--ss-ink);
+}
+
+.second-screen__desc {
+  margin: 0;
+  flex: 0 1 346px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+/* THE CUTOUT. Interior is transparent → the fixed persistent bg shows through;
+   box-shadow paints the solid panel everywhere around it. Padding = the bleed
+   frame where the background peeks past the product image (the 镂空 edge). */
+.second-screen__window {
+  position: relative;
+  z-index: 1;
+  align-self: stretch;          /* fills the capped content width */
+  width: 100%;
+  aspect-ratio: 1.516 / 1;      /* Figma cutout 1155 × 762 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24px;
+  /* Spread must cover the whole section regardless of its height (vmax/vh
+     units fall short when the section grows taller than the viewport). */
+  box-shadow: 0 0 0 9999px var(--ss-panel);
+}
+
+/* The product mockup is INSET inside the cutout (Figma 882 × 506 ≈ 76% of the
+   window), so the persistent gold field bleeds generously around all four
+   edges — the 镂空 frame. Both ratios are taken straight from the Figma frame. */
+.second-screen__media {
+  width: 76.4%;
+  height: auto;
+  aspect-ratio: 1.743 / 1;
+  border-radius: 10px;
+  object-fit: cover;
+  object-position: top center;
+  box-shadow: 0 30px 80px -36px rgba(20, 16, 8, 0.55);
+}
+
+/* — Previous work: a solid header (the eyebrow) followed by the same
+     alternating feature rows used by the collection tabs. — */
+.second-screen__previous-intro {
+  position: relative;
+  background: var(--ss-panel);  /* solid — seam-matches the feature rows below */
+  padding: clamp(48px, 9vh, 104px) var(--ss-pad) clamp(8px, 2vh, 20px);
+}
+
+/* ══ Second screen — collection tabs (AI Playground / Analog) ════════════
+   Reuses the container (--ss-pad), type tokens and 镂空 cutout language from
+   Work. The body is a stack of alternating feature rows; each row clips its
+   own cutout box-shadow (overflow:hidden) so multiple windows don't paint
+   over each other's holes. */
+.second-screen__collection-intro {
+  position: relative;
+  background: var(--ss-panel);  /* solid header — covers the hero at the top */
+  padding: clamp(64px, 8vh, 88px) var(--ss-pad) clamp(28px, 4vh, 44px);
+}
+
+.second-screen__features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.second-screen__feature {
+  position: relative;
+  overflow: hidden;             /* clips THIS row's cutout box-shadow */
+  display: flex;
+  align-items: center;
+  gap: clamp(32px, 5vw, 88px);
+  padding: clamp(40px, 7vh, 84px) var(--ss-pad);
+}
+
+/* Zigzag: even rows put the media on the right. */
+.second-screen__feature:nth-child(even) {
+  flex-direction: row-reverse;
+}
+
+/* Image-only row (no caption): centre the frame in the row. */
+.second-screen__feature--solo {
+  justify-content: center;
+}
+.second-screen__window--solo {
+  width: min(72%, 880px);
+  /* aspect-ratio is set inline from the item's coverAspect so the frame
+     matches the image and it fills edge-to-edge (no bleed). */
+}
+
+/* Media side — the cutout window. Its giant box-shadow paints the whole row
+   the panel colour; padding is the transparent frame where the persistent
+   field bleeds around the media (the 镂空 edge). */
+.second-screen__window--feature {
+  flex: 0 0 auto;               /* as a flex child of the feature row */
+  align-self: center;
+  width: min(56%, 720px);
+  aspect-ratio: 1.5 / 1;
+  /* Inherits display:flex + centering from .second-screen__window. Frames are
+     sized as a % of the window (below), so the persistent field bleeds around
+     them — same technique as the Work mockup. (Percentage PADDING can't be used
+     here: it resolves against the parent row's width, not the window's.) */
+  gap: 5%;
+  border-radius: 20px;
+  overflow: hidden;             /* clip a full-bleed cover to the rounded frame
+                                   (does not clip the panel-painting box-shadow) */
+}
+
+/* Caption side — sits above the window's panel-painting shadow. */
+.second-screen__feature-caption {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.second-screen__feature-tag {
+  margin: 0;
+  font-family: "Geist Variable", system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.second-screen__feature-name {
+  margin: 0;
+  font-family: "Kode Mono", monospace;
+  font-weight: 700;
+  font-size: clamp(24px, 2.4vw, 32px);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  color: var(--ss-ink);
+}
+
+.second-screen__feature-blurb {
+  margin: 0;
+  max-width: 42ch;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.second-screen__feature-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-family: "Geist Variable", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ss-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--ss-ink);
+  padding-bottom: 2px;
+  transition: opacity 0.2s ease;
+}
+.second-screen__feature-link:hover {
+  opacity: 0.55;
+}
+
+/* Real project cover — a TRANSPARENT PNG that floats on the cutout's revealed
+   background. `contain` shows the whole artwork; no card fill / radius / shadow,
+   so the persistent field shows straight through the transparent areas. */
+.second-screen__media--feature {
+  width: 92%;
+  height: 86%;
+  aspect-ratio: auto;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Placeholder media — inset inside the cutout so the persistent field bleeds
+   around it, exactly like the Work mockup. Swapped for real images later. */
+.second-screen__placeholder {
+  height: 72%;                  /* inset → background bleeds around (镂空 edge) */
+  aspect-ratio: 1.5 / 1;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px dashed rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(3px);
+  box-shadow: 0 30px 80px -36px rgba(20, 16, 8, 0.4);
+}
+
+/* Two photos side by side (Analog "In Real Life") → portrait frames that fit. */
+.second-screen__window--split .second-screen__placeholder {
+  aspect-ratio: 0.82 / 1;
+}
+.second-screen__placeholder span {
+  font-family: "Geist Variable", system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(0, 0, 0, 0.4);
+  text-align: center;
+  padding: 0 12px;
+}
+
+@media (max-width: 768px) {
+  /* Flow content from the top instead of centering — avoids a tall section
+     orphaning the description far from the title. */
+  .second-screen__current {
+    justify-content: flex-start;
+    min-height: auto;
+    gap: clamp(20px, 4vh, 36px);
+    padding: clamp(84px, 13vh, 116px) var(--ss-pad) clamp(56px, 9vh, 88px);
+  }
+  .second-screen__intro-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+  /* In a column, the row flex-basis becomes a HEIGHT — reset so they size to
+     content instead of inflating the section. */
+  .second-screen__title,
+  .second-screen__desc {
+    flex: 0 0 auto;
+    max-width: 100%;
+  }
+  .second-screen__title {
+    font-size: clamp(26px, 8vw, 34px);
+  }
+  .second-screen__desc {
+    flex: 0 0 auto;
+  }
+  /* Tighter frame on small screens — less room for a big bleed, so the mockup
+     fills more of the cutout while still showing the 镂空 edge. */
+  .second-screen__window {
+    aspect-ratio: 1.2 / 1;
+  }
+  .second-screen__media {
+    width: 88%;
+  }
+
+  /* Collection tabs: stack media over caption; drop the zigzag. */
+  .second-screen__collection-intro {
+    padding-top: clamp(84px, 13vh, 116px);
+  }
+  .second-screen__feature,
+  .second-screen__feature:nth-child(even) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+    padding-block: clamp(32px, 6vh, 56px);
+  }
+  .second-screen__window--feature {
+    width: 100%;
+    align-self: stretch;
+    aspect-ratio: 1.4 / 1;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

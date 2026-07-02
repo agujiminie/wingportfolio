@@ -1,0 +1,764 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Curie interactive demo — replaces the static product screenshot inside the
+   Work tab's cutout window. Authored at a fixed 1120×640 "stage" (1:1 with the
+   Figma frame `expand - chats`, node 3309-2020) and scaled to fit via a
+   transform whose factor is measured by useFitScale.
+
+   Design tokens (from Figma get_design_context):
+     primary/2            #65558F   (active pill, avatar)
+     status/link/2        #9D7EE6   (chat box border)
+     status/link/3        #5B5BD5   (repo chip text)
+     status/link/base 2   #F7F7FF   (repo chip fill)
+     neutral/border/1     #D6D6D6   (tab pills)
+     neutral/border/2     #EAEAEA   (attach / dividers)
+     neutral/bg/action    #262626   (send button)
+     neutral/bg/grey 1    #FCFCFC   (chat flow bg)
+     sidebar border       rgba(132,111,225,0.1)
+   ──────────────────────────────────────────────────────────────────────── */
+
+.curie-demo {
+  /* Sits where the old <img.second-screen__media> sat: inset in the cutout so
+     the persistent background bleeds around it (the 镂空 edge). Sized to fill
+     most of the frame (like the reference screenshot) — the window's flex
+     centering keeps the top and bottom gaps equal. */
+  position: relative;
+  width: 88%;
+  aspect-ratio: 1120 / 672; /* 640 app + 32 macOS title bar */
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fcfcfc;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 30px 80px -36px rgba(20, 16, 8, 0.55);
+  /* Local design tokens */
+  --c-primary: #65558f;
+  --c-link-2: #9d7ee6;
+  --c-link-3: #5b5bd5;
+  --c-link-fill: #f7f7ff;
+  --c-border-1: #d6d6d6;
+  --c-border-2: #eaeaea;
+  --c-action: #262626;
+  --c-ink-88: rgba(0, 0, 0, 0.88);
+  --c-ink-65: rgba(0, 0, 0, 0.65);
+  --c-ink-45: rgba(0, 0, 0, 0.45);
+  --c-sans: "Geist Variable", "Inter", system-ui, sans-serif;
+  --c-mono: "Geist Mono", "SFMono-Regular", ui-monospace, monospace;
+  color: var(--c-ink-88);
+}
+
+/* The fixed-size canvas. Scaled from the top-left; the wrapper's aspect-ratio
+   guarantees the scaled height lands exactly on the wrapper's bottom. */
+/* Visually-hidden label, kept accessible to screen readers. */
+.curie-demo .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.curie-demo__stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1120px;
+  height: 672px;
+  transform: scale(var(--curie-scale, 1));
+  transform-origin: top left;
+  font-family: var(--c-sans);
+  font-size: 14px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── macOS window chrome ─────────────────────────────────────────────────── */
+.curie-titlebar {
+  position: relative;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #efedeb;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+.curie-titlebar__lights {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 8px;
+}
+.curie-titlebar__light {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
+}
+.curie-titlebar__light--close {
+  background: #ff5f57;
+}
+.curie-titlebar__light--min {
+  background: #febc2e;
+}
+.curie-titlebar__light--max {
+  background: #28c840;
+}
+.curie-titlebar__title {
+  font-family: var(--c-sans);
+  font-weight: 500;
+  font-size: 12.5px;
+  color: rgba(0, 0, 0, 0.55);
+}
+
+/* App region below the title bar — the positioning context for the original
+   1120×640 layout (bg, nav, body are absolutely positioned inside it). */
+.curie-demo__app {
+  position: relative;
+  height: 640px;
+}
+
+/* Soft lavender→pink→blue field behind the chat area (recreates the blurred
+   Figma vectors + white backdrop). */
+.curie-demo__bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 80% at 12% 18%, rgba(171, 151, 254, 0.4), transparent 60%),
+    radial-gradient(55% 75% at 82% 12%, rgba(211, 182, 184, 0.42), transparent 62%),
+    radial-gradient(70% 90% at 78% 96%, rgba(168, 207, 241, 0.42), transparent 60%),
+    #fcfcfc;
+}
+.curie-demo__bg::after {
+  /* white veil = the backdrop-blur pass, keeps text legible over the blooms */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.38);
+  backdrop-filter: blur(24px);
+}
+
+/* ── Top nav ─────────────────────────────────────────────────────────────── */
+.curie-nav {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+}
+.curie-nav__brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.curie-nav__logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1a1a1a;
+}
+.curie-nav__logo-text {
+  font-family: var(--c-sans);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+}
+.curie-nav__logo-text b {
+  color: var(--c-primary);
+  font-weight: 700;
+}
+.curie-nav__icon-btn,
+.curie-nav__support {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--c-ink-65);
+  cursor: pointer;
+  border-radius: 12px;
+  font: inherit;
+}
+.curie-nav__icon-btn {
+  padding: 4px;
+}
+.curie-nav__support {
+  padding: 8px 16px;
+  font-family: var(--c-sans);
+  font-weight: 500;
+  font-size: 14px;
+}
+.curie-nav__icon-btn:hover,
+.curie-nav__support:hover {
+  color: #000;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* ── Body: sidebar + main ────────────────────────────────────────────────── */
+.curie-body {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+}
+
+/* Sidebar (Figma "nav 2.0", 257px) */
+.curie-side {
+  flex: 0 0 257px;
+  width: 257px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-right: 1px solid rgba(132, 111, 225, 0.1);
+  padding-top: 56px; /* clears the top nav */
+}
+.curie-side__ws {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px 20px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--c-sans);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--c-ink-65);
+}
+.curie-side__ws:hover {
+  color: #000;
+}
+.curie-divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.08);
+  border: 0;
+  margin: 0 12px;
+}
+.curie-side__tabs {
+  display: flex;
+  gap: 8px;
+  padding: 16px 16px 12px 24px;
+}
+.curie-tab {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 24px;
+  font-family: var(--c-sans);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--c-ink-65);
+}
+.curie-tab.is-active {
+  background: var(--c-primary);
+  color: #fff;
+}
+.curie-side__list {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 12px;
+}
+.curie-side__date {
+  text-align: center;
+  padding: 16px 16px 8px;
+  font-family: var(--c-mono);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--c-ink-45);
+}
+
+/* Task card (sidebar nav item) */
+.curie-task {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px;
+  border: 0;
+  background: transparent;
+  border-radius: 16px;
+  cursor: pointer;
+  text-align: left;
+}
+.curie-task:hover {
+  background: rgba(101, 85, 143, 0.06);
+}
+.curie-task__icon {
+  flex: 0 0 16px;
+  color: var(--c-ink-45);
+}
+.curie-task__body {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 4px 4px 8px;
+}
+.curie-task__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--c-ink-45);
+}
+.curie-task__id {
+  font-family: var(--c-mono);
+  font-weight: 600;
+  font-size: 12px;
+}
+.curie-task__time {
+  font-family: var(--c-sans);
+  font-weight: 400;
+  font-size: 11px;
+}
+.curie-task__name {
+  margin-top: 2px;
+  font-family: var(--c-sans);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--c-ink-88);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Profile row */
+.curie-side__profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 24px;
+  border-top: 1px solid var(--c-border-2);
+}
+.curie-avatar {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  border-radius: 96px;
+  background: var(--c-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--c-sans);
+  font-size: 12px;
+  font-weight: 400;
+}
+.curie-side__name {
+  font-family: var(--c-sans);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--c-ink-88);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Main region ─────────────────────────────────────────────────────────── */
+.curie-main {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 24px 24px;
+}
+
+/* Landing: centred stack */
+.curie-landing {
+  width: 728px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 48px;
+}
+.curie-landing__title {
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  font-family: var(--c-sans);
+  font-weight: 500;
+  font-size: 36px;
+  line-height: 1.1;
+  background: linear-gradient(90deg, #8f7ce0 0%, #c0a0b4 82%, #8fb4dc 99%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.curie-landing__composer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Composer / chat box */
+.curie-composer {
+  width: 100%;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid var(--c-link-2);
+  border-radius: 24px;
+  padding: 16px;
+  box-shadow:
+    0 2px 2px rgba(0, 0, 0, 0.02),
+    0 1px 3px rgba(0, 0, 0, 0.02),
+    0 1px 1px rgba(0, 0, 0, 0.03);
+}
+.curie-composer--bare {
+  min-height: 96px;
+  border-color: var(--c-border-1);
+}
+.curie-composer__input {
+  flex: 1;
+  width: 100%;
+  border: 0;
+  outline: none;
+  resize: none;
+  background: transparent;
+  font-family: var(--c-sans);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.04em;
+  color: var(--c-ink-88);
+}
+.curie-composer__input::placeholder {
+  color: var(--c-ink-45);
+  letter-spacing: 0;
+}
+.curie-composer__bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+}
+.curie-composer__group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.curie-composer__group--right {
+  gap: 16px;
+}
+
+/* Control-bar chips */
+.curie-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--c-border-2);
+  background: #fff;
+  border-radius: 16px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-family: var(--c-sans);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--c-ink-65);
+  white-space: nowrap;
+}
+.curie-chip:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+.curie-chip__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.curie-chip--repo {
+  background: var(--c-link-fill);
+  border-color: transparent;
+  color: var(--c-link-3);
+  max-width: 240px;
+}
+.curie-chip--repo .curie-chip__label {
+  max-width: 168px;
+}
+.curie-chip__x {
+  display: inline-flex;
+  color: inherit;
+}
+.curie-attach {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--c-border-2);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--c-ink-65);
+  cursor: pointer;
+}
+.curie-attach:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+.curie-send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--c-action);
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.curie-send:hover {
+  background: #000;
+}
+.curie-send:active {
+  transform: scale(0.92);
+}
+
+/* Quick-action tab bar (Coding / Testing / Document / Migration) */
+.curie-actionbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px 16px 0;
+}
+.curie-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--c-border-1);
+  background: transparent;
+  border-radius: 24px;
+  padding: 8px 20px;
+  cursor: pointer;
+  font-family: var(--c-sans);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--c-ink-65);
+}
+.curie-action:hover {
+  background: rgba(0, 0, 0, 0.03);
+  color: #000;
+}
+
+/* ── Chat view (screen 2) ────────────────────────────────────────────────── */
+.curie-chat {
+  align-self: stretch;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.curie-chat__log {
+  flex: 1;
+  width: 728px;
+  max-width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 8px 0 16px;
+}
+.curie-msg--user {
+  align-self: flex-end;
+  max-width: 78%;
+  background: #f4f2fb;
+  border: 1px solid rgba(101, 85, 143, 0.14);
+  border-radius: 18px 18px 6px 18px;
+  padding: 12px 16px;
+  font-family: var(--c-sans);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--c-ink-88);
+}
+.curie-msg--assistant {
+  align-self: flex-start;
+  max-width: 88%;
+  display: flex;
+  gap: 12px;
+}
+.curie-msg__avatar {
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #9d7ee6, #8fb4dc);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.curie-msg__content {
+  flex: 1;
+  min-width: 0;
+}
+.curie-msg__text {
+  margin: 0 0 12px;
+  font-family: var(--c-sans);
+  font-size: 14px;
+  line-height: 21px;
+  color: var(--c-ink-88);
+}
+.curie-msg__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Larger task cards generated inline in the conversation */
+.curie-card {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--c-border-2);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.curie-card:hover {
+  border-color: var(--c-link-2);
+  box-shadow: 0 6px 18px -10px rgba(101, 85, 143, 0.5);
+}
+.curie-card__icon {
+  flex: 0 0 18px;
+  margin-top: 2px;
+  color: var(--c-primary);
+}
+.curie-card__body {
+  flex: 1;
+  min-width: 0;
+}
+.curie-card__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.curie-card__id {
+  font-family: var(--c-mono);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--c-ink-45);
+}
+.curie-card__status {
+  font-family: var(--c-sans);
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 16px;
+  padding: 1px 8px;
+  border-radius: 12px;
+}
+.curie-card__status--active {
+  background: var(--c-link-fill);
+  color: var(--c-link-3);
+}
+.curie-card__status--queued {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--c-ink-45);
+}
+.curie-card__time {
+  margin-left: auto;
+  font-family: var(--c-sans);
+  font-size: 11px;
+  color: var(--c-ink-45);
+}
+.curie-card__name {
+  display: block;
+  margin: 4px 0 0;
+  font-family: var(--c-sans);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--c-ink-88);
+}
+.curie-card__sub {
+  display: block;
+  margin: 3px 0 0;
+  font-family: var(--c-sans);
+  font-size: 12px;
+  line-height: 17px;
+  color: var(--c-ink-65);
+}
+.curie-chat__composer {
+  width: 728px;
+  max-width: 100%;
+  padding-bottom: 8px;
+}
+
+/* ── Motion ──────────────────────────────────────────────────────────────── */
+.curie-spin {
+  transform-origin: center;
+  animation: curie-spin 1.1s linear infinite;
+}
+@keyframes curie-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.curie-enter {
+  animation: curie-fade-up 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes curie-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.curie-fade {
+  animation: curie-fade 0.3s ease both;
+}
+@keyframes curie-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Mobile: the cutout window is squarer (1.2/1), so let the demo take nearly
+   the full width to keep the frame gaps balanced. */
+@media (max-width: 768px) {
+  .curie-demo {
+    width: 94%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .curie-spin,
+  .curie-enter,
+  .curie-fade,
+  .curie-send {
+    animation: none !important;
+    transition: none !important;
+  }
+}

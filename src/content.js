@@ -27,7 +27,7 @@ function generateFramePaths(sequenceName, frameCount = 24) {
 }
 
 const workToPlaygroundFrames = generateFramePaths('1-2', 24)
-const playgroundToAnalogueFrames = generateFramePaths('2-3', 17)
+const playgroundToAnalogueFrames = generateFramePaths('2-3', 24)
 const analogueToWorkFrames = generateFramePaths('3-1', 24)
 
 const desktopHeader = { top: 15, variant: 'desktop', width: 260 }

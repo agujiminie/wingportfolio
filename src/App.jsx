@@ -1,7 +1,10 @@
-import { startTransition, useEffect, useState } from 'react'
+import { startTransition, useCallback, useEffect, useRef, useState } from 'react'
 import LandingBackground from './LandingBackground'
 import MorphStage from './MorphStage'
-import { STATE_BY_ID, TRANSITION_IMAGES, getBreakpointId } from './content'
+import FrameOverlay from './FrameOverlay'
+import SecondScreen from './SecondScreen'
+import { STATE_BY_ID, TRANSITION_IMAGES } from './content'
+import { smoothScrollToTop } from './lib/smoothScroll'
 
 function getInitialStateId() {
   if (typeof window === 'undefined') {
@@ -17,136 +20,123 @@ function getInitialStateId() {
   return 'work'
 }
 
-function getViewportState() {
-  if (typeof window === 'undefined') {
-    return {
-      breakpointId: 'desktop',
-      height: 1080,
-      width: 1280,
-    }
-  }
+// The hero (morph canvas + headline) fades to 0 by the time the second screen's
+// top edge has risen to this fraction of the viewport height — i.e. once the
+// panel covers the bottom (1 - VANISH_AT) of the screen. Tune this single number.
+const VANISH_AT = 0.4
 
-  return {
-    breakpointId: getBreakpointId(window.innerWidth),
-    height: window.innerHeight,
-    width: window.innerWidth,
-  }
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value))
 }
 
-function getSurfaceMetrics(viewport, frame) {
-  const scale = Math.max(
-    (viewport.width + 4) / frame.width,
-    (viewport.height + 4) / frame.height,
-  )
-  const width = frame.width * scale
-  const height = frame.height * scale
+// The hero headline dismisses as soon as scrolling starts: past this tiny
+// offset (px) it fades out (the CSS opacity transition makes the snap a fade).
+const TITLE_FADE_AT = 8
 
-  return {
-    height,
-    left: (viewport.width - width) / 2,
-    scale,
-    top: height > viewport.height ? 0 : (viewport.height - height) / 2,
-    width,
-  }
-}
+// Below this scroll offset (px) the hero is effectively in view, so a tab click
+// can morph immediately instead of first snapping to the top.
+const TOP_EPSILON = 2
 
 export default function App() {
   const [activeId, setActiveId] = useState(() => getInitialStateId())
-  const [viewport, setViewport] = useState(() => getViewportState())
+  const [scrolled, setScrolled] = useState(false)
+  const panelRef = useRef(null)
+  // In-flight "snap to top" cancel fn + the tab to switch to once it lands.
+  const scrollCancelRef = useRef(null)
+  const pendingTargetRef = useRef(null)
 
-  const activeState = STATE_BY_ID[activeId]
-  const activeLayout = activeState.layouts[viewport.breakpointId]
-  const surface = getSurfaceMetrics(viewport, activeLayout.frame)
-  const morphContentTopPx = activeLayout.nav.top + 79 + 24
-
+  // Scroll-driven hero fade (Method B). Writes a single --fade custom property
+  // on :root; CSS maps it onto the morph stage opacity and the headline opacity.
   useEffect(() => {
-    const handleResize = () => setViewport(getViewportState())
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    const root = document.documentElement
+    // Stable for the app's lifetime; its height is re-read each frame to stay
+    // correct across viewport resizes.
+    const bar = document.querySelector('.frame__topbar')
+    let ticking = false
+
+    const update = () => {
+      ticking = false
+      const panel = panelRef.current
+      if (!panel) return
+      const vh = window.innerHeight
+      const top = panel.getBoundingClientRect().top
+      // 1 when the panel enters at the bottom (top = vh); 0 at top = VANISH_AT*vh.
+      const fade = clamp((top - VANISH_AT * vh) / (vh - VANISH_AT * vh), 0, 1)
+      root.style.setProperty('--fade', fade.toFixed(3))
+      // Headline dismisses immediately on scroll (independent of the morph fade).
+      root.style.setProperty('--title-fade', window.scrollY > TITLE_FADE_AT ? '0' : '1')
+      // Nav background activates only once the solid second-screen panel has
+      // risen up to meet the bar (its top edge reaches the bar's bottom) — so the
+      // bar stays transparent over the hero and only tints over the solid panel.
+      // setState bails out when unchanged, so this re-renders only on crossing.
+      const barBottom = bar ? bar.getBoundingClientRect().bottom : 0
+      setScrolled(top <= barBottom)
+    }
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true
+        requestAnimationFrame(update)
+      }
+    }
+
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      root.style.removeProperty('--fade')
+      root.style.removeProperty('--title-fade')
+    }
   }, [])
 
-  const shellStyle = {
-    height: `${surface.height}px`,
-    left: `${surface.left}px`,
-    top: `${surface.top}px`,
-    width: `${surface.width}px`,
-  }
+  // Cancel any in-flight snap-to-top if the component unmounts mid-animation.
+  useEffect(() => () => scrollCancelRef.current?.(), [])
 
-  const surfaceStyle = {
-    height: `${activeLayout.frame.height}px`,
-    transform: `scale(${surface.scale})`,
-    width: `${activeLayout.frame.width}px`,
-  }
+  // Tab click. If the hero is already in view, switch immediately (the morph
+  // plays as usual). Otherwise snap the hero back to the top first, then switch
+  // so the morph happens where it's actually visible. Re-clicking mid-snap just
+  // retargets the pending tab without restarting the scroll.
+  const handleSelect = useCallback(
+    (id) => {
+      if (id === activeId) return
+      pendingTargetRef.current = id
+
+      if (scrollCancelRef.current) return // snap already running → just retarget
+
+      if (window.scrollY <= TOP_EPSILON) {
+        startTransition(() => setActiveId(id))
+        return
+      }
+
+      scrollCancelRef.current = smoothScrollToTop({
+        onDone: () => {
+          scrollCancelRef.current = null
+          const target = pendingTargetRef.current
+          if (target != null) startTransition(() => setActiveId(target))
+        },
+      })
+    },
+    [activeId],
+  )
 
   return (
     <main className="landing">
+      {/* Layer 0 — persistent background (image + Dither): revealed through the cutout */}
       <LandingBackground activeId={activeId} />
 
-      {/* Layer 2 — morph canvas, static */}
-      <div className="landing__surface-shell" style={shellStyle}>
-        <div className="landing__surface" style={surfaceStyle}>
-          <MorphStage
-            activeId={activeId}
-            contentTopPx={morphContentTopPx}
-            transitionImages={TRANSITION_IMAGES}
-          />
-        </div>
+      {/* Layer 2 — morph canvas, centered via CSS; fades out on scroll (--fade) */}
+      <div className="landing__stage">
+        <MorphStage activeId={activeId} transitionImages={TRANSITION_IMAGES} />
       </div>
 
-      {/* Layer 3 — text + nav, completely static */}
-      <div className="landing__surface-shell landing__ui-shell" style={shellStyle}>
-        <div className="landing__surface" style={surfaceStyle}>
-          <header
-            className={`landing__header${activeLayout.header.variant === 'mobile' ? ' is-mobile' : ''}`}
-            style={{
-              top: `${activeLayout.header.top}px`,
-              width: `${activeLayout.header.width}px`,
-            }}
-          >
-            <h1>Wing Zeng</h1>
-            <p>8+yoe AI Product Designer</p>
-          </header>
+      {/* Layer 4 — viewport-framing overlay (nav/brand stay; headline fades with --fade) */}
+      <FrameOverlay activeId={activeId} onSelect={handleSelect} scrolled={scrolled} />
 
-          <nav
-            className={`landing__switcher${activeLayout.header.variant === 'mobile' ? ' is-mobile' : ''}`}
-            aria-label="Category switcher"
-            style={{
-              gap: `${activeLayout.nav.gap}px`,
-              top: `${activeLayout.nav.top}px`,
-            }}
-          >
-            {activeLayout.nav.buttons.map((buttonLayout) => {
-              const state = STATE_BY_ID[buttonLayout.id]
-              const isActive = buttonLayout.id === activeId
-
-              return (
-                <button
-                  key={buttonLayout.id}
-                  type="button"
-                  aria-label={state.navLabel}
-                  aria-pressed={isActive}
-                  className={`landing__pill${isActive ? ' is-active' : ''}${buttonLayout.showLabel ? '' : ' is-icon-only'}`}
-                  style={{
-                    background: isActive ? activeState.activeFill : undefined,
-                    border: isActive ? activeState.activeBorder : undefined,
-                    color: isActive ? activeState.activeText : undefined,
-                    width: `${buttonLayout.width}px`,
-                  }}
-                  onClick={() => {
-                    if (buttonLayout.id === activeId) return
-                    startTransition(() => setActiveId(buttonLayout.id))
-                  }}
-                >
-                  {buttonLayout.showLabel
-                    ? <span className="landing__pill-label">{state.navLabel}</span>
-                    : null}
-                </button>
-              )
-            })}
-          </nav>
-        </div>
-      </div>
+      {/* In-flow scroll content: one hero viewport, then the solid second screen */}
+      <div className="landing__spacer" aria-hidden="true" />
+      <SecondScreen panelRef={panelRef} activeId={activeId} />
     </main>
   )
 }

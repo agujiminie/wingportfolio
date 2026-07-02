@@ -15,3 +15,15 @@ output/playwright
 /*.jpg
 /*.jpeg
 /*.mp4
+
+# Figma fidelity gate marker (local, not committed)
+.claude/.figma-reviewed
+
+# Local tooling artifacts
+.playwright-mcp
+claude_desktop_config.json
+
+# Root-level working exports (same policy as /*.png etc. above)
+/media
+/project cover
+/Wing Z_2026.pdf

@@ -98,7 +98,7 @@ function drawFrame(ctx, composeCanvas, img) {
 /**
  * Morph canvas under nav: scrub driven by top category pills, full frame strip, 1s ring animation.
  */
-export default function MorphStage({ activeId, contentTopPx, transitionImages }) {
+export default function MorphStage({ activeId, transitionImages }) {
   const canvasRef = useRef(null)
   const composeRef = useRef(null)
   const imagesRef = useRef([])
@@ -227,11 +227,7 @@ export default function MorphStage({ activeId, contentTopPx, transitionImages })
   }, [imagesLoaded])
 
   return (
-    <div
-      className="morph-stage"
-      style={{ '--morph-content-top': `${contentTopPx}px` }}
-      role="presentation"
-    >
+    <div className="morph-stage" role="presentation">
       {!imagesLoaded ? (
         <div className="morph-demo__loading" aria-live="polite">
           Loading frames…

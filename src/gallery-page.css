@@ -1,0 +1,489 @@
+/* ══ Analog gallery page ═══════════════════════════════════════════════════
+   Extends the project-page design language: #edf0ee panel, #363636 ink,
+   Kode Mono display type, Geist body, pill interactive radius, 12px media.
+
+   Layout idiom (Claude-startups hero): artwork cards are absolutely
+   positioned around the hero and bleed past its edges; the center column
+   holds eyebrow / headline / blurb / category tabs. Below, a CSS-columns
+   masonry grid of the active category. */
+
+/* index.css caps #root at viewport height for the landing's fixed-layer
+   stack; lift it while the gallery page is mounted (same as .project-page). */
+#root:has(> .gallery-page) {
+  height: auto;
+}
+
+.gallery-page,
+.gallery-content {
+  --gp-panel: #edf0ee;
+  --gp-ink: #363636;
+  --gp-edge: #d6d6d6;
+  --gp-soft: rgba(0, 0, 0, 0.55);
+  --gp-faint: rgba(0, 0, 0, 0.45);
+  --gp-margin: clamp(20px, 3.2vw, 60px);
+  --gp-bar-top: clamp(11px, 1vw, 14px);
+  --gp-bar-h: calc(var(--gp-bar-top) * 2 + 30px);
+}
+
+.gallery-page {
+  min-height: 100dvh;
+  background: var(--gp-panel);
+  font-family: "Geist Variable", "Inter", system-ui, sans-serif;
+  color: var(--gp-ink);
+}
+
+/* No background here (unlike .gallery-page): .gp-hero and .gp-grid-wrap each
+   paint their own solid panel colour, and .gp-closing deliberately doesn't —
+   its window (.gp-closing__figure) is a real cutout into whatever sits below
+   .second-screen, which is the landing's fixed background layer when
+   embedded. An opaque background here would sit between them and block it. */
+.gallery-content {
+  font-family: "Geist Variable", "Inter", system-ui, sans-serif;
+  color: var(--gp-ink);
+}
+
+/* Embedded in the landing's Analog tab: no page bar above, so the hero owns
+   the full reveal viewport. */
+.gallery-content--embedded .gp-hero {
+  min-height: 100svh;
+}
+
+/* — Top bar (mirrors .pp-bar) — */
+.gp-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: var(--gp-bar-h);
+  padding: 0 var(--gp-margin);
+  background: var(--gp-panel);
+}
+
+.gp-bar__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--gp-ink);
+}
+
+.gp-bar__brand-mark {
+  display: flex;
+  color: var(--gp-ink);
+}
+
+.gp-bar__brand-name {
+  font-family: "Kode Mono", monospace;
+  font-size: 20px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.gp-bar__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-family: "Kode Mono", monospace;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.65);
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: 999px;
+}
+
+.gp-bar__back:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.gp-bar__cta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gp-bar__cta-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--gp-ink);
+  border-radius: 999px;
+  transition: background-color 160ms ease;
+}
+
+.gp-bar__cta-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* — Scatter hero — */
+.gp-hero {
+  position: relative;
+  background: var(--gp-panel);
+  min-height: calc(100svh - var(--gp-bar-h));
+  display: grid;
+  place-items: center;
+  /* Cards bleed past the hero edges on purpose; the page must not scroll
+     horizontally because of them. */
+  overflow: hidden;
+  padding: clamp(24px, 4vh, 56px) var(--gp-margin);
+}
+
+.gp-scatter {
+  position: absolute;
+  inset: 0;
+}
+
+.gp-card {
+  position: absolute;
+  /* --card-w is unitless (reference px at 1440vw) so the calc stays a valid
+     number × length product. */
+  width: clamp(110px, calc(var(--card-w) / 1440 * 100vw), calc(var(--card-w) * 1px));
+  padding: 0;
+  border: 0;
+  background: none;
+  transform: translate(-50%, -50%) rotate(var(--card-r));
+  cursor: pointer;
+}
+
+.gp-card__art {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #fff;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 18px 40px rgba(0, 0, 0, 0.14);
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.gp-card:hover .gp-card__art {
+  transform: scale(1.04);
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.1),
+    0 26px 52px rgba(0, 0, 0, 0.18);
+}
+
+.gp-hero__center {
+  position: relative;
+  z-index: 1;
+  max-width: 620px;
+  text-align: center;
+  display: grid;
+  justify-items: center;
+  gap: clamp(14px, 2vh, 22px);
+}
+
+.gp-hero__eyebrow {
+  margin: 0;
+  font-family: "Kode Mono", monospace;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gp-soft);
+}
+
+.gp-hero__title {
+  margin: 0;
+  font-family: "Kode Mono", monospace;
+  font-size: clamp(34px, 4.6vw, 64px);
+  font-weight: 400;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.gp-hero__desc {
+  margin: 0;
+  max-width: 46ch;
+  font-size: clamp(15px, 1.2vw, 17px);
+  line-height: 1.6;
+  color: var(--gp-soft);
+}
+
+/* — Category tabs (pill segmented control) — */
+.gp-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  max-width: 560px;
+}
+
+.gp-tab {
+  padding: 9px 16px;
+  border: 1px solid var(--gp-edge);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  font-family: "Kode Mono", monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gp-soft);
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.gp-tab:hover {
+  border-color: var(--gp-ink);
+  color: var(--gp-ink);
+}
+
+.gp-tab.is-active {
+  background: var(--gp-ink);
+  border-color: var(--gp-ink);
+  color: #fff;
+}
+
+/* — Masonry grid — */
+.gp-grid-wrap {
+  background: var(--gp-panel);
+  padding: clamp(28px, 5vh, 64px) var(--gp-margin) clamp(40px, 7vh, 96px);
+}
+
+.gp-grid {
+  columns: 4 260px;
+  column-gap: 18px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.gp-grid__item {
+  display: block;
+  width: 100%;
+  margin: 0 0 18px;
+  padding: 0;
+  border: 0;
+  background: none;
+  break-inside: avoid;
+  cursor: zoom-in;
+}
+
+.gp-grid__item img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.gp-grid__item:hover img {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
+}
+
+/* — Closing frame — an actual cutout window (matches .second-screen__window
+   --solo: transparent interior, no rotation, no caption). real-life.png has
+   transparent gaps between its three photo rows, so this is what lets the
+   landing's fixed background layer peek through those seams when embedded.
+   The earlier attempt broke on scroll (Chromium blanked unrelated content
+   after scrolling to the bottom and back up) because the flood-fill shadow
+   was UNCLIPPED — .second-screen__feature always pairs this shadow with
+   overflow:hidden on the row so the paint/composite area stays bounded to
+   the row's own box instead of truly spanning 9999px in every direction.
+   `overflow: hidden` here does the same job. */
+.gp-closing {
+  overflow: hidden;
+  display: grid;
+  justify-items: center;
+  padding: clamp(40px, 8vh, 110px) var(--gp-margin) clamp(56px, 10vh, 140px);
+}
+
+.gp-closing__figure {
+  position: relative;
+  margin: 0;
+  width: min(72%, 880px);
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: 0 0 0 9999px var(--gp-panel);
+}
+
+.gp-closing__figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* — Footer (mirrors .pp-footer) — */
+.gp-footer {
+  border-top: 1px solid var(--gp-edge);
+  padding: 0 var(--gp-margin);
+}
+
+.gp-footer__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: clamp(20px, 3vh, 32px) 0;
+}
+
+.gp-footer__primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: "Kode Mono", monospace;
+  font-size: clamp(17px, 1.6vw, 22px);
+  color: var(--gp-ink);
+  text-decoration: none;
+}
+
+.gp-footer__primary:hover .gp-footer__arrow {
+  transform: translateX(-4px);
+}
+
+.gp-footer__arrow {
+  transition: transform 200ms ease;
+}
+
+.gp-footer__top {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--gp-edge);
+  border-radius: 999px;
+  background: none;
+  font-family: "Kode Mono", monospace;
+  font-size: 13px;
+  color: var(--gp-soft);
+  cursor: pointer;
+}
+
+.gp-footer__top:hover {
+  border-color: var(--gp-ink);
+  color: var(--gp-ink);
+}
+
+/* — Lightbox — */
+.gp-lightbox {
+  border: 0;
+  padding: 0;
+  background: none;
+  max-width: min(1120px, 92vw);
+  max-height: 90dvh;
+  overflow: visible;
+}
+
+.gp-lightbox::backdrop {
+  background: rgba(20, 22, 21, 0.82);
+}
+
+.gp-lightbox__figure {
+  margin: 0;
+}
+
+.gp-lightbox__figure img {
+  display: block;
+  max-width: min(1120px, 92vw);
+  max-height: 78dvh;
+  width: auto;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.gp-lightbox__caption {
+  margin-top: 12px;
+  text-align: center;
+  font-family: "Kode Mono", monospace;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.gp-lightbox__btn {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+
+.gp-lightbox__btn:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.gp-lightbox__btn--prev {
+  left: clamp(8px, 2vw, 28px);
+  top: 50%;
+  translate: 0 -50%;
+}
+
+.gp-lightbox__btn--next {
+  right: clamp(8px, 2vw, 28px);
+  top: 50%;
+  translate: 0 -50%;
+}
+
+.gp-lightbox__btn--close {
+  top: clamp(8px, 2vw, 28px);
+  right: clamp(8px, 2vw, 28px);
+}
+
+/* — Responsive — */
+@media (max-width: 900px) {
+  .gp-grid {
+    columns: 3 200px;
+    column-gap: 14px;
+  }
+
+  .gp-grid__item {
+    margin-bottom: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Fewer scatter cards on small screens; the survivors shrink. */
+  .gp-card--desktop {
+    display: none;
+  }
+
+  .gp-card {
+    width: clamp(88px, calc(var(--card-w) / 1440 * 130vw), 180px);
+  }
+
+  .gp-hero {
+    min-height: calc(94svh - var(--gp-bar-h));
+  }
+
+  .gp-bar__brand-name {
+    display: none;
+  }
+
+  .gp-grid {
+    columns: 2 140px;
+    column-gap: 12px;
+  }
+
+  .gp-grid__item {
+    margin-bottom: 12px;
+  }
+}
+
+/* Reduced motion: everything is visible and static; JS skips the tweens. */
+@media (prefers-reduced-motion: reduce) {
+  .gp-card__art,
+  .gp-grid__item img,
+  .gp-footer__arrow {
+    transition: none;
+  }
+}

@@ -1,0 +1,118 @@
+/* ══ AI Playground — living feature-frame media ══════════════════════════
+   Three bespoke media components rendered inside .second-screen__window--feature
+   (see index.css). Each sizes itself like the <img> it replaced so the 镂空
+   bleed around the artwork is unchanged. */
+
+/* — Musion: layered cover + mouse tilt — */
+.musion-tilt {
+  position: relative;
+  width: 92%;
+  height: 86%;
+  perspective: 950px;
+}
+
+.musion-tilt__group {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.musion-tilt__layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: right center;
+  will-change: transform;
+}
+
+/* Screen-reader-only composite description. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* — Roblox: screenshot with the video region alive — */
+.roblox-live {
+  position: relative;
+  height: 86%;
+  aspect-ratio: 1440 / 1038;  /* the ai-game.png screenshot */
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.roblox-live__still {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.roblox-live__video {
+  position: absolute;          /* left/top/size set inline from VIDEO_RECT */
+  object-fit: cover;
+  opacity: 0;                  /* faded in by GSAP on first play */
+  visibility: hidden;
+}
+
+/* — AI Playlist: spinning vinyl over the pixel-art cover — */
+.vinyl {
+  position: relative;
+  height: 86%;
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.vinyl__still {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vinyl__disc-wrap {
+  position: absolute;          /* centre/size set inline from DISC */
+  aspect-ratio: 1 / 1;
+  /* translate+scaleY set inline; squash turns the spinning circle into the
+     artwork's ellipse (affine — the rotation stays correct). */
+}
+
+.vinyl__disc {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.vinyl__glitch {
+  position: absolute;
+  left: -8%;
+  width: 116%;                 /* wider than the frame so x-drift never gaps */
+  background: rgba(255, 255, 255, 0.55);
+  mix-blend-mode: overlay;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.vinyl__glitch--cyan {
+  background: rgba(126, 231, 242, 0.75);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roblox-live__video,
+  .vinyl__glitch {
+    display: none;
+  }
+}

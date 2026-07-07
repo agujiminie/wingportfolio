@@ -11,6 +11,7 @@ import tencentCover from './assets/projects/tencent.png'
 import aiPlaylistCover from './assets/projects/ai-playlist.png'
 import realLifeCover from './assets/projects/real-life.png'
 import aiGameCover from './assets/projects/ai-game.png'
+import galleryPreview from './assets/projects/gallery-preview.webp'
 
 export const BRAND = {
   name: 'Wing Zeng',
@@ -59,15 +60,19 @@ export const EXPERIENCE = [
     // so the "ORACLE" wordmark sits a bit below the top edge.
     coverStyle: { width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'right bottom', transform: 'translateY(7%) scale(1.14)', transformOrigin: 'right bottom' },
     cta: 'View project',
-    href: '#',
+    href: '#/project/oracle',
   },
   {
     name: 'NovoEd',
     tag: 'Learning Platform',
     blurb: 'Practice, Learn and Improve On-the-go — Enhance Learning Through Video Practice',
     cover: novoedCover,
-    cta: 'View project',
-    href: '#',
+    // Two case studies under one banner — rendered as a vertical link stack
+    // instead of the single "View project" CTA.
+    links: [
+      { label: 'NovoEd Video Practice', href: '#/project/novoed' },
+      { label: 'Mobile App', href: '#/project/novoed-mobile' },
+    ],
   },
   {
     name: 'Texas Advanced Computing Center',
@@ -75,7 +80,7 @@ export const EXPERIENCE = [
     blurb: 'Build the Sustainable Design System for Global Scholars Using TACC AI Consoles',
     cover: taccCover,
     cta: 'View project',
-    href: '#',
+    href: '#/project/tacc',
   },
   {
     name: 'Tencent',
@@ -83,7 +88,7 @@ export const EXPERIENCE = [
     blurb: 'Bring the Social Live Streaming to Millions of Corporate Learners',
     cover: tencentCover,
     cta: 'View project',
-    href: '#',
+    href: '#/project/tencent',
   },
 ]
 
@@ -100,32 +105,33 @@ export const PLAYGROUND = {
       name: 'Musion',
       tag: 'AI Search',
       blurb: 'An AI search tool that helps you explore and go deeper on a new passion.',
+      // Rendered by MusionTilt (layered cover + mouse tilt); cover kept as the
+      // reduced-motion/fallback composite.
+      media: 'musion',
       cover: musionCover,
-      // Anchor right so the artwork's right edge meets the frame; whole image kept.
       coverStyle: { width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'right center' },
       cta: 'View project',
-      href: '#',
+      href: '#/project/musion',
     },
     {
       name: 'AI Game Design & Development',
       tag: 'Roblox · Game',
       blurb:
         'Designed and launched an open-world social lobby game on Roblox, built end-to-end with AI.',
+      // Rendered by RobloxLive — the screenshot's video region plays in place.
+      media: 'roblox',
       cover: aiGameCover,
-      // Opaque screenshot → size the box to the image (1.387) so the whole shot
-      // shows with rounded corners (10px), like the AI Playlist cover.
-      coverStyle: { height: '86%', width: 'auto', aspectRatio: '1.387 / 1', objectFit: 'cover', borderRadius: '10px' },
-      cta: 'View project',
-      href: '#',
+      cta: 'Start Playing',
+      href: 'https://www.roblox.com/games/114633908838233/Little-Myths-Garden',
+      external: true,
     },
     {
       name: 'AI Playlist',
       tag: 'Music',
       blurb: 'A growing collection of me producing music in collaboration with AI.',
+      // Rendered by VinylPlayer — the cover's record spins when in view.
+      media: 'vinyl',
       cover: aiPlaylistCover,
-      // Opaque square album art → size the box to the image and round its
-      // corners to match the placeholder (10px).
-      coverStyle: { height: '86%', width: 'auto', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: '10px' },
       cta: 'Listen',
       href: '#',
     },
@@ -145,8 +151,12 @@ export const ANALOG = {
       name: 'Gallery',
       tag: 'Drawing',
       blurb: 'A collection of my hand drawings.',
+      // Live screenshot of the #/gallery scatter hero (1.5:1, matches the
+      // feature frame) so the window previews the page it links to.
+      cover: galleryPreview,
+      coverStyle: { width: '100%', height: '100%', objectFit: 'cover' },
       cta: 'View gallery',
-      href: '#',
+      href: '#/gallery',
     },
     {
       name: '手帐 / Collage Art',

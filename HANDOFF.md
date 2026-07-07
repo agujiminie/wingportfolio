@@ -29,6 +29,74 @@ UI 需要像素级对齐 Figma——规则和自动校验流程见 [CLAUDE.md](C
 - 交互：screen 1（landing，预填 prompt + repo chip）按发送 → screen 2（chat，
   用户消息 + Curie 回复 + 两张 task card）。左上角编辑按钮可重置回 screen 1。
 
+## Gallery（Analog tab 内容 + #/gallery 页，2026-07-07 新增）
+
+Webflow /gallery 的重设计版：scatter hero（Claude startups 风格，作品卡环绕标题
+出血排布 + 滚动视差）+ 居中 category tabs + 下方 masonry grid + closing quote
++ lightbox。
+
+- **共享体是 `src/GalleryContent.jsx`，渲染在两个地方**：
+  1. 落地页 Analog tab 的 second screen（SecondScreen.jsx 对 `analogue` 特判，
+     渲染 `<GalleryContent embedded />`——保留原来的面板揭示/mask 形式，
+     滑下来看到的直接就是 gallery）；
+  2. 独立路由 `#/gallery`（GalleryPage.jsx 只是 bar + GalleryContent + footer 壳）。
+  **用户明确说过：以后 Analog tab 要加的内容直接加进 gallery**（改
+  GalleryContent / gallery.js 即可，两处同步生效）。
+- 数据：`src/projects/gallery.js`（5 个 category、54 张作品、散落 slot 预设、
+  `GALLERY_QUOTE` 收尾用 jimin-05 "Don't think about making art" 海报，换照片改
+  `GALLERY_QUOTE.item`）。
+- 图片：经 Webflow API 导出 → WebP 两档（`src/assets/projects/gallery/{thumb,full}`，共 ~7MB）。
+- 动效：GSAP + ScrollTrigger，入场全部 ScrollTrigger 门控（embedded 揭示到位才播），
+  `prefers-reduced-motion` 时跳过。
+- frameContent.js 的 ANALOG.items（Gallery/手帐/In Real Life 卡片）和
+  `gallery-preview.webp` 已不再被 Analog tab 渲染（被 GalleryContent 取代），
+  数据先保留备用。
+- 无 Figma 稿——设计参考是 claude.com/programs/startups 的 hero，用户已确认方案。
+- **已知坑（已修复，别再踩）**：`.gp-closing__figure` 用 `box-shadow: 0 0 0
+  9999px var(--gp-panel)` 复刻站内 `.second-screen__window` 的镂空技巧
+  （real-life.png 三排照片之间有真实透明缝隙，露出下面固定的 dither 背景）。
+  第一次实现时 `.gp-closing` 没加 `overflow:hidden`，导致这个 9999px shadow
+  真的以未裁切的巨大范围参与合成，在这个图多 + GSAP 视差多的长页面上触发了
+  Chromium 合成渲染 bug——快速滚到底再往上滑，中间大片内容整体变白（computed
+  style 显示 opacity:1/visible 正常，但实际没画出来）。**真正的根因**：站内
+  原技巧永远是`.second-screen__feature { overflow:hidden }` 包一层，把巨大
+  shadow 裁到该行自己的边界内。修复方式：`.gp-closing` 补上 `overflow:hidden`
+  （裁切 shadow），同时要保证 `.gallery-content`/`.gp-closing` 全链路没有
+  opaque 背景挡在中间——只有 `.gp-hero`/`.gp-grid-wrap` 该有自己的 solid
+  背景。以后再给任何元素加 `9999px` 级别的 box-shadow，**必须**配一层
+  `overflow:hidden` 的父容器。
+
+## AI Playground 动效 frame（2026-07-07 新增）
+
+三个 playground feature row 的媒体从静态图升级为"滑到那里才动"的组件
+（全部 GSAP + ScrollTrigger，零新依赖；`prefers-reduced-motion` 时保持静态图）。
+代码在 `src/components/playground/`，由 `frameContent.js` 里 item 的
+`media: 'musion' | 'roblox' | 'vinyl'` 字段驱动（SecondScreen 的
+`FEATURE_MEDIA` 表做映射，无 `media` 字段的 item 走原来的 `<img>` 路径）。
+
+- **MusionTilt**：musion.png 切成 4 层（`assets/projects/musion-layers/`，
+  wordmark + 3 台手机，全画布 1440×912 WebP，同样式叠放即像素对齐）。
+  入场手机错峰上浮；hover + fine pointer 时 `gsap.quickTo` 驱动整组
+  rotateX/rotateY 跟随鼠标，各层不同 translateZ 产生视差；离开
+  `elastic.out` 回弹。切层脚本逻辑：按 alpha 列投影分段（x 0–457 字标，
+  584–905 / 935–1257 / 1287–1440 三台手机）。
+- **RobloxLive**：截图 ai-game.png 上、视频区域精确坐标
+  （left 2.29% / top 2.79% / w 63.47% / h 49.42%，16:9）叠一个
+  `<video muted loop playsInline>`；进入视口播放并淡入，离开暂停。
+  CTA "Start Playing" 新标签页打开 roblox.com 游戏页。
+  `assets/projects/roblox-preview.mp4` 是真实的游戏预览视频（8s 912×514
+  H.264 无声 1.6MB），来源：Roblox 自托管 HLS 需登录态，经用户在 playwright
+  窗口登录后，从页面网络请求抓到 sc2.rbxcdn.com 带签名 manifest，分段是
+  **gzip 压缩的 webm**（gunzip 后 cat 拼接再 ffmpeg 转码即可）。以后要换视频
+  重复这个流程：登录页面 → 抓 manifest URL → 下载分段 → gunzip → concat →
+  `ffmpeg -i full.webm -an -vf scale=912:-2 -crf 26 out.mp4`。
+- **VinylPlayer**：ai-playlist.png 封面上，实测唱片椭圆（中心 46.3%/69.2%、
+  宽 66%、压扁 scaleY 0.219）叠一张同色系 SVG 黑胶（同心槽纹 + 珊瑚色标签
+  + 偏心刻度），`steps(48)` 步进旋转做像素风停格感，进入视口 timeScale
+  渐升（needle-drop 感）、离开渐停；另有 3 条 glitch 横纹低频闪烁。
+
+无 Figma 稿——动效为用户口头需求（"delightful、滑到才动"），方案经用户确认。
+
 ## 明确的下一步（用户原话规划）
 
 1. **Screen 3：full automation loop** —— 用户切到另一个 chat 看完整自动化流程。

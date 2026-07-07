@@ -1,19 +1,25 @@
 /* ─────────────────────────────────────────────────────────────────────────
    Curie interactive demo — replaces the static product screenshot inside the
-   Work tab's cutout window. Authored at a fixed 1120×640 "stage" (1:1 with the
-   Figma frame `expand - chats`, node 3309-2020) and scaled to fit via a
-   transform whose factor is measured by useFitScale.
+   Work tab's cutout window. Authored at a fixed 1440×909 "stage" (1:1 with
+   the Curie Design System frame `expanded - hover`, node 3541-2654) plus a
+   40px macOS title bar, and scaled to fit via a transform whose factor is
+   measured by useFitScale.
 
-   Design tokens (from Figma get_design_context):
+   Design tokens (from Figma get_design_context, node 3541-2654):
      primary/2            #65558F   (active pill, avatar)
      status/link/2        #9D7EE6   (chat box border)
      status/link/3        #5B5BD5   (repo chip text)
      status/link/base 2   #F7F7FF   (repo chip fill)
      neutral/border/1     #D6D6D6   (tab pills)
-     neutral/border/2     #EAEAEA   (attach / dividers)
-     neutral/bg/action    #262626   (send button)
-     neutral/bg/grey 1    #FCFCFC   (chat flow bg)
+     neutral/border/2     #EAEAEA   (attach / dividers / profile border)
+     neutral/bg/action    #262626   (send button, enabled)
+     send disabled        rgba(29,27,32,0.12)
+     chat flow bg         #EFF0F3
+     neutral/icon/solid   #8E8E8E   (search)
+     text placeholder     rgba(0,0,0,0.25)
      sidebar border       rgba(132,111,225,0.1)
+     title gradient       rgba(0,0,0,0.2) over
+                          90deg #AB97FE 0% → #D3B6B8 82% → #A8CFF1 99%
    ──────────────────────────────────────────────────────────────────────── */
 
 .curie-demo {
@@ -22,11 +28,14 @@
      most of the frame (like the reference screenshot) — the window's flex
      centering keeps the top and bottom gaps equal. */
   position: relative;
+  /* Pre-measure fallback only — useFitScale sets width/height inline.
+     The APP REGION is locked to 16:9; the 32px title bar rides on top
+     (1024 / (1024 × 9/16 + 32) at the stage floor). */
   width: 88%;
-  aspect-ratio: 1120 / 672; /* 640 app + 32 macOS title bar */
+  aspect-ratio: 1024 / 608;
   border-radius: 12px;
   overflow: hidden;
-  background: #fcfcfc;
+  background: #fbfbfa;
   border: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 0 30px 80px -36px rgba(20, 16, 8, 0.55);
   /* Local design tokens */
@@ -37,12 +46,56 @@
   --c-border-1: #d6d6d6;
   --c-border-2: #eaeaea;
   --c-action: #262626;
-  --c-ink-88: rgba(0, 0, 0, 0.88);
-  --c-ink-65: rgba(0, 0, 0, 0.65);
-  --c-ink-45: rgba(0, 0, 0, 0.45);
+  /* Ink hierarchy tuned for WCAG AA at the demo's small on-screen sizes:
+     primary ≈12.9:1, secondary ≈6.6:1, meta ≈4.9:1 on white — still reads
+     calm and Cursor-like (primary → secondary → meta). */
+  --c-ink-88: rgba(0, 0, 0, 0.84);
+  --c-ink-65: rgba(0, 0, 0, 0.66);
+  --c-ink-45: rgba(0, 0, 0, 0.56);
   --c-sans: "Geist Variable", "Inter", system-ui, sans-serif;
   --c-mono: "Geist Mono", "SFMono-Regular", ui-monospace, monospace;
   color: var(--c-ink-88);
+  /* Radius scale: 24 containers & pills, 16 composer controls & chips,
+     12 icon buttons & list rows, 8 tooltips & hover pads. */
+}
+
+/* One focus treatment for every interactive element inside the window. */
+.curie-demo :is(button, [role='button']):focus-visible {
+  outline: 2px solid var(--c-primary);
+  outline-offset: 2px;
+}
+
+/* Restart control — floats at the top-right corner of the cutout window
+   (outside the scaled stage, so it's sized in real px). Resets the demo to
+   the landing screen from anywhere. */
+.curie-restart {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #fff;
+  color: rgba(0, 0, 0, 0.55);
+  cursor: pointer;
+  box-shadow: 0 2px 10px -2px rgba(20, 16, 8, 0.25);
+  transition: color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+.curie-restart:hover {
+  color: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 14px -2px rgba(20, 16, 8, 0.3);
+}
+.curie-restart:active {
+  transform: scale(0.94);
+}
+.curie-restart:focus-visible {
+  outline: 2px solid #65558f;
+  outline-offset: 2px;
 }
 
 /* The fixed-size canvas. Scaled from the top-left; the wrapper's aspect-ratio
@@ -64,8 +117,13 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 1120px;
-  height: 672px;
+  /* Fluid macOS window: Figma components stay 1:1 (14px type, 320px
+     sidebar) at a locked scale, and the stage itself resizes with the
+     frame — the layout reflows like a real desktop window. */
+  width: var(--stage-w, 960px);
+  height: var(--stage-h, 652px);
+  display: flex;
+  flex-direction: column;
   transform: scale(var(--curie-scale, 1));
   transform-origin: top left;
   font-family: var(--c-sans);
@@ -78,6 +136,7 @@
 /* ── macOS window chrome ─────────────────────────────────────────────────── */
 .curie-titlebar {
   position: relative;
+  flex-shrink: 0;
   height: 32px;
   display: flex;
   align-items: center;
@@ -115,31 +174,21 @@
   color: rgba(0, 0, 0, 0.55);
 }
 
-/* App region below the title bar — the positioning context for the original
-   1120×640 layout (bg, nav, body are absolutely positioned inside it). */
+/* App region below the title bar — the positioning context for the layout
+   (bg, nav, body are absolutely positioned inside it). */
 .curie-demo__app {
   position: relative;
-  height: 640px;
+  flex: 1;
+  min-height: 0;
 }
 
-/* Soft lavender→pink→blue field behind the chat area (recreates the blurred
-   Figma vectors + white backdrop). */
+
+/* Flat chat-flow canvas — #EFF0F3 (spec), no decorative gradients. The
+   translucent task cards depend on this tone to read as glass. */
 .curie-demo__bg {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(60% 80% at 12% 18%, rgba(171, 151, 254, 0.4), transparent 60%),
-    radial-gradient(55% 75% at 82% 12%, rgba(211, 182, 184, 0.42), transparent 62%),
-    radial-gradient(70% 90% at 78% 96%, rgba(168, 207, 241, 0.42), transparent 60%),
-    #fcfcfc;
-}
-.curie-demo__bg::after {
-  /* white veil = the backdrop-blur pass, keeps text legible over the blooms */
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.38);
-  backdrop-filter: blur(24px);
+  background: #eff0f3;
 }
 
 /* ── Top nav ─────────────────────────────────────────────────────────────── */
@@ -148,30 +197,62 @@
   inset: 0 0 auto 0;
   z-index: 3;
   display: flex;
-  align-items: center;
+  /* Top-aligned so the brand sits at the same spot in every phase — the
+     landing-only Support button would otherwise stretch the row and push
+     the centered brand down a few px relative to the chat phases.
+     24px top pad centers the 32px rows on the shared 40px control line
+     (one horizontal line across nav, chat flow and task panel controls,
+     like panel toolbars in a desktop app). */
+  align-items: flex-start;
   justify-content: space-between;
-  padding: 16px;
+  padding: 24px 16px 16px;
+  /* Overlay bar: let clicks pass through the empty strip (e.g. to the chat
+     header's task-list button underneath); children re-enable hits. */
+  pointer-events: none;
+  transition: opacity 0.22s ease;
 }
+.curie-nav > * {
+  pointer-events: auto;
+}
+/* Faded out when the chat header carries the branding (collapsed / split). */
+.curie-nav--hidden {
+  opacity: 0;
+}
+.curie-nav--hidden > * {
+  pointer-events: none;
+}
+/* Brand row spans the sidebar column: panel + logo sit left with an 8px
+   gap; the new-chat button is pushed flush to 16px from the sidebar's
+   right edge (220 − 16 nav pad − 188 row = 16). */
 .curie-nav__brand {
   display: flex;
   align-items: center;
-  gap: 16px;
-}
-.curie-nav__logo {
-  display: flex;
-  align-items: center;
   gap: 8px;
-  color: #1a1a1a;
+  width: 188px;
 }
-.curie-nav__logo-text {
-  font-family: var(--c-sans);
-  font-weight: 700;
-  font-size: 17px;
-  letter-spacing: -0.01em;
+.curie-nav__brand .curie-nav__icon-btn {
+  margin-left: auto;
 }
-.curie-nav__logo-text b {
-  color: var(--c-primary);
-  font-weight: 700;
+/* Official CurieTech AI wordmark SVG — compact 16px lockup height. */
+.curie-brand-logo {
+  display: block;
+  height: 16px;
+  width: auto;
+}
+.curie-nav__panel-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.45); /* neutral/icon/default */
+  border-radius: 8px;
+}
+.curie-nav__panel-toggle:hover {
+  color: #000;
+  background: rgba(0, 0, 0, 0.04);
 }
 .curie-nav__icon-btn,
 .curie-nav__support {
@@ -186,13 +267,19 @@
   font: inherit;
 }
 .curie-nav__icon-btn {
+  color: rgba(0, 0, 0, 0.45); /* neutral/icon/default */
+}
+.curie-nav__icon-btn {
   padding: 4px;
 }
 .curie-nav__support {
-  padding: 8px 16px;
+  /* 22px line + 5px vertical = 32px tall, same as the brand row, so both
+     rows share one optical center under the nav's flex-start alignment. */
+  padding: 5px 16px;
   font-family: var(--c-sans);
   font-weight: 500;
   font-size: 14px;
+  line-height: 22px;
 }
 .curie-nav__icon-btn:hover,
 .curie-nav__support:hover {
@@ -201,35 +288,60 @@
 }
 
 /* ── Body: sidebar + main ────────────────────────────────────────────────── */
+/* Grid columns [sidebar | chat | panel]. Animating grid-template-columns is
+   reliable (unlike flex-grow) and reflows all three tracks smoothly, so the
+   sidebar retracts, the chat resizes, and the panel expands in one motion. */
 .curie-body {
   position: absolute;
   inset: 0;
   z-index: 2;
-  display: flex;
+  display: grid;
+  /* Sidebar is a fixed 220px in every state (narrowed from Figma's 320px
+     per user request — keeps the chat column roomy inside 16:9). */
+  grid-template-columns: 220px minmax(0, 1fr) 0fr;
+  /* The single row must be pinned to the container's height — otherwise the
+     row auto-sizes to content and the chat column grows past the window,
+     pushing the composer out of view and killing the log's scrolling. */
+  grid-template-rows: minmax(0, 1fr);
+  transition: grid-template-columns 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.curie-body--collapsed {
+  grid-template-columns: 0px minmax(0, 1fr) 0fr;
+}
+/* The chat column keeps a 360px floor in split mode; the panel absorbs
+   the squeeze so task-card titles stay legible in the 3-column state. */
+.curie-body--split {
+  grid-template-columns: 220px minmax(360px, 1fr) 1.4fr;
+}
+.curie-body--collapsed.curie-body--split {
+  grid-template-columns: 0px minmax(360px, 1fr) 1.4fr;
 }
 
-/* Sidebar (Figma "nav 2.0", 257px) */
+/* Sidebar (Curie Design System "Nav 2.0", node 3541-2097; 320px in Figma,
+   fixed 220px here per user request) */
 .curie-side {
-  flex: 0 0 257px;
-  width: 257px;
+  flex: 0 0 220px;
+  width: 220px;
   display: flex;
   flex-direction: column;
   background: #fff;
   border-right: 1px solid rgba(132, 111, 225, 0.1);
-  padding-top: 56px; /* clears the top nav */
 }
+/* Compact spacing system (Linear/Cursor-style): 32px rows, 2px gaps inside
+   a group, dividers between groups, one 16px inset shared by every section. */
 .curie-side__ws {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 24px 20px;
+  margin: 68px 16px 10px; /* clears the overlaid nav brand (ends 56px) by 12px */
+  padding: 4px 0;
   border: 0;
   background: transparent;
   cursor: pointer;
   font-family: var(--c-sans);
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 18px;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 17px;
   color: var(--c-ink-65);
 }
 .curie-side__ws:hover {
@@ -239,97 +351,122 @@
   height: 1px;
   background: rgba(0, 0, 0, 0.08);
   border: 0;
-  margin: 0 12px;
+  margin: 0;
+  width: 100%;
+  flex-shrink: 0;
+}
+.curie-divider--full {
+  margin: 0;
+}
+.curie-side__tabs-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding: 0 16px;
 }
 .curie-side__tabs {
   display: flex;
   gap: 8px;
-  padding: 16px 16px 12px 24px;
 }
 .curie-tab {
   border: 0;
   background: transparent;
   cursor: pointer;
-  padding: 6px 12px;
+  padding: 3px 10px;
   border-radius: 24px;
   font-family: var(--c-sans);
   font-weight: 500;
-  font-size: 14px;
-  line-height: 22px;
-  color: var(--c-ink-65);
+  font-size: 13px;
+  line-height: 19px;
+  color: var(--c-ink-45);
 }
+/* Soft tint instead of the solid Figma pill — the sidebar stays quieter
+   than the chat box (user request; minimalist-ui spot-pastel rule). */
 .curie-tab.is-active {
-  background: var(--c-primary);
-  color: #fff;
+  background: rgba(101, 85, 143, 0.12);
+  color: var(--c-primary);
+  font-weight: 600;
+}
+.curie-side__search {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  padding: 2px;
+  cursor: pointer;
+  color: #8e8e8e; /* neutral/icon/solid */
+  border-radius: 8px;
+}
+.curie-side__search:hover {
+  color: #000;
+  background: rgba(0, 0, 0, 0.04);
 }
 .curie-side__list {
   flex: 1;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 8px 12px;
+  gap: 2px; /* items read as one group; hover pills provide separation */
+  margin-top: 10px;
+  padding: 0 6px 8px; /* 6px rail + 10px item pad = the shared 16px inset */
 }
-.curie-side__date {
-  text-align: center;
-  padding: 16px 16px 8px;
-  font-family: var(--c-mono);
-  font-weight: 600;
-  font-size: 12px;
-  color: var(--c-ink-45);
+.curie-side__list > .curie-divider {
+  /* Full-bleed like the workspace divider (cancels the 6px list rail),
+     plus breathing room before the first row. */
+  width: auto;
+  align-self: stretch;
+  margin: 0 -6px 6px;
 }
 
-/* Task card (sidebar nav item) */
-.curie-task {
+/* Chat history item (Figma "Nav Item", node 3541-2117) */
+.curie-chat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  background: transparent;
+  border-radius: 12px; /* list-row tier */
+  cursor: pointer;
+  text-align: left;
+}
+.curie-chat-item:hover {
+  background: rgba(101, 85, 143, 0.06);
+}
+.curie-chat-item__row {
   display: flex;
   align-items: center;
   gap: 8px;
   width: 100%;
-  padding: 8px;
-  border: 0;
-  background: transparent;
-  border-radius: 16px;
-  cursor: pointer;
-  text-align: left;
+  min-width: 0;
 }
-.curie-task:hover {
-  background: rgba(101, 85, 143, 0.06);
-}
-.curie-task__icon {
+.curie-chat-item__icon {
   flex: 0 0 16px;
-  color: var(--c-ink-45);
+  display: inline-flex;
+  color: rgba(0, 0, 0, 0.35); /* decorative — quieter than the label */
 }
-.curie-task__body {
+.curie-chat-item__name {
   flex: 1;
   min-width: 0;
-  padding: 4px 4px 4px 8px;
-}
-.curie-task__meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: var(--c-ink-45);
-}
-.curie-task__id {
-  font-family: var(--c-mono);
-  font-weight: 600;
-  font-size: 12px;
-}
-.curie-task__time {
-  font-family: var(--c-sans);
-  font-weight: 400;
-  font-size: 11px;
-}
-.curie-task__name {
-  margin-top: 2px;
   font-family: var(--c-sans);
   font-weight: 500;
-  font-size: 14px;
-  line-height: 22px;
-  color: var(--c-ink-88);
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--c-ink-65);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.curie-chat-item__time {
+  padding-left: 24px; /* aligns with the name (16px icon + 8px gap) */
+  font-family: var(--c-sans);
+  font-weight: 400;
+  font-size: 11px; /* sidebar meta reads a step below the chat content */
+  line-height: 14px;
+  color: var(--c-ink-45);
 }
 
 /* Profile row */
@@ -337,29 +474,30 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 20px 24px;
+  padding: 10px 16px;
   border-top: 1px solid var(--c-border-2);
 }
 .curie-avatar {
-  flex: 0 0 32px;
-  width: 32px;
-  height: 32px;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
   border-radius: 96px;
-  background: var(--c-primary);
-  color: #fff;
+  /* Tinted instead of solid brand purple — quieter footer */
+  background: rgba(101, 85, 143, 0.14);
+  color: var(--c-primary);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--c-sans);
-  font-size: 12px;
-  font-weight: 400;
+  font-size: 10px;
+  font-weight: 600;
 }
 .curie-side__name {
   font-family: var(--c-sans);
   font-weight: 500;
-  font-size: 14px;
-  line-height: 22px;
-  color: var(--c-ink-88);
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--c-ink-65);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -368,54 +506,68 @@
 /* ── Main region ─────────────────────────────────────────────────────────── */
 .curie-main {
   position: relative;
-  flex: 1;
   min-width: 0;
+  min-height: 0; /* grid item: allow shrinking so the log scrolls internally */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 56px 24px 24px;
+  padding: 24px; /* symmetric so the landing centres in the app area */
 }
 
-/* Landing: centred stack */
+/* Landing — a 3-row grid (1fr / auto / 1fr) that pins the CHAT BOX to the
+   vertical middle of the interface; the heading floats just above it and the
+   quick-action pills just below. */
 .curie-landing {
-  width: 728px;
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 48px;
+  flex: 1;
+  width: 100%;
+  display: grid;
+  /* Optical centering (ChatGPT/Claude-style): the greeting + chat box
+     group sits at ~40% of the free height, not the geometric center —
+     dead-center reads "low" once the action pills add weight below. */
+  grid-template-rows: minmax(0, 0.75fr) auto minmax(0, 1.25fr);
+  justify-items: center;
 }
 .curie-landing__title {
   margin: 0;
+  align-self: end; /* sits at the bottom of the top row, above the chat box */
+  /* Tight 20px screen gap to the chat box (scale-cancelled) — heading and
+     box read as one group, per the reference AI landing composers. */
+  margin-bottom: calc(20px / var(--curie-scale, 0.928571));
   width: 100%;
   text-align: center;
   font-family: var(--c-sans);
-  font-weight: 500;
-  font-size: 36px;
-  line-height: 1.1;
-  background: linear-gradient(90deg, #8f7ce0 0%, #c0a0b4 82%, #8fb4dc 99%);
+  font-weight: 400; /* Geist Regular */
+  /* Pinned to 24px on screen: the stage is scaled by --curie-scale, so
+     divide the target by the scale to cancel it out (14px body → 13px). */
+  font-size: calc(24px / var(--curie-scale, 0.928571));
+  line-height: normal;
+  /* Figma's ramp under a darker overlay (0.2 → 0.38) so the 24px heading
+     clears 3:1 large-text contrast on the #EFF0F3 canvas. */
+  background-image:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.38) 0%, rgba(0, 0, 0, 0.38) 100%),
+    linear-gradient(90deg, #ab97fe 0%, #d3b6b8 82%, #a8cff1 98.98%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
-.curie-landing__composer {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 
-/* Composer / chat box */
+/* Composer / chat box.
+   White border in every state (user spec; deviates from Figma's purple
+   focus ring) — the box reads as calm glass on the #EFF0F3 canvas, like
+   the task cards. The blinking caret + send tooltip carry the affordance. */
 .curie-composer {
   width: 100%;
-  min-height: 160px;
+  max-width: 632px; /* chat box cap (Figma) — centered in its column */
+  margin-inline: auto;
+  /* Content-sized: the box hugs the 3-line prompt with no reserved empty
+     rows (the send tooltip only ever overlaps trailing whitespace). */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 12px;
   background: #fff;
-  border: 1px solid var(--c-link-2);
+  border: 1px solid #fff;
   border-radius: 24px;
   padding: 16px;
   box-shadow:
@@ -423,9 +575,9 @@
     0 1px 3px rgba(0, 0, 0, 0.02),
     0 1px 1px rgba(0, 0, 0, 0.03);
 }
-.curie-composer--bare {
-  min-height: 96px;
-  border-color: var(--c-border-1);
+.curie-composer--compact {
+  min-height: 0;
+  gap: 10px;
 }
 .curie-composer__input {
   flex: 1;
@@ -437,12 +589,14 @@
   font-family: var(--c-sans);
   font-weight: 400;
   font-size: 14px;
-  line-height: 16px;
-  letter-spacing: 0.04em;
+  line-height: 18px;
+  letter-spacing: 0.02em;
   color: var(--c-ink-88);
 }
 .curie-composer__input::placeholder {
-  color: var(--c-ink-45);
+  /* Lifted from Figma's 0.25 for legibility (≈3.2:1, fine for a hint). */
+  color: rgba(0, 0, 0, 0.42);
+  font-weight: 500;
   letter-spacing: 0;
 }
 .curie-composer__bar {
@@ -461,6 +615,8 @@
 }
 
 /* Control-bar chips */
+/* Control-tier pill: 7px pad + 16px line + 1px borders = 32px tall,
+   exactly matching the attach / send buttons in the same row. */
 .curie-chip {
   display: inline-flex;
   align-items: center;
@@ -468,7 +624,7 @@
   border: 1px solid var(--c-border-2);
   background: #fff;
   border-radius: 16px;
-  padding: 8px 12px;
+  padding: 7px 12px;
   cursor: pointer;
   font-family: var(--c-sans);
   font-weight: 500;
@@ -490,9 +646,17 @@
   border-color: transparent;
   color: var(--c-link-3);
   max-width: 240px;
+  cursor: default; /* static context chip — no pointer, no false affordance */
+}
+.curie-chip--repo:hover {
+  background: var(--c-link-fill);
 }
 .curie-chip--repo .curie-chip__label {
   max-width: 168px;
+}
+.curie-chip--ghost {
+  border-color: transparent;
+  background: transparent;
 }
 .curie-chip__x {
   display: inline-flex;
@@ -505,7 +669,7 @@
   width: 32px;
   height: 32px;
   border: 1px solid var(--c-border-2);
-  border-radius: 12px;
+  border-radius: 16px; /* matches the adjacent chips (control tier) */
   background: #fff;
   color: var(--c-ink-65);
   cursor: pointer;
@@ -520,7 +684,7 @@
   width: 32px;
   height: 32px;
   border: 0;
-  border-radius: 12px;
+  border-radius: 16px; /* matches the adjacent chips (control tier) */
   background: var(--c-action);
   color: #fff;
   cursor: pointer;
@@ -532,28 +696,94 @@
 .curie-send:active {
   transform: scale(0.92);
 }
+.curie-send--disabled,
+.curie-send--disabled:hover {
+  background: rgba(29, 27, 32, 0.12); /* Figma disabled state-layer */
+  color: rgba(0, 0, 0, 0.35); /* keep the arrow discoverable (was white) */
+  cursor: default;
+}
 
-/* Quick-action tab bar (Coding / Testing / Document / Migration) */
+/* Floating nudge above the send button (landing default state). Same dark
+   pill language as the header tooltip; a gentle float says "press me". */
+.curie-send-wrap {
+  position: relative;
+  display: inline-flex;
+}
+/* White pill in the portfolio's own voice (Kode Mono, like the site
+   title) with a soft brand-purple glow. drop-shadow (not box-shadow)
+   wraps the pill AND the caret in one halo. */
+.curie-send-tip {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  z-index: 4;
+  padding: 9px 16px;
+  border-radius: 10px;
+  background: #fff;
+  color: #363636; /* portfolio brand ink */
+  font-family: 'Kode Mono', 'SFMono-Regular', ui-monospace, monospace;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: none;
+  filter: drop-shadow(0 0 1px rgba(101, 85, 143, 0.4))
+    drop-shadow(0 2px 6px rgba(101, 85, 143, 0.22))
+    drop-shadow(0 0 16px rgba(101, 85, 143, 0.4));
+  animation: curie-tip-float 1.8s ease-in-out infinite;
+}
+.curie-send-tip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border: 6px solid transparent;
+  border-top-color: #fff;
+  border-bottom-width: 0;
+}
+/* Float + breathing glow in one loop; reduced-motion falls back to the
+   static base filter above. */
+@keyframes curie-tip-float {
+  0%,
+  100% {
+    transform: translate(-50%, 0);
+    filter: drop-shadow(0 0 1px rgba(101, 85, 143, 0.4))
+      drop-shadow(0 2px 6px rgba(101, 85, 143, 0.22))
+      drop-shadow(0 0 12px rgba(101, 85, 143, 0.3));
+  }
+  50% {
+    transform: translate(-50%, -4px);
+    filter: drop-shadow(0 0 1px rgba(101, 85, 143, 0.45))
+      drop-shadow(0 2px 8px rgba(101, 85, 143, 0.28))
+      drop-shadow(0 0 22px rgba(101, 85, 143, 0.55));
+  }
+}
+
+/* Quick-action tab bar (Coding / Testing / Document / Migration) —
+   text-only pills per node 3541-2664 */
 .curie-actionbar {
+  align-self: start; /* sits at the top of the bottom row, below the chat box */
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
-  padding: 24px 16px 0;
+  gap: 16px;
+  padding: 16px; /* pills hug the box — part of the same optical group */
 }
 .curie-action {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
   border: 1px solid var(--c-border-1);
   background: transparent;
-  border-radius: 24px;
-  padding: 8px 20px;
+  /* Same 32px control-tier spec as the composer chips above */
+  border-radius: 16px;
+  padding: 7px 14px;
   cursor: pointer;
   font-family: var(--c-sans);
   font-weight: 500;
-  font-size: 14px;
-  line-height: 22px;
+  font-size: 12px; /* 2px smaller than the 14px base */
+  line-height: 16px;
   color: var(--c-ink-65);
 }
 .curie-action:hover {
@@ -561,7 +791,220 @@
   color: #000;
 }
 
-/* ── Chat view (screen 2) ────────────────────────────────────────────────── */
+/* ── Chat view (screen 2, Figma "Phase 2 - Single Agent UX" 386-17414) ────
+   Type follows the landing scale (Figma values ×1.29) and the softened ink
+   tokens; colors not defined on the landing come straight from Figma. */
+
+/* Chat phase: the modal header (below) owns the top of the main region, so
+   clear it (56px bar + 21px gap per Figma). Horizontal padding drops to 0 so
+   the scroll container reaches the region's right edge — the scrollbar rail
+   belongs to the viewport edge, not the text column. */
+/* No reserved header strip: the chat flow owns the full height and the
+   controls float above it; scrolled content slides underneath them. */
+.curie-main--chat {
+  padding: 0 0 24px;
+}
+
+/* Header on top of the chat flow — a transparent floating layer (banner
+   fill + divider removed per user request); only the brand lockup and the
+   task-list button render. 16px side padding mirrors the nav so the brand
+   crossfades between nav and header without shifting. */
+/* Thinnest possible cover: the banner ends flush with the control row's
+   bottom edge (control line 40 + 12 = 52), so scrolling text is clipped
+   the moment it hits the controls — nothing taller than needed. */
+.curie-chat-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* Above the log content — the messages' fill-mode animations leave
+     stacking contexts that would otherwise paint over the cover. */
+  z-index: 2;
+  height: 52px;
+  display: flex;
+  align-items: flex-end; /* 24px boxes bottom at 52 → center on the 40 line */
+  justify-content: space-between;
+  padding: 0 16px;
+  background: #eff0f3; /* matches the chat-flow canvas */
+}
+/* Collapsed-state branding (Figma node 1045-32864): panel toggle + wordmark,
+   shown only in split mode where the sidebar is hidden. */
+.curie-chat-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* matches the nav brand lockup */
+  transition: opacity 0.22s ease;
+}
+.curie-chat-header__brand.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.curie-chat-header__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.45); /* neutral/icon/default */
+  border-radius: 8px;
+}
+.curie-chat-header__toggle:hover {
+  color: #000;
+  background: rgba(0, 0, 0, 0.04);
+}
+/* Task-list button — same box, hover area and hover state as the panel
+   toggle beside the logo (20px icon + 2px pad, 8px radius). */
+.curie-chat-header__btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto; /* always pinned right, with or without branding */
+  padding: 2px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.45); /* neutral/icon/default */
+  border-radius: 8px;
+}
+.curie-chat-header__btn:hover {
+  color: #000;
+  background: rgba(0, 0, 0, 0.04);
+}
+/* Hover tooltip ("Tasks in this chat") */
+.curie-chat-header__btn::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 6;
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: var(--c-action);
+  color: #fff;
+  font-family: var(--c-sans);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.3;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(-2px);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.curie-chat-header__btn:hover::after,
+.curie-chat-header__btn:focus-visible::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+.curie-chat-header__btn[aria-expanded='true']::after {
+  display: none; /* panel replaces the tooltip */
+}
+
+/* "Tasks in this chat" popover (Figma "task in the chat", node 1562-16488) */
+.curie-taskpanel {
+  position: absolute;
+  top: 60px; /* below the 52px cover */
+  right: 24px;
+  z-index: 5;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 16px;
+  background: var(--c-link-fill); /* base 2 #F7F7FF */
+  border: 1px solid rgba(91, 91, 213, 0.2);
+  border-radius: 24px;
+  overflow: hidden;
+  /* not in Figma (frame is inline there); needed for overlay separation */
+  box-shadow: 0 16px 40px -20px rgba(91, 91, 213, 0.35);
+}
+.curie-taskpanel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 48px;
+  padding: 8px 16px 8px 24px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--c-sans);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--c-primary);
+}
+.curie-taskpanel__head:hover {
+  background: rgba(101, 85, 143, 0.06);
+}
+.curie-taskpanel__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 12px;
+}
+.curie-taskpanel__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  padding: 12px 16px;
+  background: #fff;
+  border: 1px solid var(--c-border-2);
+  border-radius: 16px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease;
+}
+.curie-taskpanel__item:hover {
+  border-color: var(--c-link-2);
+}
+.curie-taskpanel__id {
+  font-family: var(--c-mono);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: normal;
+  color: var(--c-ink-45);
+}
+.curie-taskpanel__title {
+  font-family: var(--c-sans);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--c-ink-88);
+}
+.curie-taskpanel__item .curie-tag {
+  margin-top: 6px;
+}
+
+/* Colorful status tag in the task panel (Figma "Tag / Colorful") */
+.curie-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 50px;
+  font-family: var(--c-sans);
+  font-weight: 700;
+  font-size: 11px; /* floor for the tag — 10px lands ~9px on screen */
+  line-height: normal;
+  white-space: nowrap;
+}
+.curie-tag--inprogress {
+  background: #f9f0ff; /* primary/3 (velvet preset) */
+  color: var(--c-primary);
+}
+.curie-tag--completed {
+  background: #f6ffed; /* status/success/3 */
+  color: #257a43; /* darkened from #36A764 — 5.2:1 on the pale fill */
+}
+.curie-tag--input {
+  background: #fff7e6; /* status/warning/3 */
+  color: #a16207; /* darkened from #D48806 — clears AA at 11px */
+}
+
 .curie-chat {
   align-self: stretch;
   flex: 1;
@@ -571,143 +1014,490 @@
   flex-direction: column;
   align-items: center;
 }
+/* The scroll container spans the full chat region so the scrollbar rail sits
+   at the region's right edge (like a native window), not beside the text
+   column. macOS-style overlay behavior: hidden at rest, appears while
+   scrolling or on hover, fades out after. */
 .curie-chat__log {
   flex: 1;
-  width: 728px;
-  max-width: 100%;
-  overflow: hidden;
+  align-self: stretch;
+  width: auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable both-edges; /* keeps the column truly centered */
+}
+/* 14px rail = 8px thumb + 6px transparent inset from the right edge */
+.curie-chat__log::-webkit-scrollbar {
+  width: 14px;
+  background: transparent;
+}
+.curie-chat__log::-webkit-scrollbar-thumb {
+  background: transparent;
+  background-clip: padding-box;
+  border-right: 6px solid transparent;
+  border-radius: 999px;
+}
+.curie-chat__log:hover::-webkit-scrollbar-thumb,
+.curie-chat__log.is-scrolling::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.25);
+  background-clip: padding-box;
+}
+.curie-chat__log::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4);
+  background-clip: padding-box;
+}
+/* Firefox has no ::-webkit-scrollbar — fall back to the thin native bar */
+@supports not selector(::-webkit-scrollbar) {
+  .curie-chat__log {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+  .curie-chat__log:hover,
+  .curie-chat__log.is-scrolling {
+    scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+  }
+}
+
+/* The centered message column inside the full-width scroll container —
+   fluid up to Figma's 720px */
+.curie-chat__col {
+  width: min(720px, calc(100% - 48px));
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 8px 0 16px;
-}
-.curie-msg--user {
-  align-self: flex-end;
-  max-width: 78%;
-  background: #f4f2fb;
-  border: 1px solid rgba(101, 85, 143, 0.14);
-  border-radius: 18px 18px 6px 18px;
-  padding: 12px 16px;
-  font-family: var(--c-sans);
-  font-size: 14px;
-  line-height: 20px;
-  color: var(--c-ink-88);
-}
-.curie-msg--assistant {
-  align-self: flex-start;
-  max-width: 88%;
-  display: flex;
-  gap: 12px;
-}
-.curie-msg__avatar {
-  flex: 0 0 28px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #9d7ee6, #8fb4dc);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.curie-msg__content {
-  flex: 1;
-  min-width: 0;
-}
-.curie-msg__text {
-  margin: 0 0 12px;
-  font-family: var(--c-sans);
-  font-size: 14px;
-  line-height: 21px;
-  color: var(--c-ink-88);
-}
-.curie-msg__cards {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  /* Clearance lives INSIDE the scrollable column: at rest content sits a
+     compact 8px below the 52px cover, and scrolls under it. */
+  padding: 60px 0 16px;
 }
 
-/* Larger task cards generated inline in the conversation */
-.curie-card {
+/* User message: right-aligned soft gray bubble (Figma "user input") */
+.curie-msg--user {
+  align-self: flex-end;
+  max-width: min(433px, 100%);
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 24px;
+  padding: 16px;
+  font-family: var(--c-sans);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: 0.02em; /* matches the composer, so the sent text
+                             doesn't visibly re-track (Figma had 0.04) */
+  text-align: right;
+  color: var(--c-ink-88);
+}
+
+/* Assistant turn: "Worked for Ns ›" header + body */
+.curie-turn {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 12px;
   width: 100%;
-  padding: 14px 16px;
-  border: 1px solid var(--c-border-2);
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+.curie-worked {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
   cursor: pointer;
-  text-align: left;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  font-family: var(--c-sans);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--c-ink-65);
 }
-.curie-card:hover {
-  border-color: var(--c-link-2);
-  box-shadow: 0 6px 18px -10px rgba(101, 85, 143, 0.5);
+.curie-worked:hover {
+  background: rgba(0, 0, 0, 0.04);
 }
-.curie-card__icon {
-  flex: 0 0 18px;
-  margin-top: 2px;
-  color: var(--c-primary);
+.curie-turn__body {
+  padding: 8px 16px;
+  font-family: var(--c-sans);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--c-ink-88);
 }
-.curie-card__body {
-  flex: 1;
+.curie-turn__body p {
+  margin: 0;
+}
+.curie-turn__body ul {
+  margin: 22px 0 0;
+  padding-left: 21px;
+  list-style: disc;
+}
+.curie-turn__body li {
+  margin: 0;
+}
+
+/* Task card (Task Flow User Journey Figma — default 1-39746 / 1-39789 /
+   5-3582; hover 5-4158 / 5-4175 / 5-4191): translucent glass at rest,
+   solid white + soft shadow on hover. */
+.curie-taskcard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 480px;
+  max-width: 100%;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid #fff;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+.curie-taskcard:hover {
+  background: #fff;
+  box-shadow:
+    0 2px 2px rgba(0, 0, 0, 0.02),
+    0 1px 3px rgba(0, 0, 0, 0.02),
+    0 1px 1px rgba(0, 0, 0, 0.03);
+}
+.curie-taskcard__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+.curie-taskcard__left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   min-width: 0;
 }
-.curie-card__head {
+.curie-taskcard__iconwrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin: 4px;
+  border-radius: 8px;
+}
+.curie-taskcard__iconwrap--inprogress {
+  background: rgba(132, 111, 225, 0.1);
+  color: var(--c-link-3);
+}
+.curie-taskcard__iconwrap--completed {
+  background: rgba(54, 167, 100, 0.1);
+  color: #2c8450; /* status/success/1 */
+}
+.curie-taskcard__iconwrap--input {
+  background: rgba(212, 136, 6, 0.1);
+  color: #a16207; /* darkened warning ink (was #D48806) for 3:1+ graphics */
+}
+.curie-taskcard__info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.curie-taskcard__id {
+  font-family: var(--c-sans);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--c-ink-45);
+}
+.curie-taskcard__title {
+  font-family: var(--c-sans);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--c-ink-88);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.curie-taskcard__foot {
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 100%;
+  padding-left: 8px;
 }
-.curie-card__id {
+.curie-taskcard__status {
+  font-family: var(--c-mono);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: normal;
+  color: var(--c-ink-45);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.curie-taskcard__expand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  color: var(--c-ink-45);
+}
+.curie-taskcard__expand:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--c-ink-88);
+}
+/* Input-needed: the footer status line carries the warning color (5-3582,
+   darkened from Figma's #D48806 so 12px mono clears WCAG AA) */
+.curie-taskcard--input .curie-taskcard__status {
+  color: #a16207;
+}
+
+.curie-chat__composer {
+  width: min(720px, calc(100% - 48px));
+  padding: 16px 0 8px;
+}
+
+/* ── Split screen: task detail panel (Figma workflow-automation 1045-32850) ──
+   Clicking a task card opens this pane. The layout animates:
+   • sidebar slot slides out (width 320→0) + fades,
+   • panel slot slides in (flex-grow 0→1.4) while the chat reflows,
+   reversing on close. All three columns can coexist (sidebar re-opened while
+   the panel stays), so nothing is coupled in CSS. */
+
+/* Sidebar slot — fills its grid track; the fixed-width sidebar inside clips
+   as the track retracts to 0, and its content fades out. */
+.curie-side-slot {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  transition: opacity 0.24s ease;
+}
+.curie-side-slot.is-collapsed {
+  opacity: 0;
+}
+/* Content slides left as it retracts (transform/opacity are composited, so
+   this carries the motion reliably even where grid-track interpolation is
+   flaky). */
+.curie-side-slot .curie-side {
+  transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.curie-side-slot.is-collapsed .curie-side {
+  transform: translateX(-28px);
+}
+
+/* Panel slot — fills its grid track (0 → 1.4fr); the card inside slides in
+   from the right and fades as the track expands. */
+.curie-panel-slot {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+}
+.curie-panel {
+  flex: 1;
+  min-width: 0;
+  margin: 16px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid var(--c-border-2);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px -16px rgba(20, 16, 8, 0.25);
+  opacity: 0;
+  transform: translateX(24px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.curie-panel-slot.is-open .curie-panel {
+  opacity: 1;
+  transform: translateX(0);
+}
+.curie-panel__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  /* 16px panel margin + 7px pad + 16 (half the 32px action row, incl. the
+     close button) + 1px border = the shared 40px control line — Download
+     All / close sit level with the chat flow's floating controls. */
+  padding: 7px 20px 12px;
+  border-bottom: 1px solid var(--c-border-2);
+}
+.curie-panel__head-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.curie-panel__id {
   font-family: var(--c-mono);
   font-weight: 600;
   font-size: 12px;
   color: var(--c-ink-45);
 }
-.curie-card__status {
+.curie-panel__title {
+  margin: 0;
   font-family: var(--c-sans);
-  font-weight: 500;
-  font-size: 11px;
-  line-height: 16px;
-  padding: 1px 8px;
-  border-radius: 12px;
-}
-.curie-card__status--active {
-  background: var(--c-link-fill);
-  color: var(--c-link-3);
-}
-.curie-card__status--queued {
-  background: rgba(0, 0, 0, 0.05);
-  color: var(--c-ink-45);
-}
-.curie-card__time {
-  margin-left: auto;
-  font-family: var(--c-sans);
-  font-size: 11px;
-  color: var(--c-ink-45);
-}
-.curie-card__name {
-  display: block;
-  margin: 4px 0 0;
-  font-family: var(--c-sans);
-  font-weight: 500;
+  font-weight: 700;
   font-size: 14px;
-  line-height: 20px;
+  line-height: 18px;
+  color: var(--c-ink-88);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.curie-panel__head-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.curie-panel__download-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--c-border-2);
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  font-family: var(--c-sans);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--c-ink-65);
+  white-space: nowrap;
+}
+.curie-panel__download-all:hover {
+  background: rgba(0, 0, 0, 0.03);
+  color: #000;
+}
+.curie-panel__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--c-ink-45);
+  border-radius: 8px;
+}
+.curie-panel__close:hover {
+  color: #000;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* Scrollable body: Summary + All Flows section cards */
+.curie-panel__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
+}
+.curie-panel__body::-webkit-scrollbar {
+  width: 8px;
+}
+.curie-panel__body::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 999px;
+}
+.curie-panel__section {
+  border: 1px solid var(--c-border-2);
+  border-radius: 16px;
+  padding: 8px;
+}
+.curie-panel__section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 12px 8px;
+}
+.curie-panel__section-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.curie-panel__section-title {
+  font-family: var(--c-mono);
+  font-weight: 600;
+  font-size: 14px;
   color: var(--c-ink-88);
 }
-.curie-card__sub {
-  display: block;
-  margin: 3px 0 0;
+.curie-panel__section-sub {
   font-family: var(--c-sans);
+  font-weight: 400;
   font-size: 12px;
-  line-height: 17px;
-  color: var(--c-ink-65);
+  color: var(--c-ink-45);
 }
-.curie-chat__composer {
-  width: 728px;
-  max-width: 100%;
-  padding-bottom: 8px;
+.curie-panel__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--c-ink-45);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.curie-panel__icon-btn:hover {
+  color: #000;
+  background: rgba(0, 0, 0, 0.04);
+}
+.curie-panel__rows,
+.curie-panel__tree-group {
+  display: flex;
+  flex-direction: column;
+}
+.curie-panel__file,
+.curie-panel__folder {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  background: transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+}
+.curie-panel__file:hover,
+.curie-panel__folder:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+.curie-panel__file-icon {
+  flex: 0 0 18px;
+  display: inline-flex;
+  color: var(--c-ink-45);
+}
+.curie-panel__file-name {
+  min-width: 0;
+  font-family: var(--c-mono);
+  font-weight: 500;
+  font-size: 13px; /* below the sidebar's 13px sans — tertiary content
+                      shouldn't out-size the primary nav */
+  color: var(--c-ink-65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.curie-panel__folder .curie-panel__file-name {
+  color: var(--c-ink-88);
+}
+.curie-panel__file.is-nested {
+  padding-left: 40px; /* indent nested files under a folder */
 }
 
 /* ── Motion ──────────────────────────────────────────────────────────────── */
@@ -745,19 +1535,21 @@
   }
 }
 
-/* Mobile: the cutout window is squarer (1.2/1), so let the demo take nearly
-   the full width to keep the frame gaps balanced. */
-@media (max-width: 768px) {
-  .curie-demo {
-    width: 94%;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .curie-spin,
   .curie-enter,
   .curie-fade,
-  .curie-send {
+  .curie-send,
+  .curie-send-tip,
+  .curie-spin,
+  .curie-taskcard,
+  .curie-chat-header__btn::after,
+  .curie-restart,
+  .curie-body,
+  .curie-side-slot,
+  .curie-side-slot .curie-side,
+  .curie-panel,
+  .curie-nav,
+  .curie-chat-header__brand {
     animation: none !important;
     transition: none !important;
   }

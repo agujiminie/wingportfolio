@@ -1,0 +1,737 @@
+/* ══ Project case-study page ══════════════════════════════════════════════
+   Extends the landing frame's design language: same bar metrics (--bar-h),
+   side margins (--frame-margin), panel colour (--ss-panel #edf0ee),
+   Kode Mono display type and Geist body type. Values mirror index.css.
+
+   Editorial column system: body text holds a reading measure (--pp-text)
+   while media breaks out to a wider column (--pp-media). One radius system:
+   pills for interactive, 12px for media, window chrome 12px. Light theme
+   only, matching the rest of the site. */
+
+/* index.css caps #root at the viewport height for the landing's fixed-layer
+   stack; that cap breaks position:sticky here. Lift it only while a project
+   page is mounted — the landing keeps its own layout untouched. */
+#root:has(> .project-page) {
+  height: auto;
+}
+
+.project-page {
+  --pp-panel: #edf0ee;
+  --pp-ink: #363636;
+  --pp-edge: #d6d6d6;
+  --pp-soft: rgba(0, 0, 0, 0.55);
+  --pp-faint: rgba(0, 0, 0, 0.45);
+  --pp-margin: clamp(20px, 3.2vw, 60px);
+  --pp-bar-top: clamp(11px, 1vw, 14px);
+  --pp-bar-h: calc(var(--pp-bar-top) * 2 + 30px);
+  --pp-text: 720px;   /* reading measure */
+  --pp-media: 1080px; /* breakout media column */
+  min-height: 100dvh;
+  background: var(--pp-panel);
+  font-family: "Geist Variable", "Inter", system-ui, sans-serif;
+  color: var(--pp-ink);
+}
+
+/* — Reading progress hairline (CSS scroll-driven; no JS) — */
+.pp-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 11;
+  background: var(--pp-ink);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+@supports (animation-timeline: scroll()) {
+  .pp-progress {
+    animation: pp-progress linear both;
+    animation-timeline: scroll(root);
+  }
+}
+
+@keyframes pp-progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* — Sticky top bar: brand / section nav / CTAs (same layout as the frame) — */
+.pp-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: var(--pp-bar-h);
+  padding: 0 var(--pp-margin);
+  background: var(--pp-panel);
+}
+
+.pp-bar__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--pp-ink);
+}
+
+.pp-bar__brand-mark {
+  display: flex;
+  color: var(--pp-ink);
+}
+
+.pp-bar__brand-name {
+  font-family: "Kode Mono", monospace;
+  font-size: 20px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.pp-bar__nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.pp-bar__nav::-webkit-scrollbar {
+  display: none;
+}
+
+.pp-bar__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 8px;
+  padding: 8px 14px 8px 8px;
+  font-family: "Kode Mono", monospace;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.65);
+  text-decoration: none;
+  white-space: nowrap;
+  border-right: 1px solid var(--pp-edge);
+  transition: color 200ms ease;
+}
+
+.pp-bar__back:hover,
+.pp-bar__back:focus-visible {
+  color: #111;
+  outline: none;
+}
+
+/* Section pills — same idiom as the landing's .frame__nav-item. */
+.pp-bar__nav-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 16777200px;
+  background: transparent;
+  font-family: "Kode Mono", monospace;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.65);
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 280ms ease,
+    color 280ms ease,
+    transform 200ms ease;
+}
+
+.pp-bar__nav-item:hover,
+.pp-bar__nav-item:focus-visible {
+  color: #111;
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.pp-bar__nav-item.is-active {
+  padding: 6px 18px;
+  font-weight: 600;
+  color: #111;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.pp-bar__nav-item.is-active:hover {
+  transform: none;
+}
+
+.pp-bar__cta {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.pp-bar__cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 0, 0, 0.72);
+  text-decoration: none;
+  transition: color 200ms ease, transform 200ms ease;
+}
+
+.pp-bar__cta-btn:hover,
+.pp-bar__cta-btn:focus-visible {
+  color: #111;
+  transform: translateY(-1px);
+  outline: none;
+}
+
+/* — Hero: left-aligned editorial opening + meta facts + windowed demo — */
+.pp-hero {
+  max-width: var(--pp-media);
+  margin: 0 auto;
+  padding: clamp(40px, 6vh, 72px) var(--pp-margin) 0;
+}
+
+.pp-hero__tag {
+  margin: 0 0 20px;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--pp-faint);
+}
+
+.pp-hero__title {
+  margin: 0;
+  max-width: 24ch;
+  font-family: "Kode Mono", monospace;
+  font-weight: 700;
+  font-size: clamp(32px, 4.4vw, 58px);
+  line-height: 1.06;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+  color: var(--pp-ink);
+}
+
+.pp-hero__subtitle {
+  margin: 18px 0 0;
+  max-width: 52ch;
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.5;
+  color: var(--pp-soft);
+}
+
+/* Meta facts — Role / Company / Scope / Reach, hairline-topped columns. */
+.pp-meta {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(16px, 2.5vw, 36px);
+  max-width: var(--pp-media);
+  margin: clamp(32px, 5vh, 52px) 0 0;
+}
+
+.pp-meta__item {
+  border-top: 1px solid var(--pp-edge);
+  padding-top: 12px;
+}
+
+.pp-meta__label {
+  margin: 0;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--pp-faint);
+}
+
+.pp-meta__value {
+  margin: 6px 0 0;
+  font-family: "Kode Mono", monospace;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--pp-ink);
+}
+
+.pp-hero__media {
+  margin-top: clamp(36px, 6vh, 64px);
+}
+
+/* — macOS window chrome (same idiom as the landing's Curie demo) — */
+.pp-window {
+  margin: 0;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px -32px rgba(20, 16, 8, 0.25);
+}
+
+.pp-window__bar {
+  position: relative;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #efedeb;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.pp-window__lights {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.pp-window__light {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
+}
+
+.pp-window__light--close {
+  background: #ff5f57;
+}
+
+.pp-window__light--min {
+  background: #febc2e;
+}
+
+.pp-window__light--max {
+  background: #28c840;
+}
+
+.pp-window__title {
+  font-weight: 500;
+  font-size: 12.5px;
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.pp-window__body img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* — Sections — */
+.pp-section {
+  max-width: var(--pp-media);
+  margin: 0 auto;
+  padding: clamp(72px, 11vh, 128px) var(--pp-margin) 0;
+  scroll-margin-top: calc(var(--pp-bar-h) + 8px);
+}
+
+.pp-section__title {
+  margin: 0 0 clamp(36px, 5vh, 56px);
+  padding-top: clamp(20px, 3vh, 28px);
+  border-top: 1px solid var(--pp-edge);
+  font-family: "Kode Mono", monospace;
+  font-weight: 700;
+  font-size: clamp(26px, 2.8vw, 38px);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  color: var(--pp-ink);
+}
+
+.pp-block {
+  margin-bottom: clamp(48px, 7vh, 88px);
+}
+
+.pp-block:last-child {
+  margin-bottom: 0;
+}
+
+/* Lead block — the case-study opener, large reading type. */
+.pp-block--lead {
+  max-width: var(--pp-text);
+}
+
+.pp-block__lead-heading {
+  margin: 0 0 20px;
+  font-family: "Kode Mono", monospace;
+  font-weight: 700;
+  font-size: clamp(21px, 2.3vw, 29px);
+  line-height: 1.22;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+  color: var(--pp-ink);
+}
+
+.pp-block__lead-text {
+  margin: 0 0 16px;
+  font-size: clamp(16px, 1.5vw, 19px);
+  line-height: 1.65;
+  letter-spacing: -0.01em;
+  color: var(--pp-soft);
+}
+
+/* Default block — heading, reading-measure text, full-width media. */
+.pp-block__heading {
+  margin: 0 0 14px;
+  font-family: "Kode Mono", monospace;
+  font-weight: 700;
+  font-size: clamp(19px, 2vw, 25px);
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  color: var(--pp-ink);
+}
+
+.pp-block__text {
+  margin: 0 0 14px;
+  max-width: 70ch;
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+  color: var(--pp-soft);
+}
+
+.pp-figure {
+  margin: 22px 0 0;
+}
+
+.pp-figure--hero {
+  margin: 0;
+}
+
+/* The hero is the page's single elevated moment — an ultra-diffuse lift.
+   Every other figure sits flat (hairline border only), Notion-style. */
+.pp-figure--hero img {
+  box-shadow: 0 24px 64px -32px rgba(20, 16, 8, 0.25);
+}
+
+/* One media treatment page-wide: flat, hairline-defined. Elevation is
+   reserved for the hero (and the opt-in window frame). */
+.pp-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 12px;
+}
+
+/* Assets that already render as a self-contained card: no added border. */
+.pp-figure--flush img {
+  border: none;
+}
+
+.pp-block__note {
+  margin: 20px 0 0;
+  max-width: 70ch;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--pp-faint);
+}
+
+/* Bullet list — same metrics as body text, quiet markers. */
+.pp-block__list {
+  margin: 0 0 14px;
+  padding-left: 22px;
+  max-width: 70ch;
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+  color: var(--pp-soft);
+}
+
+.pp-block__list li {
+  margin-bottom: 8px;
+}
+
+.pp-block__list li::marker {
+  color: var(--pp-faint);
+}
+
+/* Block-level external link — same underlined-arrow idiom as the landing's
+   feature rows, so "going outside the site" reads consistently. */
+.pp-block__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 18px;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--pp-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--pp-ink);
+  padding-bottom: 2px;
+  transition: opacity 200ms ease;
+}
+
+.pp-block__cta:hover,
+.pp-block__cta:focus-visible {
+  opacity: 0.55;
+  outline: none;
+}
+
+/* Pull quote — client/testimonial voice at lead-heading scale. */
+.pp-block--quote {
+  max-width: var(--pp-text);
+}
+
+.pp-quote {
+  margin: 0 0 24px;
+  padding-left: clamp(18px, 2.4vw, 28px);
+  border-left: 2px solid var(--pp-ink);
+}
+
+.pp-quote__text {
+  margin: 0;
+  font-family: "Kode Mono", monospace;
+  font-weight: 700;
+  font-size: clamp(20px, 2.2vw, 27px);
+  line-height: 1.3;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  color: var(--pp-ink);
+}
+
+.pp-quote__cite {
+  display: block;
+  margin-top: 14px;
+  font-family: "Geist Variable", system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--pp-faint);
+}
+
+/* Video embed — same flat, hairline-defined treatment as .pp-figure img. */
+.pp-video {
+  aspect-ratio: 16 / 9;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.pp-video iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Figure caption — quiet label under process/component boards. */
+.pp-figure__caption {
+  margin-top: 10px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--pp-faint);
+}
+
+/* Split block — statement beside its illustration. */
+.pp-block--split {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: clamp(28px, 4vw, 64px);
+  align-items: center;
+}
+
+.pp-block--split .pp-figure {
+  margin: 0;
+}
+
+.pp-block--split-reverse .pp-block__statement {
+  order: 2;
+}
+
+.pp-block__statement {
+  margin: 0;
+  font-family: "Kode Mono", monospace;
+  font-weight: 700;
+  font-size: clamp(19px, 2vw, 26px);
+  line-height: 1.3;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  color: var(--pp-ink);
+}
+
+/* Grid-2 block — exploration boards and process artifacts. */
+.pp-block__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(14px, 2vw, 24px);
+}
+
+.pp-block__grid .pp-figure {
+  margin: 0;
+}
+
+/* An odd trailing board spans the full row so no cell sits empty. */
+.pp-block__grid .pp-figure:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+/* Feature grid — 2 × 2 image-led feature cells. */
+.pp-block__features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(32px, 4.5vw, 64px) clamp(24px, 3.5vw, 48px);
+}
+
+.pp-feature__heading {
+  margin: 20px 0 10px;
+  font-family: "Kode Mono", monospace;
+  font-weight: 700;
+  font-size: clamp(17px, 1.7vw, 21px);
+  line-height: 1.3;
+  letter-spacing: -0.03em;
+  color: var(--pp-ink);
+}
+
+.pp-feature__text {
+  margin: 0 0 10px;
+  font-size: 15px;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+  color: var(--pp-soft);
+}
+
+.pp-feature .pp-figure {
+  margin: 0 0 4px;
+}
+
+.pp-feature .pp-figure + .pp-figure {
+  margin-top: 14px;
+}
+
+/* — Scroll reveal (gated behind reduced-motion) — */
+@media (prefers-reduced-motion: no-preference) {
+  .pp-reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 640ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 640ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .pp-reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* — Footer: one hairline, one line — */
+.pp-footer {
+  max-width: var(--pp-media);
+  margin: 0 auto;
+  padding: clamp(72px, 11vh, 128px) var(--pp-margin) clamp(40px, 6vh, 64px);
+}
+
+.pp-footer__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-top: clamp(24px, 3.5vh, 36px);
+  border-top: 1px solid var(--pp-edge);
+}
+
+.pp-footer__primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  font-family: "Kode Mono", monospace;
+  font-weight: 700;
+  font-size: clamp(22px, 2.8vw, 34px);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  color: var(--pp-ink);
+  text-decoration: none;
+}
+
+.pp-footer__primary:focus-visible {
+  outline: none;
+}
+
+/* The arrow carries the hover feedback: it nudges in its travel direction. */
+.pp-footer__arrow {
+  flex-shrink: 0;
+  transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pp-footer__primary:hover :is(svg:first-child),
+.pp-footer__primary:focus-visible :is(svg:first-child) {
+  transform: translateX(-6px);
+}
+
+.pp-footer__primary:hover :is(svg:last-child),
+.pp-footer__primary:focus-visible :is(svg:last-child) {
+  transform: translateX(6px);
+}
+
+.pp-footer__top {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: "Geist Variable", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--pp-soft);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 200ms ease;
+}
+
+.pp-footer__top:hover,
+.pp-footer__top:focus-visible {
+  color: #111;
+  outline: none;
+}
+
+/* — Mobile: bar wraps, columns collapse — */
+@media (max-width: 860px) {
+  .pp-bar {
+    flex-wrap: wrap;
+    height: auto;
+    padding-top: var(--pp-bar-top);
+    padding-bottom: var(--pp-bar-top);
+    row-gap: 6px;
+  }
+
+  .pp-bar__nav {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .pp-section {
+    scroll-margin-top: calc(var(--pp-bar-h) + 56px);
+  }
+
+  .pp-meta {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pp-block--split {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .pp-block--split-reverse .pp-block__statement {
+    order: 0;
+  }
+
+  .pp-block__grid,
+  .pp-block__features {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pp-bar__nav-item,
+  .pp-bar__cta-btn,
+  .pp-footer__arrow,
+  .pp-footer__top {
+    transition: none;
+  }
+}

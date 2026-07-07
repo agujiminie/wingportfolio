@@ -1,72 +1,65 @@
 /* eslint-disable react/prop-types */
-import { LoaderIcon, ChevronDownIcon } from './icons'
-import {
-  WORKSPACE,
-  USER,
-  SIDEBAR_TASKS,
-  SIDEBAR_DATE,
-  SIDEBAR_TASKS_OLDER,
-} from './curieContent'
+import { ChevronDownIcon, SearchIcon, ChatBubbleIcon } from './icons'
+import { WORKSPACE, USER, SIDEBAR_CHATS } from './curieContent'
 
-function TaskItem({ task }) {
+function ChatItem({ chat }) {
   return (
-    <button type="button" className="curie-task" tabIndex={-1}>
-      <span className="curie-task__icon">
-        <LoaderIcon />
-      </span>
-      <span className="curie-task__body">
-        <span className="curie-task__meta">
-          <span className="curie-task__id">{task.id}</span>
-          <span className="curie-task__time">{task.time}</span>
+    <button type="button" className="curie-chat-item" tabIndex={-1}>
+      <span className="curie-chat-item__row">
+        <span className="curie-chat-item__icon">
+          <ChatBubbleIcon />
         </span>
-        <span className="curie-task__name">{task.name}</span>
+        <span className="curie-chat-item__name">{chat.name}</span>
       </span>
+      <span className="curie-chat-item__time">{chat.time}</span>
     </button>
   )
 }
 
 /**
- * Left navigation (Figma "nav 2.0"): workspace switcher, Chats/Tasks tabs,
- * task history and the profile row. Purely presentational for the demo.
+ * Left navigation (Curie Design System "Nav 2.0", node 3541-2097): workspace
+ * switcher, Chats/Tasks tabs with search, chat history and the profile row.
+ * Purely presentational for the demo.
  */
-export default function Sidebar({ activeTab = 'tasks' }) {
+export default function Sidebar({ activeTab = 'chats' }) {
   return (
     <aside className="curie-side" aria-label="Workspace navigation">
       <button type="button" className="curie-side__ws" tabIndex={-1}>
         {WORKSPACE}
         <ChevronDownIcon />
       </button>
-      <hr className="curie-divider" />
+      <hr className="curie-divider curie-divider--full" />
 
-      <div className="curie-side__tabs" role="tablist" aria-label="Chats and tasks">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'chats'}
-          className={`curie-tab${activeTab === 'chats' ? ' is-active' : ''}`}
-          tabIndex={-1}
-        >
-          Chats
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'tasks'}
-          className={`curie-tab${activeTab === 'tasks' ? ' is-active' : ''}`}
-          tabIndex={-1}
-        >
-          Tasks
+      <div className="curie-side__tabs-row">
+        <div className="curie-side__tabs" role="tablist" aria-label="Chats and tasks">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'chats'}
+            className={`curie-tab${activeTab === 'chats' ? ' is-active' : ''}`}
+            tabIndex={-1}
+          >
+            Chats
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'tasks'}
+            className={`curie-tab${activeTab === 'tasks' ? ' is-active' : ''}`}
+            tabIndex={-1}
+          >
+            Tasks
+          </button>
+        </div>
+        <button type="button" className="curie-side__search" aria-label="Search chats" tabIndex={-1}>
+          <SearchIcon size={20} />
         </button>
       </div>
-      <hr className="curie-divider" />
 
       <div className="curie-side__list">
-        {SIDEBAR_TASKS.map((task) => (
-          <TaskItem key={task.id} task={task} />
-        ))}
-        <p className="curie-side__date">{SIDEBAR_DATE}</p>
-        {SIDEBAR_TASKS_OLDER.map((task) => (
-          <TaskItem key={task.id} task={task} />
+        <hr className="curie-divider" />
+        {SIDEBAR_CHATS.map((chat) => (
+          <ChatItem key={chat.id} chat={chat} />
         ))}
       </div>
 

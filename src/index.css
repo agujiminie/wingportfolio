@@ -573,6 +573,16 @@ html::after {
   box-shadow: 0 0 0 9999px var(--ss-panel);
 }
 
+/* Work-tab demo cutout only: mirror the interface's 1024px floor. Below the
+   breakpoint (~1204px viewport) the window holds this min-width and centers,
+   so both the frame and the interface stop responding and hold the minimum
+   (the flat panel bleed clips invisibly on very narrow screens). The
+   feature/solo window variants are unaffected. */
+.second-screen__current > .second-screen__window {
+  min-width: 1063px; /* 1024 stage × 13/14 + 2 × 56px gap */
+  align-self: center;
+}
+
 /* The product mockup is INSET inside the cutout (Figma 882 × 506 ≈ 76% of the
    window), so the persistent gold field bleeds generously around all four
    edges — the 镂空 frame. Both ratios are taken straight from the Figma frame. */
@@ -692,6 +702,20 @@ html::after {
   line-height: 1.5;
   letter-spacing: -0.01em;
   color: rgba(0, 0, 0, 0.55);
+}
+
+/* Multi-link stack — one banner, several case studies (e.g. NovoEd). Links
+   sit vertically with the same underline idiom as the single CTA. */
+.second-screen__feature-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.second-screen__feature-links .second-screen__feature-link {
+  margin-top: 0;
 }
 
 .second-screen__feature-link {

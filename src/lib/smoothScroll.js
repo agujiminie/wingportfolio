@@ -49,9 +49,11 @@ export function smoothScrollToTop({ onDone } = {}) {
   let rafId = 0
   let startTime = 0
   let settled = false
+  let safetyId = 0
 
   const cleanup = () => {
     cancelAnimationFrame(rafId)
+    clearTimeout(safetyId)
     // Programmatic scrollTo fires 'scroll', not 'wheel'/'touchmove', so these
     // only catch genuine user input — no self-cancellation.
     window.removeEventListener('wheel', onUserScroll)
@@ -91,6 +93,15 @@ export function smoothScrollToTop({ onDone } = {}) {
   window.addEventListener('wheel', onUserScroll, { passive: true })
   window.addEventListener('touchmove', onUserScroll, { passive: true })
   rafId = requestAnimationFrame(step)
+
+  // rAF stalls in hidden/backgrounded tabs; without this the animation never
+  // finishes, onDone never fires, and the caller's pending state (App's
+  // scrollCancelRef) wedges the nav permanently. Timers still run when
+  // hidden, so force-finish at the top a beat after the animation deadline.
+  safetyId = setTimeout(() => {
+    window.scrollTo(0, 0)
+    finish()
+  }, duration + 250)
 
   return cancel
 }

@@ -43,8 +43,15 @@ export default function GalleryPage() {
           {CTAS.map((cta) => {
             const Icon = CTA_ICONS[cta.icon]
             return (
-              <a key={cta.id} href={cta.href} className="gp-bar__cta-btn" aria-label={cta.label}>
-                <Icon size={24} strokeWidth={1.6} aria-hidden="true" />
+              <a
+                key={cta.id}
+                href={cta.href}
+                className="gp-bar__cta-btn"
+                aria-label={cta.label}
+                target={cta.external ? '_blank' : undefined}
+                rel={cta.external ? 'noopener noreferrer' : undefined}
+              >
+                <Icon size={22} strokeWidth={1.6} aria-hidden="true" />
               </a>
             )
           })}

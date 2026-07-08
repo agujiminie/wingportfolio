@@ -20,6 +20,7 @@ const CTA_ICONS = { linkedin: Linkedin, mail: Mail }
 export default function ProjectPage({ project }) {
   const activeSection = useScrollSpy(project.sections)
   const nextProject = getNextProject(project.slug)
+  const backTo = project.backTo ?? { label: 'Work', href: '#/' }
 
   useEffect(() => {
     const previousTitle = document.title
@@ -45,9 +46,9 @@ export default function ProjectPage({ project }) {
         </a>
 
         <nav className="pp-bar__nav" aria-label="Case study sections">
-          <a className="pp-bar__back" href="#/">
+          <a className="pp-bar__back" href={backTo.href}>
             <ArrowLeft size={14} strokeWidth={2} aria-hidden="true" />
-            <span>Work</span>
+            <span>{backTo.label}</span>
           </a>
           {project.sections.map((section) => (
             <a
@@ -69,8 +70,15 @@ export default function ProjectPage({ project }) {
           {CTAS.map((cta) => {
             const Icon = CTA_ICONS[cta.icon]
             return (
-              <a key={cta.id} href={cta.href} className="pp-bar__cta-btn" aria-label={cta.label}>
-                <Icon size={24} strokeWidth={1.6} aria-hidden="true" />
+              <a
+                key={cta.id}
+                href={cta.href}
+                className="pp-bar__cta-btn"
+                aria-label={cta.label}
+                target={cta.external ? '_blank' : undefined}
+                rel={cta.external ? 'noopener noreferrer' : undefined}
+              >
+                <Icon size={22} strokeWidth={1.6} aria-hidden="true" />
               </a>
             )
           })}

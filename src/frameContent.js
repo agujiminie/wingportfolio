@@ -8,7 +8,6 @@ import oracleCover from './assets/projects/oracle.png'
 import novoedCover from './assets/projects/novoed.png'
 import taccCover from './assets/projects/tacc.png'
 import tencentCover from './assets/projects/tencent.png'
-import aiPlaylistCover from './assets/projects/ai-playlist.png'
 import realLifeCover from './assets/projects/real-life.png'
 import aiGameCover from './assets/projects/ai-game.png'
 import galleryPreview from './assets/projects/gallery-preview.webp'
@@ -24,10 +23,16 @@ export const HEADLINES = {
   analogue: ['Make it tangible.', 'Make it beautiful.', 'Make it.'],
 }
 
-// Top-right icon buttons.
+// Top-right icon buttons. `external: true` renders with target="_blank".
 export const CTAS = [
-  { id: 'linkedin', label: 'LinkedIn', icon: 'linkedin', href: '#' },
-  { id: 'email', label: 'Email', icon: 'mail', href: 'mailto:wzeng@curietech.ai' },
+  {
+    id: 'linkedin',
+    label: 'LinkedIn',
+    icon: 'linkedin',
+    href: 'https://www.linkedin.com/in/wingzeng/',
+    external: true,
+  },
+  { id: 'email', label: 'Email', icon: 'mail', href: 'mailto:wingzengying@gmail.com' },
 ]
 
 // Left-edge nav drives the morph stage; each id must match a STATE id in content.js.
@@ -126,14 +131,15 @@ export const PLAYGROUND = {
       external: true,
     },
     {
+      // Rendered by RetroPlayer — a pixel-art deck that plays the AI track.
+      // Image-only like Analog's "In Real Life": no caption, centred solo row
+      // at the end of the tab. The frame matches the artwork (864×432).
       name: 'AI Playlist',
-      tag: 'Music',
-      blurb: 'A growing collection of me producing music in collaboration with AI.',
-      // Rendered by VinylPlayer — the cover's record spins when in view.
-      media: 'vinyl',
-      cover: aiPlaylistCover,
-      cta: 'Listen',
-      href: '#',
+      media: 'player',
+      imageOnly: true,
+      // Full-content-width cutout with the player at its regular size inside
+      // (no coverAspect: the window's height follows the media + padding).
+      wide: true,
     },
   ],
 }

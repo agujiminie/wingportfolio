@@ -5,14 +5,14 @@ import CurieDemo from './components/curie/CurieDemo'
 import GalleryContent from './GalleryContent'
 import MusionTilt from './components/playground/MusionTilt'
 import RobloxLive from './components/playground/RobloxLive'
-import VinylPlayer from './components/playground/VinylPlayer'
+import RetroPlayer from './components/playground/RetroPlayer'
 
 // Items that carry a `media` key swap the plain cover <img> for a living
 // component (scroll-triggered animation) — AI Playground frames.
 const FEATURE_MEDIA = {
   musion: MusionTilt,
   roblox: RobloxLive,
-  vinyl: VinylPlayer,
+  player: RetroPlayer,
 }
 
 /**
@@ -69,12 +69,16 @@ function FeatureList({ items }) {
       {items.map((item) => (
         <li
           key={item.name}
-          className={`second-screen__feature${item.imageOnly ? ' second-screen__feature--solo' : ''}`}
+          className={`second-screen__feature${item.imageOnly ? ' second-screen__feature--solo' : ''}${
+            item.wide ? ' second-screen__feature--finale' : ''
+          }`}
         >
           <div
             className={`second-screen__window second-screen__window--feature${
               (item.frames ?? 1) > 1 ? ' second-screen__window--split' : ''
-            }${item.imageOnly ? ' second-screen__window--solo' : ''}`}
+            }${item.imageOnly ? ' second-screen__window--solo' : ''}${
+              item.wide ? ' second-screen__window--wide' : ''
+            }`}
             style={item.coverAspect ? { aspectRatio: item.coverAspect } : undefined}
           >
             {item.media && FEATURE_MEDIA[item.media] ? (

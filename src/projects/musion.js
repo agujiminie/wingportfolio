@@ -20,6 +20,9 @@ export const MUSION = {
   slug: 'musion',
   name: 'Musion',
   tag: 'AI Search',
+  // Reached from the landing's "AI Playground" tab (see PLAYGROUND in
+  // frameContent.js), not the "Work" tab — the back link should return there.
+  backTo: { label: 'AI Playground', href: '?state=playground#/' },
   title: 'Inspire, Build & Act on Your Passion',
   subtitle:
     'A GenAI-powered mobile app that turns inspiration into action — through AI vertical search and a smart journal.',

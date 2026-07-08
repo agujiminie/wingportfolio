@@ -262,24 +262,32 @@ html::after {
   transform: translateY(-50%);
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 6px;
 }
 
 .frame__cta-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
   color: rgba(0, 0, 0, 0.72);
   text-decoration: none;
   cursor: pointer;
-  transition: color 200ms ease, transform 200ms ease;
+  transition: color 200ms ease, background-color 200ms ease, transform 200ms ease;
 }
 
 .frame__cta-btn:hover,
 .frame__cta-btn:focus-visible {
   color: #111;
+  background: rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
-  outline: none;
+}
+
+.frame__cta-btn:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.4);
+  outline-offset: 2px;
 }
 
 /* Top-center — nav (part of the top bar), centered on the bar mid-line */
@@ -340,14 +348,14 @@ html::after {
 .frame__nav-item {
   display: inline-flex;
   align-items: center;
-  padding: 8px 12px;
+  padding: 8px 14px;
   border: 1px solid transparent;
   border-radius: 16777200px;
   background: transparent;
   font-family: "Kode Mono", monospace;
-  font-size: 14px;
-  font-weight: 500;
-  color: rgba(0, 0, 0, 0.65);
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.8);
   white-space: nowrap;
   cursor: pointer;
   transition:
@@ -360,14 +368,19 @@ html::after {
 .frame__nav-item:hover,
 .frame__nav-item:focus-visible {
   color: #111;
+  background: rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
-  outline: none;
+}
+
+.frame__nav-item:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.4);
+  outline-offset: 2px;
 }
 
 .frame__nav-item.is-active {
   padding: 6px 24px;
   font-family: "Kode Mono", monospace;
-  font-weight: 600;
+  font-weight: 700;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
 
@@ -639,10 +652,28 @@ html::after {
 .second-screen__feature--solo {
   justify-content: center;
 }
+
+/* Closing centrepiece (item.wide): roughly double the row rhythm above it so
+   the full-width frame reads as a finale, not just the next list row. */
+.second-screen__feature--finale {
+  padding-top: clamp(96px, 15vh, 180px);
+}
 .second-screen__window--solo {
   width: min(72%, 880px);
   /* aspect-ratio is set inline from the item's coverAspect so the frame
      matches the image and it fills edge-to-edge (no bleed). */
+}
+
+/* Finale solo variant (item.wide) — a step up from the 56% feature windows
+   (so it still reads as the closing centrepiece) but no longer full-bleed;
+   the media inside keeps the same inset idiom as the other frames and the
+   镂空 field breathes on all four sides. Height comes from the media plus
+   this vertical padding, not an aspect ratio. Compound selector: must
+   outrank --feature's width/aspect, declared later below. */
+.second-screen__window--feature.second-screen__window--wide {
+  width: min(72%, 880px);
+  aspect-ratio: auto;
+  padding: clamp(24px, 2.8vw, 40px) 0;
 }
 
 /* Media side — the cutout window. Its giant box-shadow paints the whole row

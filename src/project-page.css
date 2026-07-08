@@ -106,25 +106,44 @@
 }
 
 .pp-bar__back {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   margin-right: 8px;
-  padding: 8px 14px 8px 8px;
+  padding: 8px 14px 8px 10px;
+  border-radius: 999px;
   font-family: "Kode Mono", monospace;
   font-size: 14px;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.65);
   text-decoration: none;
   white-space: nowrap;
-  border-right: 1px solid var(--pp-edge);
-  transition: color 200ms ease;
+  transition: color 200ms ease, background-color 200ms ease;
+}
+
+/* Divider between the back link and the section pills (was a border-right,
+   moved off the element so the hover pill keeps a clean rounded shape). */
+.pp-bar__back::after {
+  content: "";
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 18px;
+  background: var(--pp-edge);
 }
 
 .pp-bar__back:hover,
 .pp-bar__back:focus-visible {
   color: #111;
-  outline: none;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.pp-bar__back:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.4);
+  outline-offset: 2px;
 }
 
 /* Section pills — same idiom as the landing's .frame__nav-item. */
@@ -151,8 +170,13 @@
 .pp-bar__nav-item:hover,
 .pp-bar__nav-item:focus-visible {
   color: #111;
+  background: rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
-  outline: none;
+}
+
+.pp-bar__nav-item:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.4);
+  outline-offset: 2px;
 }
 
 .pp-bar__nav-item.is-active {
@@ -170,23 +194,31 @@
 .pp-bar__cta {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 6px;
 }
 
 .pp-bar__cta-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
   color: rgba(0, 0, 0, 0.72);
   text-decoration: none;
-  transition: color 200ms ease, transform 200ms ease;
+  transition: color 200ms ease, background-color 200ms ease, transform 200ms ease;
 }
 
 .pp-bar__cta-btn:hover,
 .pp-bar__cta-btn:focus-visible {
   color: #111;
+  background: rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
-  outline: none;
+}
+
+.pp-bar__cta-btn:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.4);
+  outline-offset: 2px;
 }
 
 /* — Hero: left-aligned editorial opening + meta facts + windowed demo — */

@@ -64,16 +64,25 @@
   visibility: hidden;
 }
 
-/* — AI Playlist: spinning vinyl over the pixel-art cover — */
-.vinyl {
+/* — AI Playlist: pixel-art retro player (solo centred row) —
+   The window's aspect (frameContent coverAspect) is a touch taller than the
+   artwork's 2:1, so the 镂空 background bleeds above and below while the
+   player fills the wrapper's width — the cutout frame idiom. */
+.retro-player {
   position: relative;
-  height: 86%;
-  aspect-ratio: 1 / 1;
-  border-radius: 10px;
+  /* Same inset idiom as the other frames' artwork (~86-92% of the window).
+     With the finale window at 72%/880px, 88% keeps the player's height on
+     the same ~0.32×content-width optical band as the Musion/Roblox art. */
+  width: 88%;
+  aspect-ratio: 864 / 432;     /* the artwork; height stays proportional */
+  border-radius: 12px;
   overflow: hidden;
+  cursor: pointer;             /* whole artwork is the PLAY hit area */
+  container-type: inline-size; /* lets the OSD font scale with the player */
 }
 
-.vinyl__still {
+.retro-player__still,
+.retro-player__video {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -81,38 +90,93 @@
   object-fit: cover;
 }
 
-.vinyl__disc-wrap {
-  position: absolute;          /* centre/size set inline from DISC */
-  aspect-ratio: 1 / 1;
-  /* translate+scaleY set inline; squash turns the spinning circle into the
-     artwork's ellipse (affine — the rotation stays correct). */
+.retro-player__video {
+  opacity: 0;                  /* toggled inline while playing */
+  transition: opacity 0.25s steps(3);
 }
 
-.vinyl__disc {
-  display: block;
-  width: 100%;
-  height: 100%;
-  transform-origin: 50% 50%;
+/* OSD strip over the screen's baked glitch-text lines. */
+.retro-player__osd {
+  position: absolute;          /* rect set inline from OSD_RECT */
+  display: flex;
+  align-items: center;
+  padding: 0 1.2%;
+  overflow: hidden;
+  background: rgba(20, 36, 72, 0.82);   /* the artwork's navy, glassed */
+  border: 1px solid rgba(230, 129, 129, 0.35);
+  font-family: 'Kode Mono', monospace;
+  font-weight: 600;
+  font-size: clamp(12px, 2.3cqw, 21px);
+  letter-spacing: 0.03em;
+  color: #ffd9a8;              /* warm LCD amber */
+  text-shadow: 0 0 6px rgba(255, 217, 168, 0.45);
+  white-space: nowrap;
+}
+
+/* The idle prompt may wrap to two lines (the strip is tall enough) so the
+   full sentence always shows; the playing marquee stays a scrolling one-liner. */
+.retro-player__prompt {
+  white-space: normal;
+  line-height: 1.3;
+  overflow: hidden;
+}
+
+.retro-player__cursor {
+  margin-left: 0.4em;
+  animation: retro-blink 1.1s steps(1) infinite;
+}
+
+@keyframes retro-blink {
+  50% { opacity: 0; }
+}
+
+/* Old-deck marquee: two copies scroll by half their joint width for a
+   seamless loop, stepped for the pixel cadence. */
+.retro-player__marquee {
+  display: inline-flex;
+  gap: 3em;
+  padding-right: 3em;
+  animation: retro-marquee 9s steps(90) infinite;
+}
+
+@keyframes retro-marquee {
+  to { transform: translateX(-50%); }
+}
+
+/* Pixel PLAY key over the artwork's D-pad. */
+.retro-player__btn {
+  position: absolute;          /* rect set inline from BTN_RECT */
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
   will-change: transform;
 }
 
-.vinyl__glitch {
-  position: absolute;
-  left: -8%;
-  width: 116%;                 /* wider than the frame so x-drift never gaps */
-  background: rgba(255, 255, 255, 0.55);
-  mix-blend-mode: overlay;
-  opacity: 0;
-  pointer-events: none;
+.retro-player__btn svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-.vinyl__glitch--cyan {
-  background: rgba(126, 231, 242, 0.75);
+/* Hover anywhere on the artwork highlights the PLAY key. The scale lives on
+   the svg so it can't fight GSAP's wiggle transform, which animates the
+   button element itself. */
+.retro-player:hover .retro-player__btn svg {
+  transform: scale(1.08);
+}
+
+.retro-player__btn:focus-visible {
+  outline: 2px solid #ffd9a8;
+  outline-offset: 3px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .roblox-live__video,
-  .vinyl__glitch {
+  .roblox-live__video {
     display: none;
+  }
+  .retro-player__cursor,
+  .retro-player__marquee {
+    animation: none;
   }
 }

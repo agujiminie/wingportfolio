@@ -5,12 +5,15 @@ import ChatView from './ChatView'
 import TaskPanel from './TaskPanel'
 import { CurieLogo, NewChatIcon, PanelIcon, HelpIcon, RefreshIcon } from './icons'
 import { useFitScale } from './useFitScale'
-import { PROMPT } from './curieContent'
+import { PROMPT, TASK_CARDS } from './curieContent'
 import './curie-demo.css'
 
 // ms after send when each chat beat lands
 // (plan → follow-up → task cards → tasks settle into final states)
 const STAGE_DELAYS = [600, 1500, 2400, 5200]
+// The final stage, when both task cards have settled into completed/input
+// states — the moment the demo auto-opens the first task's detail panel.
+const TASKS_SETTLED_STAGE = STAGE_DELAYS.length
 
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' &&
@@ -72,6 +75,15 @@ export default function CurieDemo() {
   }
 
   useEffect(() => clearStageTimers, [])
+
+  // Once both tasks settle, walk the user straight into the first task's
+  // detail panel — unless they already opened one themselves mid-flight,
+  // in which case their choice wins.
+  useEffect(() => {
+    if (stage === TASKS_SETTLED_STAGE && !selectedTask) {
+      openTask(TASK_CARDS[0])
+    }
+  }, [stage, selectedTask, openTask])
 
   const handleSend = useCallback(() => {
     if (phase === 'chat' || !prompt.trim()) return

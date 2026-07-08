@@ -75,21 +75,115 @@ export const TASK_CARDS = [
     title: 'Retrieve & transform Salesforce Account',
     statusActive: 'Generating DataWeave transformation...',
     finalProgress: 'completed',
+    detailType: 'diff', // opens the code-diff panel (see TASK_DIFF)
   },
   {
     id: '#45633',
     title: 'Insert Account into SAP Customer Master',
     statusActive: 'Configuring SAP connector...',
-    finalProgress: 'input',
+    finalProgress: 'completed',
+    detailType: 'files', // opens the Summary + All Flows file browser
   },
 ]
 
 export const TASK_PANEL_TITLE = 'Tasks in this chat'
 
 // Task detail side panel (Figma workflow-automation, node 1045-32850). Opens
-// as a split-screen pane when a task card is clicked. Content mirrors the
-// Figma frame's Summary + All Flows sections.
+// as a split-screen pane when a task card is clicked. Two variants, keyed by
+// TASK_CARDS[].detailType:
+//   'diff'  → TASK_DIFF   (code-diff card, layout referenced from Figma
+//             "Demo - Agentic UX" node 38-38606; recolored to Curie's own
+//             tokens and set in Geist Mono to stay 1:1 with the rest of the
+//             demo instead of that file's Source Code Pro)
+//   'files' → TASK_DETAIL (Summary + All Flows file browser, unchanged)
 export const TASK_PANEL_DOWNLOAD = 'Download All'
+
+// `segments` are minimal manual tokens (kw = keyword, str = string/type
+// literal); everything else renders in the body ink. old/new are the
+// unified-diff line numbers — null on the side a line doesn't exist on.
+export const TASK_DIFF = {
+  fileName: 'account-transform.dwl',
+  language: 'DataWeave',
+  added: 9,
+  removed: 2,
+  lines: [
+    { type: 'ctx', old: 1, new: 1, segments: [{ t: '%dw', k: 'kw' }, { t: ' 2.0' }] },
+    {
+      type: 'ctx',
+      old: 2,
+      new: 2,
+      segments: [{ t: 'output', k: 'kw' }, { t: ' application/json' }],
+    },
+    { type: 'ctx', old: 3, new: 3, segments: [{ t: '---' }] },
+    { type: 'ctx', old: 4, new: 4, segments: [{ t: '{' }] },
+    { type: 'ctx', old: 5, new: 5, segments: [{ t: '  accountId: payload.Id,' }] },
+    { type: 'ctx', old: 6, new: 6, segments: [{ t: '  name: payload.Name,' }] },
+    { type: 'del', old: 7, new: null, segments: [{ t: '  phone: payload.Phone,' }] },
+    {
+      type: 'add',
+      old: null,
+      new: 7,
+      segments: [
+        { t: '  phone: payload.Phone ' },
+        { t: 'default', k: 'kw' },
+        { t: ' ' },
+        { t: '""', k: 'str' },
+        { t: ',' },
+      ],
+    },
+    { type: 'add', old: null, new: 8, segments: [{ t: '  billingAddress: {' }] },
+    {
+      type: 'add',
+      old: null,
+      new: 9,
+      segments: [{ t: '    street: payload.BillingStreet,' }],
+    },
+    { type: 'add', old: null, new: 10, segments: [{ t: '    city: payload.BillingCity,' }] },
+    {
+      type: 'add',
+      old: null,
+      new: 11,
+      segments: [{ t: '    state: payload.BillingState,' }],
+    },
+    {
+      type: 'add',
+      old: null,
+      new: 12,
+      segments: [{ t: '    postalCode: payload.BillingPostalCode' }],
+    },
+    { type: 'add', old: null, new: 13, segments: [{ t: '  },' }] },
+    { type: 'ctx', old: 8, new: 14, segments: [{ t: '  industry: payload.Industry,' }] },
+    {
+      type: 'del',
+      old: 9,
+      new: null,
+      segments: [{ t: '  lastModifiedDate: payload.LastModifiedDate' }],
+    },
+    {
+      type: 'add',
+      old: null,
+      new: 15,
+      segments: [
+        { t: '  lastModifiedDate: payload.LastModifiedDate ' },
+        { t: 'as', k: 'kw' },
+        { t: ' ' },
+        { t: 'DateTime', k: 'str' },
+      ],
+    },
+    {
+      type: 'add',
+      old: null,
+      new: 16,
+      segments: [
+        { t: '    {format: ' },
+        { t: "\"yyyy-MM-dd'T'HH:mm:ss\"", k: 'str' },
+        { t: '}' },
+      ],
+    },
+    { type: 'ctx', old: 10, new: 17, segments: [{ t: '}' }] },
+  ],
+}
+
 export const TASK_DETAIL = {
   sections: [
     {

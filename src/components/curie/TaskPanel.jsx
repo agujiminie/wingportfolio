@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { DownloadIcon, DocumentIcon, FolderIcon, CloseIcon } from './icons'
-import { TASK_DETAIL, TASK_PANEL_DOWNLOAD } from './curieContent'
+import { TASK_DETAIL, TASK_DIFF, TASK_PANEL_DOWNLOAD } from './curieContent'
+import CodeDiffView from './CodeDiffView'
 
 function FileRow({ name, nested = false }) {
   return (
@@ -84,9 +85,11 @@ export default function TaskPanel({ task, onClose }) {
       </header>
 
       <div className="curie-panel__body">
-        {TASK_DETAIL.sections.map((section) => (
-          <Section key={section.id} section={section} />
-        ))}
+        {task.detailType === 'diff' ? (
+          <CodeDiffView diff={TASK_DIFF} />
+        ) : (
+          TASK_DETAIL.sections.map((section) => <Section key={section.id} section={section} />)
+        )}
       </div>
     </aside>
   )

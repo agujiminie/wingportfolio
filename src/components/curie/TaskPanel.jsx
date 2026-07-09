@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { DownloadIcon, DocumentIcon, FolderIcon, CloseIcon } from './icons'
-import { TASK_DETAIL, TASK_DIFF, TASK_PANEL_DOWNLOAD } from './curieContent'
+import { TASK_DETAIL, TASK_DIFF } from './curieContent'
 import CodeDiffView from './CodeDiffView'
 
 function FileRow({ name, nested = false }) {
@@ -22,14 +22,6 @@ function Section({ section }) {
           <span className="curie-panel__section-title">{section.title}</span>
           <span className="curie-panel__section-sub">{section.subtitle}</span>
         </div>
-        <button
-          type="button"
-          className="curie-panel__icon-btn"
-          aria-label={`Download ${section.title}`}
-          tabIndex={-1}
-        >
-          <DownloadIcon size={16} />
-        </button>
       </div>
 
       <div className="curie-panel__rows">
@@ -56,11 +48,27 @@ function Section({ section }) {
 
 /**
  * Task detail side panel (Figma workflow-automation, node 1045-32850). Opens
- * split-screen when a task card is clicked: a floating white card with a
- * header (task id + title, Download All, close) over a scrollable body of
- * Summary + All Flows sections.
+ * split-screen when a task card is clicked.
+ *
+ * Two layouts:
+ *  • diff  — a code canvas in the Claude Code idiom: ONE slim toolbar line
+ *    (task id, filename, meta, icon controls) directly on top of the code;
+ *    no stacked panel header (CodeDiffView owns the whole surface).
+ *  • sections — single-line header (id + title, download / close icons)
+ *    over the scrollable Summary + All Flows lists.
  */
 export default function TaskPanel({ task, onClose }) {
+  if (task.detailType === 'diff') {
+    return (
+      <aside
+        className="curie-panel curie-panel--canvas curie-enter"
+        aria-label={`Task ${task.id} details`}
+      >
+        <CodeDiffView diff={TASK_DIFF} taskId={task.id} onClose={onClose} />
+      </aside>
+    )
+  }
+
   return (
     <aside className="curie-panel curie-enter" aria-label={`Task ${task.id} details`}>
       <header className="curie-panel__head">
@@ -69,27 +77,31 @@ export default function TaskPanel({ task, onClose }) {
           <h3 className="curie-panel__title">Task: {task.title}</h3>
         </div>
         <div className="curie-panel__head-actions">
-          <button type="button" className="curie-panel__download-all" tabIndex={-1}>
+          <button
+            type="button"
+            className="curie-panel__tool"
+            aria-label="Download all"
+            title="Download all"
+            tabIndex={-1}
+          >
             <DownloadIcon size={16} />
-            {TASK_PANEL_DOWNLOAD}
           </button>
           <button
             type="button"
-            className="curie-panel__close"
+            className="curie-panel__tool"
             onClick={onClose}
             aria-label="Close task panel"
+            title="Close"
           >
-            <CloseIcon size={20} />
+            <CloseIcon size={16} />
           </button>
         </div>
       </header>
 
       <div className="curie-panel__body">
-        {task.detailType === 'diff' ? (
-          <CodeDiffView diff={TASK_DIFF} />
-        ) : (
-          TASK_DETAIL.sections.map((section) => <Section key={section.id} section={section} />)
-        )}
+        {TASK_DETAIL.sections.map((section) => (
+          <Section key={section.id} section={section} />
+        ))}
       </div>
     </aside>
   )

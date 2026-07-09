@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Sidebar from './Sidebar'
 import LandingView from './LandingView'
 import ChatView from './ChatView'
 import TaskPanel from './TaskPanel'
-import { CurieLogo, NewChatIcon, PanelIcon, HelpIcon, RefreshIcon } from './icons'
+import { CurieLogo, NewChatIcon, PanelIcon, RefreshIcon } from './icons'
 import { useFitScale } from './useFitScale'
-import { PROMPT, TASK_CARDS } from './curieContent'
+import { DEAD_CONTROL_TIP, PROMPT, TASK_CARDS } from './curieContent'
 import './curie-demo.css'
 
 // ms after send when each chat beat lands
@@ -18,6 +18,25 @@ const TASKS_SETTLED_STAGE = STAGE_DELAYS.length
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' &&
   window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
+// Controls that actually do something in the demo. Every OTHER button-like
+// element is decorative — clicking one pops the "Demo only" tooltip instead
+// of silently doing nothing (see handleDeadClick).
+const LIVE_CONTROLS = [
+  '.curie-send',
+  '.curie-nav__panel-toggle',
+  '.curie-nav__icon-btn', // new chat (resets the demo)
+  '.curie-chat-header__toggle',
+  '.curie-chat-header__btn', // tasks-in-this-chat popover
+  '.curie-taskpanel__head', // popover collapse
+  '.curie-taskcard', // opens the task detail panel
+  '[aria-label="Close task panel"]',
+  '[aria-label="Copy updated file"]',
+].join(', ')
+
+// How long the dead-control tooltip stays up — matches the CSS animation
+// (curie-dead-tip-pop) so it finishes fading right as it unmounts.
+const DEAD_TIP_DURATION = 2200
 
 /**
  * Interactive CurieTech AI demo embedded in the Work tab.
@@ -41,6 +60,12 @@ export default function CurieDemo() {
   const [selectedTask, setSelectedTask] = useState(null) // last task shown
   const [panelOpen, setPanelOpen] = useState(false) // right panel visible
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  // Dead-control tooltip: position (unscaled, relative to the demo window)
+  // + a serial so re-clicks remount the element and replay its animation.
+  const [deadTip, setDeadTip] = useState(null)
+  const deadTipRef = useRef(null)
+  const deadTipTimer = useRef(null)
+  const deadTipSerial = useRef(0)
   const stageTimers = useRef([])
 
   // Branding always sits at the same spot atop the nav bar whenever the
@@ -53,17 +78,16 @@ export default function CurieDemo() {
   // chat phase crossfades the brand into the chat header.
   const navHidden = phase === 'chat' && sidebarCollapsed
 
-  // Opening a task slides the panel in and collapses the sidebar by default.
+  // Opening a task slides the panel in. The sidebar stays exactly as the user
+  // left it — it only collapses when they press the panel toggle themselves.
   const openTask = useCallback((task) => {
     setSelectedTask(task)
     setPanelOpen(true)
-    setSidebarCollapsed(true)
   }, [])
-  // Close slides the panel out and restores the sidebar (selectedTask lingers
-  // so its content stays rendered through the exit transition).
+  // Close slides the panel out (selectedTask lingers so its content stays
+  // rendered through the exit transition); the sidebar is left untouched.
   const closePanel = useCallback(() => {
     setPanelOpen(false)
-    setSidebarCollapsed(false)
   }, [])
   // Toggle the sidebar independently — lets the user slide the nav back in
   // while the chat + panel stay open (a valid 3-column state).
@@ -75,6 +99,45 @@ export default function CurieDemo() {
   }
 
   useEffect(() => clearStageTimers, [])
+  useEffect(() => () => clearTimeout(deadTipTimer.current), [])
+
+  // Delegated click-catcher for the whole demo window: a click on any
+  // button-like element that is NOT in the LIVE_CONTROLS whitelist pops a
+  // transient "Demo only" tooltip above it, so decorative controls read as
+  // intentional demo scope rather than broken buttons. Positioned against
+  // the unscaled .curie-demo wrapper (the stage transform cancels out of
+  // the viewport-rect delta), so no scale math is needed.
+  const handleDeadClick = useCallback(
+    (event) => {
+      const control = event.target.closest('button, .curie-chip')
+      if (!control || control.closest(LIVE_CONTROLS)) return
+      const host = ref.current
+      if (!host) return
+      const hostRect = host.getBoundingClientRect()
+      const rect = control.getBoundingClientRect()
+      deadTipSerial.current += 1
+      setDeadTip({
+        x: rect.left + rect.width / 2 - hostRect.left,
+        y: rect.top - hostRect.top,
+        key: deadTipSerial.current,
+      })
+      clearTimeout(deadTipTimer.current)
+      deadTipTimer.current = setTimeout(() => setDeadTip(null), DEAD_TIP_DURATION)
+    },
+    [ref],
+  )
+
+  // Keep the pill inside the window's overflow:hidden bounds — clicks near
+  // the left/right edges (sidebar rows, send-side chips) would otherwise
+  // clip it. Width is only known after render, hence the imperative nudge.
+  useLayoutEffect(() => {
+    const el = deadTipRef.current
+    const host = ref.current
+    if (!el || !host || !deadTip) return
+    const half = el.offsetWidth / 2
+    const clamped = Math.min(Math.max(deadTip.x, half + 10), host.clientWidth - half - 10)
+    if (clamped !== deadTip.x) el.style.left = `${clamped}px`
+  }, [deadTip, ref])
 
   // Once both tasks settle, walk the user straight into the first task's
   // detail panel — unless they already opened one themselves mid-flight,
@@ -99,6 +162,7 @@ export default function CurieDemo() {
 
   const handleReset = useCallback(() => {
     clearStageTimers()
+    clearTimeout(deadTipTimer.current)
     setPhase('landing')
     setStage(0)
     setReply('')
@@ -106,6 +170,7 @@ export default function CurieDemo() {
     setSelectedTask(null)
     setPanelOpen(false)
     setSidebarCollapsed(false)
+    setDeadTip(null)
   }, [])
 
   return (
@@ -120,9 +185,13 @@ export default function CurieDemo() {
         <RefreshIcon size={16} />
       </button>
 
+      {/* The delegated onClick only intercepts clicks that already landed on
+          decorative <button>s inside — it adds no keyboard-reachable
+          behavior of its own, so the static wrapper stays a plain div. */}
       <div
         className="curie-demo"
         ref={ref}
+        onClick={handleDeadClick}
         style={{
           '--curie-scale': scale,
           '--stage-w': `${stageWidth}px`,
@@ -173,12 +242,6 @@ export default function CurieDemo() {
                 </button>
               )}
             </div>
-            {phase === 'landing' && (
-              <button type="button" className="curie-nav__support" tabIndex={-1}>
-                <HelpIcon />
-                Support
-              </button>
-            )}
           </header>
 
           <div
@@ -219,6 +282,21 @@ export default function CurieDemo() {
           </div>
         </div>
       </div>
+
+      {/* Transient nudge over a clicked decorative control (see
+          handleDeadClick). key remounts it per click so the pop animation
+          replays; the timeout that clears it matches the animation length. */}
+      {deadTip && (
+        <span
+          key={deadTip.key}
+          ref={deadTipRef}
+          className="curie-dead-tip"
+          style={{ left: deadTip.x, top: deadTip.y }}
+          role="status"
+        >
+          {DEAD_CONTROL_TIP}
+        </span>
+      )}
       </div>
     </>
   )

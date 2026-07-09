@@ -233,12 +233,7 @@ export default function GalleryContent({ embedded = false }) {
         </div>
 
         <div className="gp-hero__center">
-          <p className="gp-hero__eyebrow">Analog · Gallery</p>
-          <h1 className="gp-hero__title">
-            Made by hand,
-            <br />
-            away from the screen
-          </h1>
+          <h1 className="gp-hero__title">Analog</h1>
           <p className="gp-hero__desc">
             {activeCategory?.blurb ??
               'Drawings, icon systems, type experiments and illustrations — the analog side of my practice.'}

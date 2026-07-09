@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from 'react'
-import { CopyIcon, CheckIcon } from './icons'
+import { CopyIcon, CheckIcon, DownloadIcon, CloseIcon } from './icons'
 
 const COPY_RESET_DELAY = 1500
 
@@ -25,13 +25,17 @@ function Line({ line }) {
 }
 
 /**
- * Code-diff task detail (layout referenced from Figma "Demo - Agentic UX",
- * node 38-38606 — a rounded code-viewer card with line numbers and a copy
- * action). Recolored to Curie's own tokens and set in Geist Mono instead of
- * that file's Source Code Pro, so it stays 1:1 with the rest of the demo;
- * diff +/- coloring is new (the reference is a plain viewer, not a diff).
+ * Code-diff task detail, laid out as a code canvas in the Claude Code idiom:
+ * ONE slim toolbar line (task id · filename · language · diff stats on the
+ * left, icon-only copy / download / close on the right) sitting directly on
+ * top of the scrollable code — no stacked headers. Set in Curie's own tokens
+ * and Geist Mono; diff +/- coloring uses the pale status family.
+ *
+ * @param {object} diff - fileName / language / added / removed / lines
+ * @param {string} [taskId] - muted mono prefix tying the canvas to its task card
+ * @param {() => void} [onClose] - renders the close control when provided
  */
-export default function CodeDiffView({ diff }) {
+export default function CodeDiffView({ diff, taskId, onClose }) {
   const [copied, setCopied] = useState(false)
   const resetTimer = useRef(null)
 
@@ -55,21 +59,44 @@ export default function CodeDiffView({ diff }) {
   return (
     <section className="curie-diff">
       <header className="curie-diff__head">
+        {taskId && <span className="curie-diff__task-id">{taskId}</span>}
         <span className="curie-diff__filename">{diff.fileName}</span>
         <span className="curie-diff__lang">{diff.language}</span>
         <span className="curie-diff__stats">
           <span className="curie-diff__stat curie-diff__stat--add">+{diff.added}</span>
           <span className="curie-diff__stat curie-diff__stat--del">-{diff.removed}</span>
         </span>
-        <button
-          type="button"
-          className="curie-diff__copy"
-          onClick={handleCopy}
-          aria-label="Copy updated file"
-        >
-          {copied ? <CheckIcon size={14} /> : <CopyIcon size={14} />}
-          {copied ? 'Copied' : 'Copy'}
-        </button>
+        <div className="curie-diff__actions">
+          <button
+            type="button"
+            className="curie-diff__tool"
+            onClick={handleCopy}
+            aria-label="Copy updated file"
+            title={copied ? 'Copied' : 'Copy'}
+          >
+            {copied ? <CheckIcon size={15} /> : <CopyIcon size={15} />}
+          </button>
+          <button
+            type="button"
+            className="curie-diff__tool"
+            aria-label="Download file"
+            title="Download"
+            tabIndex={-1}
+          >
+            <DownloadIcon size={15} />
+          </button>
+          {onClose && (
+            <button
+              type="button"
+              className="curie-diff__tool"
+              onClick={onClose}
+              aria-label="Close task panel"
+              title="Close"
+            >
+              <CloseIcon size={16} />
+            </button>
+          )}
+        </div>
       </header>
       <div className="curie-diff__body">
         {diff.lines.map((line, i) => (

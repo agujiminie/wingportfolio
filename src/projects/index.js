@@ -31,9 +31,10 @@ export function projectHref(slug) {
   return `#/project/${slug}`
 }
 
-/** The project after `slug` in display order, or null when it is the only one. */
+/** The project after `slug` in display order, or null when it is the last one
+    (the footer falls back to the project's `backTo` link in that case). */
 export function getNextProject(slug) {
-  if (PROJECT_ORDER.length < 2) return null
   const index = PROJECT_ORDER.findIndex((project) => project.slug === slug)
-  return PROJECT_ORDER[(index + 1) % PROJECT_ORDER.length]
+  if (index === -1 || index === PROJECT_ORDER.length - 1) return null
+  return PROJECT_ORDER[index + 1]
 }

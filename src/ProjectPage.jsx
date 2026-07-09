@@ -141,12 +141,12 @@ export default function ProjectPage({ project }) {
           {nextProject ? (
             <a className="pp-footer__primary" href={projectHref(nextProject.slug)}>
               <span>Next: {nextProject.name}</span>
-              <ArrowRight className="pp-footer__arrow" size={26} strokeWidth={2} aria-hidden="true" />
+              <ArrowRight className="pp-footer__arrow" size={16} strokeWidth={2} aria-hidden="true" />
             </a>
           ) : (
-            <a className="pp-footer__primary" href="#/">
-              <ArrowLeft className="pp-footer__arrow" size={26} strokeWidth={2} aria-hidden="true" />
-              <span>Back to all work</span>
+            <a className="pp-footer__primary" href={backTo.href}>
+              <ArrowLeft className="pp-footer__arrow" size={16} strokeWidth={2} aria-hidden="true" />
+              <span>Back to {backTo.label}</span>
             </a>
           )}
           <button
@@ -155,7 +155,7 @@ export default function ProjectPage({ project }) {
             onClick={() => window.scrollTo({ top: 0, behavior: scrollBehavior() })}
           >
             <span>Top</span>
-            <ArrowUp size={15} strokeWidth={2} aria-hidden="true" />
+            <ArrowUp size={13} strokeWidth={2} aria-hidden="true" />
           </button>
         </div>
       </footer>

@@ -88,6 +88,10 @@ export const TASK_CARDS = [
 
 export const TASK_PANEL_TITLE = 'Tasks in this chat'
 
+// Shown when a decorative (hoverable-but-inert) control is clicked, so the
+// dead click reads as intentional demo scope instead of a broken button.
+export const DEAD_CONTROL_TIP = 'Demo only. Contact me if interested :)'
+
 // Task detail side panel (Figma workflow-automation, node 1045-32850). Opens
 // as a split-screen pane when a task card is clicked. Two variants, keyed by
 // TASK_CARDS[].detailType:
@@ -96,7 +100,6 @@ export const TASK_PANEL_TITLE = 'Tasks in this chat'
 //             tokens and set in Geist Mono to stay 1:1 with the rest of the
 //             demo instead of that file's Source Code Pro)
 //   'files' → TASK_DETAIL (Summary + All Flows file browser, unchanged)
-export const TASK_PANEL_DOWNLOAD = 'Download All'
 
 // `segments` are minimal manual tokens (kw = keyword, str = string/type
 // literal); everything else renders in the body ink. old/new are the

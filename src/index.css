@@ -233,7 +233,9 @@ html::after {
   }
 }
 
-/* Top-left brand — vertically centered on the bar mid-line */
+/* Top-left brand — vertically centered on the bar mid-line. Rendered as a
+   <button> (go-home action) so it needs its own reset from browser button
+   chrome. */
 .frame__brand {
   top: calc(var(--bar-h) / 2);
   left: var(--frame-margin);
@@ -241,6 +243,16 @@ html::after {
   display: flex;
   align-items: center;
   gap: 12px;
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.frame__brand:hover .frame__brand-name {
+  color: #111;
 }
 
 .frame__brand-mark {
@@ -562,10 +574,27 @@ html::after {
 
 .second-screen__desc {
   margin: 0;
-  flex: 0 1 346px;
+  /* Grows to fill the space next to the title (flex-grow: 1) instead of
+     staying pinned at a short-blurb width — the CurieTech AI copy is a full
+     paragraph now, and a fixed 346px column made it an unreadably tall,
+     narrow strip. The generous basis keeps it wide (≈4 lines) even at mid
+     viewports where the title competes for the row. */
+  flex: 1 1 480px;
+  max-width: 720px;
   font-size: 14px;
   line-height: 1.5;
   color: rgba(0, 0, 0, 0.65);
+}
+
+.second-screen__desc a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.second-screen__desc a:hover,
+.second-screen__desc a:focus-visible {
+  color: rgba(0, 0, 0, 0.9);
 }
 
 /* THE CUTOUT. Interior is transparent → the fixed persistent bg shows through;
@@ -586,14 +615,38 @@ html::after {
   box-shadow: 0 0 0 9999px var(--ss-panel);
 }
 
-/* Work-tab demo cutout only: mirror the interface's 1024px floor. Below the
-   breakpoint (~1204px viewport) the window holds this min-width and centers,
-   so both the frame and the interface stop responding and hold the minimum
-   (the flat panel bleed clips invisibly on very narrow screens). The
-   feature/solo window variants are unaffected. */
-.second-screen__current > .second-screen__window {
+/* Work-tab demo cutout + its "just a demo" caption. Mirrors the interface's
+   1024px floor: below the breakpoint (~1204px viewport) the group holds this
+   min-width and centers, so both the frame and the interface stop responding
+   and hold the minimum (the flat panel bleed clips invisibly on very narrow
+   screens). The feature/solo window variants are unaffected. */
+.second-screen__demo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
   min-width: 1063px; /* 1024 stage × 13/14 + 2 × 56px gap */
   align-self: center;
+}
+
+.second-screen__demo-note {
+  margin: 0;
+  max-width: 60ch;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.second-screen__demo-note a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.second-screen__demo-note a:hover,
+.second-screen__demo-note a:focus-visible {
+  color: rgba(0, 0, 0, 0.7);
 }
 
 /* The product mockup is INSET inside the cutout (Figma 882 × 506 ≈ 76% of the
@@ -808,15 +861,10 @@ html::after {
   padding: 0 12px;
 }
 
-@media (max-width: 768px) {
-  /* Flow content from the top instead of centering — avoids a tall section
-     orphaning the description far from the title. */
-  .second-screen__current {
-    justify-content: flex-start;
-    min-height: auto;
-    gap: clamp(20px, 4vh, 36px);
-    padding: clamp(84px, 13vh, 116px) var(--ss-pad) clamp(56px, 9vh, 88px);
-  }
+/* Below this the title + description row gets too tight to share — the
+   paragraph collapses into a tall, unreadably narrow strip. Stack them so
+   the description runs full width (capped at its 720px measure) instead. */
+@media (max-width: 1100px) {
   .second-screen__intro-row {
     flex-direction: column;
     gap: 16px;
@@ -826,13 +874,23 @@ html::after {
   .second-screen__title,
   .second-screen__desc {
     flex: 0 0 auto;
+  }
+  .second-screen__title {
     max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Flow content from the top instead of centering — avoids a tall section
+     orphaning the description far from the title. */
+  .second-screen__current {
+    justify-content: flex-start;
+    min-height: auto;
+    gap: clamp(20px, 4vh, 36px);
+    padding: clamp(84px, 13vh, 116px) var(--ss-pad) clamp(56px, 9vh, 88px);
   }
   .second-screen__title {
     font-size: clamp(26px, 8vw, 34px);
-  }
-  .second-screen__desc {
-    flex: 0 0 auto;
   }
   /* Tighter frame on small screens — less room for a big bleed, so the mockup
      fills more of the cutout while still showing the 镂空 edge. */

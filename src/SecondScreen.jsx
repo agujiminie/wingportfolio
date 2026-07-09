@@ -153,12 +153,35 @@ function WorkContent() {
           <p className="second-screen__label">{CURRENT_WORK.label}</p>
           <div className="second-screen__intro-row">
             <h2 className="second-screen__title">{CURRENT_WORK.title}</h2>
-            <p className="second-screen__desc">{CURRENT_WORK.description}</p>
+            <p className="second-screen__desc">
+              {CURRENT_WORK.description.before}
+              <a
+                href={CURRENT_WORK.description.link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {CURRENT_WORK.description.link.label}
+              </a>
+              {CURRENT_WORK.description.after}
+            </p>
           </div>
         </header>
 
-        <div className="second-screen__window">
-          <CurieDemo />
+        <div className="second-screen__demo">
+          <div className="second-screen__window">
+            <CurieDemo />
+          </div>
+          <p className="second-screen__demo-note">
+            This is a demo built to show product interaction and design — not the real product.{' '}
+            <a
+              href="https://www.linkedin.com/in/wingzeng/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Contact me
+            </a>{' '}
+            to learn more.
+          </p>
         </div>
       </div>
 

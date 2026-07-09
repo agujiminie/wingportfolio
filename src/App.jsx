@@ -121,6 +121,22 @@ export default function App() {
     [activeId],
   )
 
+  // Brand click ("go home"): switch to the Work tab like any nav click, but
+  // when already there (handleSelect would no-op) still snap back to the top
+  // of the hero — the behavior a "home" click implies.
+  const handleGoHome = useCallback(() => {
+    if (activeId !== 'work') {
+      handleSelect('work')
+      return
+    }
+    if (scrollCancelRef.current || window.scrollY <= TOP_EPSILON) return
+    scrollCancelRef.current = smoothScrollToTop({
+      onDone: () => {
+        scrollCancelRef.current = null
+      },
+    })
+  }, [activeId, handleSelect])
+
   return (
     <main className="landing">
       {/* Layer 0 — persistent background (image + Dither): revealed through the cutout */}
@@ -132,7 +148,12 @@ export default function App() {
       </div>
 
       {/* Layer 4 — viewport-framing overlay (nav/brand stay; headline fades with --fade) */}
-      <FrameOverlay activeId={activeId} onSelect={handleSelect} scrolled={scrolled} />
+      <FrameOverlay
+        activeId={activeId}
+        onSelect={handleSelect}
+        onGoHome={handleGoHome}
+        scrolled={scrolled}
+      />
 
       {/* In-flow scroll content: one hero viewport, then the solid second screen */}
       <div className="landing__spacer" aria-hidden="true" />

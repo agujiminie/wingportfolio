@@ -197,15 +197,14 @@
   inset: 0 0 auto 0;
   z-index: 3;
   display: flex;
-  /* Top-aligned so the brand sits at the same spot in every phase — the
-     landing-only Support button would otherwise stretch the row and push
-     the centered brand down a few px relative to the chat phases.
-     24px top pad centers the 32px rows on the shared 40px control line
+  /* Top-aligned so the brand sits at the same spot in every phase.
+     16px top pad centers the 32px rows on the shared 32px control line
      (one horizontal line across nav, chat flow and task panel controls,
-     like panel toolbars in a desktop app). */
+     like panel toolbars in a desktop app) — the top gap matches the
+     panel's 16px margins so the whole control row reads balanced. */
   align-items: flex-start;
   justify-content: space-between;
-  padding: 24px 16px 16px;
+  padding: 16px 16px 16px;
   /* Overlay bar: let clicks pass through the empty strip (e.g. to the chat
      header's task-list button underneath); children re-enable hits. */
   pointer-events: none;
@@ -254,35 +253,19 @@
   color: #000;
   background: rgba(0, 0, 0, 0.04);
 }
-.curie-nav__icon-btn,
-.curie-nav__support {
+.curie-nav__icon-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   border: 0;
   background: transparent;
-  color: var(--c-ink-65);
+  color: rgba(0, 0, 0, 0.45); /* neutral/icon/default */
   cursor: pointer;
   border-radius: 12px;
   font: inherit;
-}
-.curie-nav__icon-btn {
-  color: rgba(0, 0, 0, 0.45); /* neutral/icon/default */
-}
-.curie-nav__icon-btn {
   padding: 4px;
 }
-.curie-nav__support {
-  /* 22px line + 5px vertical = 32px tall, same as the brand row, so both
-     rows share one optical center under the nav's flex-start alignment. */
-  padding: 5px 16px;
-  font-family: var(--c-sans);
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 22px;
-}
-.curie-nav__icon-btn:hover,
-.curie-nav__support:hover {
+.curie-nav__icon-btn:hover {
   color: #000;
   background: rgba(0, 0, 0, 0.04);
 }
@@ -333,7 +316,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 68px 16px 10px; /* clears the overlaid nav brand (ends 56px) by 12px */
+  margin: 60px 16px 10px; /* clears the overlaid nav brand (ends 48px) by 12px */
   padding: 4px 0;
   border: 0;
   background: transparent;
@@ -715,14 +698,24 @@
 .curie-send-tip {
   position: absolute;
   bottom: calc(100% + 12px);
-  left: 50%;
+  /* Right-anchored (not centered) on purpose: the send button sits at the
+     far-right edge of the composer, right up against the app window's own
+     clipped edge. A centered pill (translateX(-50%)) overhangs past that
+     edge and gets cut off by the window's rounded-corner overflow:hidden.
+     Anchoring to the button's right edge lets the pill grow leftward, into
+     the composer's open space, so it floats fully on top of the interface
+     instead of being clipped by it. */
+  right: 0;
   z-index: 4;
   padding: 9px 16px;
   border-radius: 10px;
   background: #fff;
+  /* Demo background is near-white (#fbfbfa) — a plain white pill would
+     nearly disappear into it, so a darker hairline separates the two. */
+  border: 1px solid rgba(0, 0, 0, 0.16);
   color: #363636; /* portfolio brand ink */
   font-family: 'Kode Mono', 'SFMono-Regular', ui-monospace, monospace;
-  font-weight: 500;
+  font-weight: 700;
   font-size: 14px;
   line-height: 1.4;
   white-space: nowrap;
@@ -732,28 +725,89 @@
     drop-shadow(0 0 18px rgba(255, 255, 255, 0.9));
   animation: curie-tip-float 1.8s ease-in-out infinite;
 }
+/* Caret, drawn as two stacked triangles so it reads as an outlined shape
+   instead of a bare white wedge poking out under the pill's bordered edge:
+   ::before is 1px larger all around in the border color, ::after is the
+   white fill on top — the 1px gap between them is the caret's "stroke". */
+.curie-send-tip::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 9px;
+  border: 7px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.16);
+  border-bottom-width: 0;
+}
 .curie-send-tip::after {
   content: '';
   position: absolute;
   top: 100%;
-  left: 50%;
-  margin-left: -6px;
+  /* Points down at the 32px send button's center, which sits 16px in from
+     the tooltip's right-anchored edge. */
+  right: 10px;
   border: 6px solid transparent;
   border-top-color: #fff;
   border-bottom-width: 0;
 }
+/* Transient "Demo only" pill over a clicked decorative control (rendered by
+   CurieDemo's handleDeadClick, positioned in the demo window's own unscaled
+   coordinates). Same white-pill voice as .curie-send-tip; the animation runs
+   the full show — pop in, hold, fade — timed to DEAD_TIP_DURATION (2200ms)
+   so the element goes invisible right before React unmounts it. */
+.curie-dead-tip {
+  position: absolute;
+  z-index: 5; /* above the scaled stage */
+  transform: translate(-50%, calc(-100% - 10px));
+  padding: 9px 16px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  color: #363636;
+  font-family: 'Kode Mono', 'SFMono-Regular', ui-monospace, monospace;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: none;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.06))
+    drop-shadow(0 2px 6px rgba(0, 0, 0, 0.08));
+  animation: curie-dead-tip-pop 2200ms ease both;
+}
+@keyframes curie-dead-tip-pop {
+  /* `translate` composes with the base transform, so the pop stays on the
+     compositor without re-declaring the centering translate() here. */
+  0% {
+    opacity: 0;
+    translate: 0 4px;
+  }
+  8%,
+  82% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  100% {
+    opacity: 0;
+    translate: 0 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .curie-dead-tip {
+    animation: none;
+  }
+}
+
 /* Float + breathing glow in one loop; reduced-motion falls back to the
    static base filter above. */
 @keyframes curie-tip-float {
   0%,
   100% {
-    transform: translate(-50%, 0);
+    transform: translateY(0);
     filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.06))
       drop-shadow(0 2px 6px rgba(0, 0, 0, 0.08))
       drop-shadow(0 0 14px rgba(255, 255, 255, 0.8));
   }
   50% {
-    transform: translate(-50%, -4px);
+    transform: translateY(-4px);
     filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.06))
       drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1))
       drop-shadow(0 0 26px rgba(255, 255, 255, 1));
@@ -810,7 +864,7 @@
    task-list button render. 16px side padding mirrors the nav so the brand
    crossfades between nav and header without shifting. */
 /* Thinnest possible cover: the banner ends flush with the control row's
-   bottom edge (control line 40 + 12 = 52), so scrolling text is clipped
+   bottom edge (control line 32 + 12 = 44), so scrolling text is clipped
    the moment it hits the controls — nothing taller than needed. */
 .curie-chat-header {
   position: absolute;
@@ -820,9 +874,9 @@
   /* Above the log content — the messages' fill-mode animations leave
      stacking contexts that would otherwise paint over the cover. */
   z-index: 2;
-  height: 52px;
+  height: 44px;
   display: flex;
-  align-items: flex-end; /* 24px boxes bottom at 52 → center on the 40 line */
+  align-items: flex-end; /* 24px boxes bottom at 44 → center on the 32 line */
   justify-content: space-between;
   padding: 0 16px;
   background: #eff0f3; /* matches the chat-flow canvas */
@@ -906,7 +960,7 @@
 /* "Tasks in this chat" popover (Figma "task in the chat", node 1562-16488) */
 .curie-taskpanel {
   position: absolute;
-  top: 60px; /* below the 52px cover */
+  top: 52px; /* below the 44px cover */
   right: 24px;
   z-index: 5;
   width: 300px;
@@ -1067,8 +1121,8 @@
   flex-direction: column;
   gap: 20px;
   /* Clearance lives INSIDE the scrollable column: at rest content sits a
-     compact 8px below the 52px cover, and scrolls under it. */
-  padding: 60px 0 16px;
+     compact 8px below the 44px cover, and scrolls under it. */
+  padding: 52px 0 16px;
 }
 
 /* User message: right-aligned soft gray bubble (Figma "user input") */
@@ -1314,24 +1368,28 @@
   opacity: 1;
   transform: translateX(0);
 }
+/* Single-line panel header (Claude Code canvas idiom): id + title inline on
+   the left, icon-only tools on the right. Panel margin 16 + 2px pad + half
+   the 28px tool = tool centers at 32, exactly on the shared control line
+   with the nav brand and the chat flow's task-list button. */
 .curie-panel__head {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  /* 16px panel margin + 7px pad + 16 (half the 32px action row, incl. the
-     close button) + 1px border = the shared 40px control line — Download
-     All / close sit level with the chat flow's floating controls. */
-  padding: 7px 20px 12px;
+  align-items: center;
+  gap: 10px;
+  /* 1px top (not 2) absorbs the panel's own 1px border above, keeping the
+     tools centered at exactly 32: 16 margin + 1 border + 1 pad + 14. */
+  padding: 1px 8px 3px 16px;
   border-bottom: 1px solid var(--c-border-2);
 }
 .curie-panel__head-titles {
+  flex: 1;
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  align-items: center;
+  gap: 8px;
   min-width: 0;
 }
 .curie-panel__id {
+  flex-shrink: 0;
   font-family: var(--c-mono);
   font-weight: 600;
   font-size: 12px;
@@ -1339,9 +1397,10 @@
 }
 .curie-panel__title {
   margin: 0;
+  min-width: 0;
   font-family: var(--c-sans);
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: 600;
+  font-size: 13px;
   line-height: 18px;
   color: var(--c-ink-88);
   white-space: nowrap;
@@ -1351,41 +1410,25 @@
 .curie-panel__head-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 2px;
   flex-shrink: 0;
 }
-.curie-panel__download-all {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border: 1px solid var(--c-border-2);
-  border-radius: 12px;
-  background: #fff;
-  cursor: pointer;
-  font-family: var(--c-sans);
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--c-ink-65);
-  white-space: nowrap;
-}
-.curie-panel__download-all:hover {
-  background: rgba(0, 0, 0, 0.03);
-  color: #000;
-}
-.curie-panel__close {
+/* Shared icon-only tool button (panel header + code-canvas toolbar). */
+.curie-panel__tool,
+.curie-diff__tool {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
+  width: 28px;
+  height: 28px;
   border: 0;
   background: transparent;
   cursor: pointer;
   color: var(--c-ink-45);
   border-radius: 8px;
 }
-.curie-panel__close:hover {
+.curie-panel__tool:hover,
+.curie-diff__tool:hover {
   color: #000;
   background: rgba(0, 0, 0, 0.04);
 }
@@ -1410,7 +1453,6 @@
   border-radius: 999px;
 }
 .curie-panel__section {
-  border: 1px solid var(--c-border-2);
   border-radius: 16px;
   padding: 8px;
 }
@@ -1438,22 +1480,6 @@
   font-weight: 400;
   font-size: 12px;
   color: var(--c-ink-45);
-}
-.curie-panel__icon-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  color: var(--c-ink-45);
-  border-radius: 8px;
-  flex-shrink: 0;
-}
-.curie-panel__icon-btn:hover {
-  color: #000;
-  background: rgba(0, 0, 0, 0.04);
 }
 .curie-panel__rows,
 .curie-panel__tree-group {
@@ -1501,25 +1527,48 @@
 }
 
 /* ── Code diff (task detail, "diff" variant) ────────────────────────────────
-   Layout referenced from Figma "Demo - Agentic UX" node 38-38606 (rounded
-   code-viewer card, line-number gutter, copy action); recolored to Curie's
-   own tokens (--c-link-2/--c-link-3 for syntax, the pale-red/green status
-   family for diff +/-) and set in Geist Mono instead of that file's Source
-   Code Pro, so it reads as part of THIS design system, not a foreign embed. */
+   A code canvas in the Claude Code idiom: ONE slim toolbar line (task id ·
+   filename · language · diff stats, icon tools right) directly on top of the
+   scrollable code — no stacked headers. Diff colors use Curie's own tokens
+   (--c-link-2/--c-link-3 syntax, pale-red/green status family) in Geist Mono. */
 .curie-diff {
   display: flex;
   flex-direction: column;
-  background: var(--c-link-fill); /* #F7F7FF — cool-white, close to the ref's #F7F9FB */
-  border: 1px solid var(--c-border-2);
+  background: #fff;
   border-radius: 16px;
   overflow: hidden;
 }
+/* Canvas variant: the diff IS the panel surface — fill it and let the code
+   region scroll (the panel's rounded corners do the clipping). */
+.curie-panel--canvas .curie-diff {
+  flex: 1;
+  min-height: 0;
+  border-radius: 0;
+}
+.curie-panel--canvas .curie-diff__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
+}
+/* The single control line: panel margin 16 + 2px pad + half the 28px tool
+   = tools centered on the shared 32px control line, level with the nav. */
 .curie-diff__head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  gap: 8px;
+  /* 1px top (not 2) absorbs the panel's own 1px border above — see
+     .curie-panel__head. */
+  padding: 1px 8px 3px 14px;
   border-bottom: 1px solid var(--c-border-2);
+}
+.curie-diff__task-id {
+  flex-shrink: 0;
+  font-family: var(--c-mono);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--c-ink-45);
 }
 .curie-diff__filename {
   min-width: 0;
@@ -1557,26 +1606,12 @@
 .curie-diff__stat--del {
   color: #9f2f2d; /* minimalist-ui pale-red text token */
 }
-.curie-diff__copy {
+.curie-diff__actions {
   flex-shrink: 0;
   margin-left: auto;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border: 1px solid var(--c-border-2);
-  border-radius: 10px;
-  background: #fff;
-  cursor: pointer;
-  font-family: var(--c-sans);
-  font-weight: 500;
-  font-size: 12px;
-  color: var(--c-ink-65);
-  white-space: nowrap;
-}
-.curie-diff__copy:hover {
-  background: rgba(0, 0, 0, 0.03);
-  color: #000;
+  gap: 2px;
 }
 .curie-diff__body {
   display: flex;

@@ -24,6 +24,9 @@ export const HEADLINES = {
 }
 
 // Top-right icon buttons. `external: true` renders with target="_blank".
+// Email hidden for now — mailto: does nothing on machines with no default
+// mail client, which reads as a broken button. Restore once there's a
+// reliable contact path (e.g. Gmail compose link or a contact form).
 export const CTAS = [
   {
     id: 'linkedin',
@@ -32,7 +35,6 @@ export const CTAS = [
     href: 'https://www.linkedin.com/in/wingzeng/',
     external: true,
   },
-  { id: 'email', label: 'Email', icon: 'mail', href: 'mailto:wingzengying@gmail.com' },
 ]
 
 // Left-edge nav drives the morph stage; each id must match a STATE id in content.js.
@@ -48,8 +50,14 @@ export const NAV_ITEMS = [
 export const CURRENT_WORK = {
   label: 'Current Work',
   title: 'Making AI Agents work for Enterprise Engineers',
-  description:
-    'As the founding designer, I’m designing an agent platform for enterprise IT, where engineers collaborate with specialized AI agents to build, test, document, and maintain complex integrations.',
+  // The company name renders as an inline link (WorkContent stitches the
+  // three parts together) instead of spelling the URL out in the copy.
+  description: {
+    before: 'As the Founding Product Designer at ',
+    link: { label: 'CurieTech AI', href: 'https://curietech.ai' },
+    after:
+      ', I spent over two years redefining how enterprise developers collaborate with AI. I led the end-to-end design of an AI-native platform for enterprise integration and migration. Working as the sole designer, I partnered closely with founders and engineers to transform complex enterprise AI into experiences that are intuitive, trustworthy, and ready for production.',
+  },
 }
 
 // Previous work — rendered as the same alternating feature rows as the

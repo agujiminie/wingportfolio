@@ -15,7 +15,7 @@ const CTA_ICONS = { linkedin: Linkedin, mail: Mail }
  * morph canvas reads as the central focal element. The left-edge nav drives the
  * active morph state, themed by the active section's accent color.
  */
-export default function FrameOverlay({ activeId, onSelect, scrolled = false }) {
+export default function FrameOverlay({ activeId, onSelect, onGoHome, scrolled = false }) {
   const activeState = STATE_BY_ID[activeId]
 
   const handleSelect = (id) => {
@@ -34,13 +34,18 @@ export default function FrameOverlay({ activeId, onSelect, scrolled = false }) {
         aria-hidden="true"
       />
 
-      {/* Top-left — brand */}
-      <div className="frame__panel frame__brand">
+      {/* Top-left — brand (click to go home) */}
+      <button
+        type="button"
+        className="frame__panel frame__brand"
+        onClick={onGoHome}
+        aria-label="Go to homepage"
+      >
         <span className="frame__brand-mark" aria-hidden="true">
           <Feather size={22} strokeWidth={1.6} />
         </span>
         <span className="frame__brand-name">{BRAND.name}</span>
-      </div>
+      </button>
 
       {/* Bottom-left — hero headline (per-tab; re-mounts on switch to replay the fade) */}
       <div className="frame__panel frame__headline-panel">

@@ -19,7 +19,7 @@ export default function LandingView({ value, onChange, onSend }) {
         onSend={onSend}
         showRepo
         autoFocus
-        sendTip="Click me to explore the demo"
+        sendTip="CLICK HERE TO EXPLORE"
       />
 
       <div className="curie-actionbar">

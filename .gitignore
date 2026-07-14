@@ -27,3 +27,10 @@ claude_desktop_config.json
 /media
 /project cover
 /Wing Z_2026.pdf
+
+# Stray job-search / codex working files (not part of the site)
+/circle_state.yml
+/circle_step2_check.yml
+/panw_principal_step2.md
+/panw_sr_step1.yml
+/*.yml

@@ -1,12 +1,25 @@
 # Handoff Notes（跨账号/跨设备交接用）
 
 > 给下一个 Claude session（无论哪个账号登录）：开始干活前先读完这份文件。
-> Last updated: 2026-07-02
+> Last updated: 2026-07-13
 
 ## 项目是什么
 
 Wing Zeng 的个人 portfolio 网站（React 19 + Vite 7）。安装/运行/部署见 [README.md](README.md)。
 UI 需要像素级对齐 Figma——规则和自动校验流程见 [CLAUDE.md](CLAUDE.md)（每个 session 会自动加载）。
+
+## Git / 部署链路（2026-07-13 在新机器上验证）
+
+- **GitHub**：`git@github.com:agujiminie/wingportfolio.git`（remote origin，已用 SSH，免密 push）。
+  机器上 `~/.ssh/id_ed25519` 已认证为 GitHub 用户 `agujiminie`。
+- **Vercel 自动部署已通**：Vercel 账号 `wingzengying-9232s-projects`（Hobby），
+  项目 `wingportfolio` 通过 GitHub 集成监听 `main` 分支——**push 到 `main` 即自动生产部署**，
+  不需要本地 `vercel` CLI（无 `.vercel` 目录）。2026-07-13 用一个空 commit 实测：
+  GitHub commit status 回写 `Vercel → success`，链路确认可用。
+- **日常工作流**：改代码 → `git add -A && git commit -m "…"` → `git push`，Vercel 自动 build 上线。
+- **待确认**：自定义域名 `wingzeng.design` 是否指向该 Vercel 项目（API 查不到，需在
+  Vercel 项目 Settings → Domains 目视确认；`wingportfolio.vercel.app` 一定是活的）。
+- 求职流程遗留的游离文件（`circle_state.yml` 等 .yml + `panw_*`）已加进 `.gitignore`，不属于网站。
 
 ## 当前状态（截至 2026-07-02）
 

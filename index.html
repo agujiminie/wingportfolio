@@ -61,7 +61,15 @@
     font-family: var(--font-title);
     font-weight: 400;
     color: var(--black);
-    transition: opacity 0.22s ease, transform 0.22s ease;
+    text-wrap: balance;
+    transition:
+      font-size 0.68s var(--ease-enter),
+      line-height 0.68s var(--ease-enter),
+      letter-spacing 0.68s var(--ease-enter),
+      margin 0.68s var(--ease-enter),
+      transform 0.68s var(--ease-enter),
+      color 0.45s ease,
+      opacity 0.45s ease;
     -webkit-tap-highlight-color: transparent;
   }
   .step:focus-visible {
@@ -83,6 +91,7 @@
     color: var(--black);
     margin-bottom: 0.35em;
   }
+  [data-state="cover"] .step:hover { transform: translateX(6px); }
   [data-state="cover"] .step .dot { display: inline; }
 
   /* step states: done (small, above), active (96px), upcoming (small, below) */
@@ -94,7 +103,11 @@
     color: var(--muted);
     opacity: 0.5;
   }
-  .step[data-role="done"]:hover, .step[data-role="upcoming"]:hover { opacity: 0.85; }
+  .step[data-role="done"]:hover, .step[data-role="upcoming"]:hover {
+    opacity: 0.85;
+    color: var(--navy);
+    transform: translateX(6px);
+  }
   .step[data-role="active"] {
     font-size: clamp(40px, 5vw, 96px);
     line-height: 1.03;
@@ -103,9 +116,7 @@
     cursor: default;
     margin: 0.12em 0 0.3em;
   }
-  .step[data-role="done"] { order: -1; }
-  .step[data-role="active"] { order: 0; }
-  .step[data-role="upcoming"] { order: 1; margin-top: 8px; }
+  .step[data-role="upcoming"] { margin-top: 8px; }
 
   /* ---------- right column ---------- */
   .desc {
@@ -163,12 +174,21 @@
     inset: 0;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
+    transform: translateY(22px);
+    transition: opacity 0.4s ease, transform 0.55s var(--ease-enter);
   }
-  .desc-item.on, .media-item.on { opacity: 1; pointer-events: auto; }
+  .media-item { transform: translateY(0); transition: opacity 0.45s ease; }
+  .desc-item.on, .media-item.on {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition-delay: 0.12s;
+  }
 
-  [data-state="cover"] .desc, [data-state="cover"] .media { opacity: 0; pointer-events: none; }
-  .desc, .media { transition: opacity 0.4s ease; }
+  [data-state="cover"] .desc { opacity: 0; pointer-events: none; transform: translateY(26px); }
+  [data-state="cover"] .media { opacity: 0; pointer-events: none; transform: translateY(4%); }
+  .desc { transition: opacity 0.5s ease, transform 0.68s var(--ease-enter); }
+  .media { transition: opacity 0.55s ease, transform 0.8s var(--ease-enter); }
 
   /* ---------- footer ---------- */
   .foot {
@@ -200,28 +220,13 @@
   }
   [data-state="s3"] .hint { opacity: 0; }
 
-  /* ---------- state switching animation ---------- */
-  .switching .step,
-  .switching .desc-item.on,
-  .switching .media-item.on {
-    opacity: 0 !important;
-    transform: translateY(10px);
-    transition: opacity 0.18s ease-in, transform 0.18s ease-in;
-  }
-  .entering .step {
-    animation: rise 0.5s var(--ease-enter) both;
-  }
-  .entering .step:nth-child(2) { animation-delay: 0.05s; }
-  .entering .step:nth-child(3) { animation-delay: 0.1s; }
-  .entering .desc-item.on { animation: rise 0.55s var(--ease-enter) 0.08s both; }
-  .entering .media-item.on { animation: fadein 0.6s ease 0.12s both; }
+  /* first paint: gentle rise-in of the cover lines */
+  .boot .step { animation: rise 0.7s var(--ease-enter) both; }
+  .boot .step:nth-child(2) { animation-delay: 0.07s; }
+  .boot .step:nth-child(3) { animation-delay: 0.14s; }
   @keyframes rise {
-    from { opacity: 0; transform: translateY(14px); }
+    from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadein {
-    from { opacity: 0; }
-    to { opacity: 1; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -247,7 +252,7 @@
 </style>
 </head>
 <body data-state="cover">
-<main class="stage" id="stage">
+<main class="stage boot" id="stage">
 
   <nav class="steps" id="steps" aria-label="Design process steps">
     <button class="step" data-step="1" id="t1">Understand the system<span class="dot">s.</span></button>
@@ -325,28 +330,16 @@
 
   function setState(idx, skipAnim) {
     if (idx < 0 || idx >= STATES.length || idx === current) return;
-    if (busy) return;
-    if (reduced || skipAnim) {
-      current = idx;
-      body.setAttribute('data-state', STATES[idx]);
-      applyRoles(idx);
-      history.replaceState(null, '', idx === 0 ? location.pathname : '#' + idx);
-      return;
+    if (busy && !skipAnim) return;
+    stage.classList.remove('boot');
+    current = idx;
+    body.setAttribute('data-state', STATES[idx]);
+    applyRoles(idx);
+    history.replaceState(null, '', idx === 0 ? location.pathname : '#' + idx);
+    if (!reduced && !skipAnim) {
+      busy = true;
+      setTimeout(function () { busy = false; }, 420);
     }
-    busy = true;
-    stage.classList.add('switching');
-    setTimeout(function () {
-      current = idx;
-      body.setAttribute('data-state', STATES[idx]);
-      applyRoles(idx);
-      history.replaceState(null, '', idx === 0 ? location.pathname : '#' + idx);
-      stage.classList.remove('switching');
-      stage.classList.add('entering');
-      setTimeout(function () {
-        stage.classList.remove('entering');
-        busy = false;
-      }, 700);
-    }, 190);
   }
 
   titles.forEach(function (t) {

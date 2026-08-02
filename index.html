@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Design Process — Wing Zeng</title>
-<meta name="description" content="Wing Zeng's design process: understand the system, let real behavior decide, build systems that evolve.">
+<meta name="description" content="Wing Zeng's design process: understand the system, parallel prototyping in code, let real behavior decide, build systems that evolve.">
 <meta property="og:title" content="Design Process — Wing Zeng">
-<meta property="og:description" content="Understand the system. Let real behavior decide. Build systems that evolve.">
+<meta property="og:description" content="Understand the system. Parallel prototyping in code. Let real behavior decide. Build systems that evolve.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
@@ -206,43 +206,15 @@
     user-select: none;
   }
 
-  /* ---------- step 2: before / after shipping tabs ---------- */
-  .s2 { position: absolute; inset: 0; display: flex; flex-direction: column; }
-  .s2-tabs {
-    flex: none;
-    display: flex;
-    gap: 24px;
-    padding: clamp(14px, 2.6vh, 26px) 5.5% 0;
-  }
-  .s2-tab {
-    background: none;
-    border: 0;
-    padding: 0 0 9px;
-    cursor: pointer;
-    font-family: var(--font-ui);
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    border-bottom: 1px solid transparent;
-    transition: color 0.2s ease, border-color 0.2s ease;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .s2-tab:hover { color: var(--navy); }
-  .s2-tab[aria-selected="true"] { color: var(--black); border-bottom-color: var(--black); }
-  .s2-tab:focus-visible { outline: 2px solid var(--navy); outline-offset: 4px; }
-  .s2-panels { flex: 1; position: relative; min-height: 0; }
+  /* ---------- step 2: parallel prototyping demos ---------- */
+  .s2 { position: absolute; inset: 0; }
   .s2-panel {
     position: absolute;
     inset: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: clamp(16px, 3vh, 28px) 5.5% clamp(36px, 6vh, 56px);
-    display: none;
+    padding: clamp(20px, 3.6vh, 34px) 5.5% clamp(36px, 6vh, 56px);
   }
-  .s2-panel.on { display: block; }
-  .s2-panel.s2-center.on { display: flex; align-items: center; justify-content: center; }
-  .s2-panel.s2-center .chips { position: static; transform: none; }
   .s2-h {
     font-family: var(--font-ui);
     font-size: 11px;
@@ -291,30 +263,59 @@
     margin: 5px 0 10px;
     min-height: 2.9em;
   }
-  .stepper { background: #fff; border: 1px solid var(--chip-border); }
-  .stepper .frame {
+  .demo { background: #fff; border: 1px solid var(--chip-border); }
+  .dstage {
     position: relative;
     aspect-ratio: 1506 / 909;
-    cursor: pointer;
+    overflow: hidden;
+    background: #fff;
   }
-  .stepper .frame img {
+  .dframe { position: absolute; inset: 0; display: none; }
+  .dframe.on { display: block; }
+  .dframe img {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: contain;
-    display: none;
   }
-  .stepper .frame img.cur { display: block; }
-  .stepper-nav {
+  .hs {
+    position: absolute;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hs::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1.5px solid rgba(97, 82, 197, 0.65);
+    border-radius: 6px;
+    background: rgba(122, 103, 220, 0.12);
+    animation: hspulse 2.4s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes hspulse {
+    0%, 100% { opacity: 0.25; transform: scale(1); }
+    50% { opacity: 0.95; transform: scale(1.045); }
+  }
+  .dstage.flash .hs::after {
+    animation: hsflash 0.4s ease 2;
+  }
+  @keyframes hsflash {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.12); }
+  }
+  .demo-bar {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-top: 8px;
+    gap: 10px;
+    padding: 8px 10px;
+    border-top: 1px solid var(--chip-border);
   }
-  .stepper-nav .arrow { width: 26px; height: 26px; border-radius: 4px; }
-  .stepper-nav .arrow svg { width: 11px; height: 11px; }
-  .stepper-count {
+  .dcount {
     font-size: 10px;
     letter-spacing: 0.08em;
     color: var(--ink-70);
@@ -322,17 +323,37 @@
     user-select: none;
     white-space: nowrap;
   }
-  .stepper-hint {
-    margin-left: auto;
+  .dcap {
+    flex: 1;
     min-width: 0;
     font-size: 10px;
-    letter-spacing: 0.04em;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
     color: var(--muted);
     user-select: none;
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
   }
+  .dreset {
+    flex: none;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid #eaeaea;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--ink-70);
+    padding: 0;
+    transition: border-color 0.2s ease, color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .dreset:hover { border-color: #d6d6d6; color: var(--black); }
+  .dreset svg { display: block; }
   .s2 .ph {
     display: inline-block;
     border: 1px dashed var(--chip-border);
@@ -441,6 +462,7 @@
   .boot .step { animation: rise 0.7s var(--ease-enter) both; }
   .boot .step:nth-child(2) { animation-delay: 0.07s; }
   .boot .step:nth-child(3) { animation-delay: 0.14s; }
+  .boot .step:nth-child(4) { animation-delay: 0.21s; }
   @keyframes rise {
     from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
@@ -461,7 +483,7 @@
     .media { position: static; margin-top: 28px; min-height: 46vh; flex: 1; }
     .media-item { display: none; position: absolute; }
     .media-item.on { display: block; }
-    .media { position: relative; }
+    .media { position: relative; left: auto; right: auto; top: auto; bottom: auto; }
     .foot { position: static; padding: 28px var(--mx) 40px; gap: 24px; flex-wrap: wrap; }
     .hint { display: none; }
     .nav { display: none; }
@@ -474,15 +496,17 @@
 
   <nav class="steps" id="steps" aria-label="Design process steps">
     <button class="step" data-step="1" id="t1">Understand the system<span class="dot">s.</span></button>
-    <button class="step" data-step="2" id="t2">Let real behavior decide<span class="dot">.</span></button>
-    <button class="step" data-step="3" id="t3">Build systems that evolve<span class="dot">.</span></button>
+    <button class="step" data-step="2" id="t2">Parallel prototyping in code<span class="dot">.</span></button>
+    <button class="step" data-step="3" id="t3">Let real behavior decide<span class="dot">.</span></button>
+    <button class="step" data-step="4" id="t4">Build systems that evolve<span class="dot">.</span></button>
   </nav>
 
   <div class="desc" aria-live="polite">
     <div class="panel">
       <p class="desc-item" data-step="1">Map the user workflow, agent architecture, and organizational constraints together.</p>
-      <p class="desc-item" data-step="2">Before shipping, align through parallel prototyping (in code); then learn from user and model behavior in production.</p>
-      <p class="desc-item" data-step="3">Encode proven judgment into reusable rules, then continuously test, review, and update them.</p>
+      <p class="desc-item" data-step="2">Before shipping, align through parallel prototyping in code — three directions, each a clickable demo below.</p>
+      <p class="desc-item" data-step="3">After shipping, learn from user and model behavior in production.</p>
+      <p class="desc-item" data-step="4">Encode proven judgment into reusable rules, then continuously test, review, and update them.</p>
     </div>
   </div>
 
@@ -512,101 +536,130 @@
       </div>
       <div class="media-item" data-step="2">
         <div class="s2">
-          <div class="s2-tabs" role="tablist" aria-label="Before and after shipping">
-            <button class="s2-tab" role="tab" id="s2t-before" aria-selected="true" aria-controls="s2p-before">Before shipping</button>
-            <button class="s2-tab" role="tab" id="s2t-after" aria-selected="false" aria-controls="s2p-after">After shipping</button>
-          </div>
-          <div class="s2-panels">
-            <div class="s2-panel on" role="tabpanel" id="s2p-before" aria-labelledby="s2t-before" data-real>
+            <div class="s2-panel" data-real>
               <section class="s2-section">
-                <h3 class="s2-h"><span class="idx">a</span>Parallel prototyping in code</h3>
                 <div class="protos">
                   <article class="proto">
                     <div class="proto-name">Guided Q&amp;A</div>
                     <p class="proto-sub">The agent asks one question at a time and walks the user from goal to generated flow.</p>
-                    <div class="stepper" data-stepper>
-                      <div class="frame" title="Click to step through">
-                        <img class="cur" src="assets/step2/qa-1.png" alt="Guided Q&A prototype — the agent asks for the goal of the task with quick-pick options" loading="lazy" decoding="async">
-                        <img src="assets/step2/qa-2.png" alt="Guided Q&A prototype — follow-up question about design specs and requirements" loading="lazy" decoding="async">
-                        <img src="assets/step2/qa-3.png" alt="Guided Q&A prototype — step 3 of the question flow" loading="lazy" decoding="async">
-                        <img src="assets/step2/qa-4.png" alt="Guided Q&A prototype — step 4 of the question flow" loading="lazy" decoding="async">
-                        <img src="assets/step2/qa-5.png" alt="Guided Q&A prototype — step 5 of the question flow" loading="lazy" decoding="async">
-                        <img src="assets/step2/qa-6.png" alt="Guided Q&A prototype — final step of the question flow" loading="lazy" decoding="async">
+                    <div class="demo" data-demo>
+                      <div class="dstage">
+                        <div class="dframe on" data-caption="Describe the flow — hit send">
+                          <img src="assets/step2/qa-1.png" alt="Guided Q&A demo — goal picked, flow described, ready to send" loading="lazy" decoding="async">
+                          <button class="hs" style="left:79.8%;top:86.3%;width:6%;height:8.6%" aria-label="Send the message"></button>
+                        </div>
+                        <div class="dframe" data-caption="Click the input to answer">
+                          <img src="assets/step2/qa-2.png" alt="Guided Q&A demo — the agent asks when the integration should trigger" loading="lazy" decoding="async">
+                          <button class="hs" style="left:31.5%;top:82.7%;width:53%;height:10.7%" aria-label="Click the input to type the answer"></button>
+                        </div>
+                        <div class="dframe" data-caption="Send your answer">
+                          <img src="assets/step2/qa-3.png" alt="Guided Q&A demo — trigger answer typed in the input" loading="lazy" decoding="async">
+                          <button class="hs" style="left:79.8%;top:86.3%;width:6%;height:8.6%" aria-label="Send the answer"></button>
+                        </div>
+                        <div class="dframe" data-caption="Agent drafts the flow — click the chat">
+                          <img src="assets/step2/qa-4.png" alt="Guided Q&A demo — answer sent, agent thinking" loading="lazy" decoding="async">
+                          <button class="hs" style="left:24%;top:45%;width:72%;height:25%" aria-label="See the agent's flow breakdown"></button>
+                        </div>
+                        <div class="dframe" data-caption="Click the input to refine a step">
+                          <img src="assets/step2/qa-5.png" alt="Guided Q&A demo — agent posts a six-step integration breakdown" loading="lazy" decoding="async">
+                          <button class="hs" style="left:31.5%;top:82.7%;width:53%;height:10.7%" aria-label="Click the input to refine a step"></button>
+                        </div>
+                        <div class="dframe" data-caption="Send — restarts the demo">
+                          <img src="assets/step2/qa-6.png" alt="Guided Q&A demo — refinement typed, ready to send" loading="lazy" decoding="async">
+                          <button class="hs" style="left:79.8%;top:86.3%;width:6%;height:8.6%" aria-label="Send and restart the demo"></button>
+                        </div>
                       </div>
-                      <div class="stepper-nav">
-                        <button class="arrow sprev" aria-label="Previous frame">
-                          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      <div class="demo-bar">
+                        <span class="dcount">1 / 6</span>
+                        <span class="dcap"></span>
+                        <button class="dreset" aria-label="Restart demo">
+                          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.5-3.6M13 2v3h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </button>
-                        <button class="arrow snext" aria-label="Next frame">
-                          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </button>
-                        <span class="stepper-count">1 / 6</span>
-                        <span class="stepper-hint">click image to step</span>
                       </div>
                     </div>
                   </article>
                   <article class="proto">
                     <div class="proto-name">Widgets</div>
                     <p class="proto-sub">Selection groups appear inline in the chat flow, and the input box adapts to the question.</p>
-                    <div class="stepper" data-stepper>
-                      <div class="frame" title="Click to step through">
-                        <img class="cur" src="assets/step2/wid-1.png" alt="Widgets prototype — grouped selection chips for targeted system, transformation, logging, and error handling" loading="lazy" decoding="async">
-                        <img src="assets/step2/wid-2.png" alt="Widgets prototype — exploration of inline selections in the chat flow" loading="lazy" decoding="async">
-                        <img src="assets/step2/wid-3.png" alt="Widgets prototype — exploration of the adapting input box" loading="lazy" decoding="async">
-                        <img src="assets/step2/wid-4.png" alt="Widgets prototype — refined widget selections in the product design" loading="lazy" decoding="async">
-                        <img src="assets/step2/wid-5.png" alt="Widgets prototype — refined chat flow with selection widgets" loading="lazy" decoding="async">
-                        <img src="assets/step2/wid-6.png" alt="Widgets prototype — refined input box state" loading="lazy" decoding="async">
+                    <div class="demo" data-demo>
+                      <div class="dstage">
+                        <div class="dframe on" data-caption="Click a chip to answer inline">
+                          <img src="assets/step2/wid-1.png" alt="Widgets demo — grouped selection chips for targeted system, transformation, logging, and error handling" loading="lazy" decoding="async">
+                          <button class="hs" style="left:50.9%;top:33%;width:11.6%;height:5%" aria-label="Select the Scheduled Data Sync chip"></button>
+                        </div>
+                        <div class="dframe" data-caption="Selections made — send">
+                          <img src="assets/step2/wid-2.png" alt="Widgets demo — chips selected across the question groups" loading="lazy" decoding="async">
+                          <button class="hs" style="left:82.3%;top:88%;width:4.6%;height:6.5%" aria-label="Send the selections"></button>
+                        </div>
+                        <div class="dframe" data-caption="Generating — click for the shipped version">
+                          <img src="assets/step2/wid-3.png" alt="Widgets demo — countdown message while the code is generated" loading="lazy" decoding="async">
+                          <button class="hs" style="left:28.5%;top:74%;width:56.3%;height:6.5%" aria-label="See the shipped version of the widget pattern"></button>
+                        </div>
+                        <div class="dframe" data-caption="Pick 'Paste sample data'">
+                          <img src="assets/step2/wid-4.png" alt="Widgets demo — shipped design with option widgets for mapping table, sample data, or scratch" loading="lazy" decoding="async">
+                          <button class="hs" style="left:25.9%;top:57.3%;width:14%;height:6%" aria-label="Choose Paste sample data"></button>
+                        </div>
+                        <div class="dframe" data-caption="Click the pane to paste data">
+                          <img src="assets/step2/wid-5.png" alt="Widgets demo — the input box adapts into XML input and JSON output panes" loading="lazy" decoding="async">
+                          <button class="hs" style="left:25.2%;top:49.4%;width:32.3%;height:27.3%" aria-label="Paste XML into the input pane"></button>
+                        </div>
+                        <div class="dframe" data-caption="Send — restarts the demo">
+                          <img src="assets/step2/wid-6.png" alt="Widgets demo — XML sample pasted into the input pane" loading="lazy" decoding="async">
+                          <button class="hs" style="left:87.4%;top:87.3%;width:5%;height:7.7%" aria-label="Send and restart the demo"></button>
+                        </div>
                       </div>
-                      <div class="stepper-nav">
-                        <button class="arrow sprev" aria-label="Previous frame">
-                          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      <div class="demo-bar">
+                        <span class="dcount">1 / 6</span>
+                        <span class="dcap"></span>
+                        <button class="dreset" aria-label="Restart demo">
+                          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.5-3.6M13 2v3h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </button>
-                        <button class="arrow snext" aria-label="Next frame">
-                          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </button>
-                        <span class="stepper-count">1 / 6</span>
-                        <span class="stepper-hint">click image to step</span>
                       </div>
                     </div>
                   </article>
                   <article class="proto">
                     <div class="proto-name">Context-aware<span class="proto-badge">Final</span></div>
                     <p class="proto-sub">Describe the goal, connect the repo or files; the agent follows up and compiles a design spec for review.</p>
-                    <div class="stepper" data-stepper>
-                      <div class="frame" title="Click to step through">
-                        <img class="cur" src="assets/step2/ctx-1.png" alt="Context-aware prototype — describe the goal in an open prompt with repo context attached" loading="lazy" decoding="async">
-                        <img src="assets/step2/ctx-2.png" alt="Context-aware prototype — the agent follows up using connected repo and file context" loading="lazy" decoding="async">
-                        <img src="assets/step2/ctx-3.png" alt="Context-aware prototype — everything is turned into a design spec for review" loading="lazy" decoding="async">
+                    <div class="demo" data-demo>
+                      <div class="dstage">
+                        <div class="dframe on" data-caption="Repo connected — hit Run">
+                          <img src="assets/step2/ctx-1.png" alt="Context-aware demo — open prompt with a repo connected, Ask and Run actions" loading="lazy" decoding="async">
+                          <button class="hs" style="left:69.4%;top:44.9%;width:7.4%;height:6.2%" aria-label="Run the request"></button>
+                        </div>
+                        <div class="dframe" data-caption="Pick a suggested task">
+                          <img src="assets/step2/ctx-2.png" alt="Context-aware demo — flow found in the repo, agent suggests follow-up tasks" loading="lazy" decoding="async">
+                          <button class="hs" style="left:30.2%;top:31.2%;width:18.7%;height:5.6%" aria-label="Pick the Handle new or changed endpoints task"></button>
+                        </div>
+                        <div class="dframe" data-caption="Task starts with context — click restarts">
+                          <img src="assets/step2/ctx-3.png" alt="Context-aware demo — chosen task kicked off at the coder with full context" loading="lazy" decoding="async">
+                          <button class="hs" style="left:25.5%;top:76.6%;width:53%;height:8.4%" aria-label="Open the started task and restart the demo"></button>
+                        </div>
                       </div>
-                      <div class="stepper-nav">
-                        <button class="arrow sprev" aria-label="Previous frame">
-                          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      <div class="demo-bar">
+                        <span class="dcount">1 / 3</span>
+                        <span class="dcap"></span>
+                        <button class="dreset" aria-label="Restart demo">
+                          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.5-3.6M13 2v3h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </button>
-                        <button class="arrow snext" aria-label="Next frame">
-                          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </button>
-                        <span class="stepper-count">1 / 3</span>
-                        <span class="stepper-hint">click image to step</span>
                       </div>
                     </div>
                   </article>
                 </div>
               </section>
               <section class="s2-section">
-                <h3 class="s2-h"><span class="idx">b</span>Align by the variables that may change the experience</h3>
+                <h3 class="s2-h">Align by the variables that may change the experience</h3>
                 <div class="ph">变量对齐内容位 — 发我图或表即可替换</div>
               </section>
             </div>
-            <div class="s2-panel s2-center" role="tabpanel" id="s2p-after" aria-labelledby="s2t-after">
-              <div class="chips">
-                <div class="chip">Learn from user and model behavior in production</div>
-                <div class="chip">内容待补 — 发我图即可替换</div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
       <div class="media-item" data-step="3">
+        <div class="chips">
+          <div class="chip">Learn from user and model behavior in production</div>
+          <div class="chip">内容待补 — 发我图即可替换</div>
+        </div>
+      </div>
+      <div class="media-item" data-step="4">
         <div class="chips">
           <div class="chip">Design.md 真实片段</div>
           <div class="chip">AI review / design QA 实例截图</div>
@@ -637,13 +690,13 @@
 
 <script>
 (function () {
-  var STATES = ['cover', 's1', 's2', 's3'];
+  var STATES = ['cover', 's1', 's2', 's3', 's4'];
   var DUR = 560;
   var EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
   var current = 0;
   var body = document.body;
   var stage = document.getElementById('stage');
-  var titles = [1, 2, 3].map(function (n) { return document.getElementById('t' + n); });
+  var titles = [1, 2, 3, 4].map(function (n) { return document.getElementById('t' + n); });
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var liveClones = [];
 
@@ -672,20 +725,15 @@
       el.classList.toggle('on', el.getAttribute('data-step') == idx);
     });
     updateFilled();
-    document.getElementById('counter').textContent = '0' + idx + ' / 03';
+    document.getElementById('counter').textContent = '0' + idx + ' / 04';
     document.getElementById('prev').disabled = false;
-    document.getElementById('next').disabled = (idx === 3);
+    document.getElementById('next').disabled = (idx === 4);
   }
 
   function updateFilled() {
     var activeMedia = document.querySelector('.media-item.on');
-    var filled = false;
-    if (activeMedia) {
-      if (activeMedia.querySelector('[data-gallery]')) filled = true;
-      var tabPanel = activeMedia.querySelector('.s2-panel.on');
-      if (tabPanel) filled = tabPanel.hasAttribute('data-real');
-    }
-    document.querySelector('.media').classList.toggle('filled', filled);
+    document.querySelector('.media').classList.toggle('filled',
+      !!(activeMedia && activeMedia.querySelector('[data-gallery], [data-real]')));
   }
 
   function setState(idx, skipAnim) {
@@ -766,7 +814,7 @@
   });
 
   document.getElementById('prev').addEventListener('click', function () { setState(Math.max(current - 1, 0)); });
-  document.getElementById('next').addEventListener('click', function () { setState(Math.min(current + 1, 3)); });
+  document.getElementById('next').addEventListener('click', function () { setState(Math.min(current + 1, 4)); });
 
   document.querySelectorAll('[data-gallery]').forEach(function (g) {
     var slides = g.querySelector('.gslides');
@@ -797,39 +845,36 @@
     render();
   });
 
-  document.querySelectorAll('.s2-tabs').forEach(function (tabs) {
-    var buttons = tabs.querySelectorAll('.s2-tab');
-    buttons.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        buttons.forEach(function (b) {
-          b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
-        });
-        var panels = tabs.parentElement.querySelectorAll('.s2-panel');
-        panels.forEach(function (p) {
-          p.classList.toggle('on', p.id === btn.getAttribute('aria-controls'));
-        });
-        updateFilled();
+  document.querySelectorAll('[data-demo]').forEach(function (d) {
+    var frames = d.querySelectorAll('.dframe');
+    var count = frames.length;
+    var pos = 0;
+    var stage = d.querySelector('.dstage');
+    var dcount = d.querySelector('.dcount');
+    var dcap = d.querySelector('.dcap');
+    function render() {
+      frames.forEach(function (f, i) { f.classList.toggle('on', i === pos); });
+      dcount.textContent = (pos + 1) + ' / ' + count;
+      dcap.textContent = frames[pos].getAttribute('data-caption') || '';
+    }
+    frames.forEach(function (f) {
+      var hs = f.querySelector('.hs');
+      if (!hs) return;
+      hs.addEventListener('click', function (e) {
+        e.stopPropagation();
+        stage.classList.remove('flash');
+        pos = (pos + 1) % count;
+        render();
       });
     });
-  });
-
-  document.querySelectorAll('[data-stepper]').forEach(function (s) {
-    var imgs = s.querySelectorAll('.frame img');
-    var count = imgs.length;
-    var pos = 0;
-    var sprev = s.querySelector('.sprev');
-    var snext = s.querySelector('.snext');
-    var scount = s.querySelector('.stepper-count');
-    function render() {
-      imgs.forEach(function (img, i) { img.classList.toggle('cur', i === pos); });
-      scount.textContent = (pos + 1) + ' / ' + count;
-      sprev.disabled = (pos === 0);
-      snext.disabled = (pos === count - 1);
-    }
-    sprev.addEventListener('click', function () { if (pos > 0) { pos--; render(); } });
-    snext.addEventListener('click', function () { if (pos < count - 1) { pos++; render(); } });
-    s.querySelector('.frame').addEventListener('click', function () {
-      pos = (pos + 1) % count;
+    stage.addEventListener('click', function () {
+      stage.classList.remove('flash');
+      void stage.offsetWidth;
+      stage.classList.add('flash');
+    });
+    d.querySelector('.dreset').addEventListener('click', function () {
+      stage.classList.remove('flash');
+      pos = 0;
       render();
     });
     render();
@@ -837,12 +882,12 @@
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
-      e.preventDefault(); setState(Math.min(current + 1, 3));
+      e.preventDefault(); setState(Math.min(current + 1, 4));
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') {
       e.preventDefault(); setState(Math.max(current - 1, 0));
     } else if (e.key === 'Escape' || e.key === 'Home') {
       setState(0);
-    } else if (e.key >= '1' && e.key <= '3') {
+    } else if (e.key >= '1' && e.key <= '4') {
       setState(parseInt(e.key, 10));
     }
   });
@@ -858,7 +903,7 @@
       wheelAcc = 0;
       wheelLock = true;
       setTimeout(function () { wheelLock = false; }, 900);
-      setState(Math.min(Math.max(current + dir, 0), 3));
+      setState(Math.min(Math.max(current + dir, 0), 4));
     }
   }, { passive: true });
 
@@ -872,11 +917,11 @@
     if (e.target.closest && e.target.closest('.s2-panel')) { touchY = null; return; }
     var dy = touchY - e.changedTouches[0].clientY;
     touchY = null;
-    if (Math.abs(dy) > 50) setState(Math.min(Math.max(current + (dy > 0 ? 1 : -1), 0), 3));
+    if (Math.abs(dy) > 50) setState(Math.min(Math.max(current + (dy > 0 ? 1 : -1), 0), 4));
   }, { passive: true });
 
   var h = parseInt((location.hash || '').replace('#', ''), 10);
-  if (h >= 1 && h <= 3) setState(h, true);
+  if (h >= 1 && h <= 4) setState(h, true);
 })();
 </script>
 </body>

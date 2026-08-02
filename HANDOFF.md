@@ -12,13 +12,16 @@ UI 需要像素级对齐 Figma——规则和自动校验流程见 [CLAUDE.md](C
 
 - **GitHub**：`git@github.com:agujiminie/wingportfolio.git`（remote origin，已用 SSH，免密 push）。
   机器上 `~/.ssh/id_ed25519` 已认证为 GitHub 用户 `agujiminie`。
-- **Vercel 自动部署已通**：Vercel 账号 `wingzengying-9232s-projects`（Hobby），
-  项目 `wingportfolio` 通过 GitHub 集成监听 `main` 分支——**push 到 `main` 即自动生产部署**，
-  不需要本地 `vercel` CLI（无 `.vercel` 目录）。2026-07-13 用一个空 commit 实测：
-  GitHub commit status 回写 `Vercel → success`，链路确认可用。
-- **日常工作流**：改代码 → `git add -A && git commit -m "…"` → `git push`，Vercel 自动 build 上线。
-- **待确认**：自定义域名 `wingzeng.design` 是否指向该 Vercel 项目（API 查不到，需在
-  Vercel 项目 Settings → Domains 目视确认；`wingportfolio.vercel.app` 一定是活的）。
+- **部署目标：GitHub Pages**（2026-08-02 起）。仓库已启用 Pages（内置
+  `pages-build-deployment` workflow，deploy-from-branch 模式），改动落到 `main` 后
+  Pages 自动更新。
+- **Vercel 部署已停用**（2026-08-02）：用户不再使用 Vercel，且旧的 GitHub 集成在每次
+  push 时都会触发失败的 preview deployment 并给用户发邮件。根目录 `vercel.json` 已设
+  `git.deploymentEnabled: false`，让 Vercel 跳过所有 git 触发的部署。**不要删除这个文件，
+  也不要恢复 Vercel 部署。** 彻底断开需要用户在 Vercel Dashboard（账号
+  `wingzengying-9232s-projects`）里 Settings → Git → Disconnect 或直接删掉
+  `wingportfolio` 项目——session 无法访问 Vercel 后台。
+- **日常工作流**：改代码 → `git add -A && git commit -m "…"` → `git push`。
 - 求职流程遗留的游离文件（`circle_state.yml` 等 .yml + `panw_*`）已加进 `.gitignore`，不属于网站。
 
 ## 当前状态（截至 2026-07-02）

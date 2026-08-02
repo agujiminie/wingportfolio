@@ -89,9 +89,9 @@
   /* step states: done (small, above), active (96px), upcoming (small, below) */
   .step .dot { display: none; }
   .step[data-role="done"], .step[data-role="upcoming"] {
-    font-size: clamp(18px, 1.875vw, 36px);
-    line-height: 1.32;
-    letter-spacing: -0.02em;
+    font-size: clamp(13px, 0.94vw, 18px);
+    line-height: 1.5;
+    letter-spacing: -0.01em;
     color: var(--muted);
     opacity: var(--dim, 0.5);
   }
@@ -101,25 +101,25 @@
     transform: translateX(6px);
   }
   .step[data-role="active"] {
-    font-size: clamp(40px, 5vw, 96px);
+    font-size: clamp(38px, 4.7vw, 90px);
     line-height: 1.03;
     letter-spacing: -0.05em;
     color: var(--black);
     cursor: default;
-    margin: 0.12em 0 0.3em;
+    margin: 0.18em 0 0.42em;
   }
-  .step[data-role="upcoming"] { margin-top: 8px; }
+  .step[data-role="upcoming"] { margin-top: 4px; }
 
   /* ---------- right column ---------- */
   .desc {
     position: absolute;
     left: 60%;
     top: var(--my);
-    width: min(35.4vw, 680px);
+    width: min(30vw, 560px);
     font-family: var(--font-ui);
-    font-size: clamp(17px, 1.875vw, 36px);
-    line-height: 1.23;
-    letter-spacing: -0.05em;
+    font-size: clamp(15px, 1.15vw, 22px);
+    line-height: 1.5;
+    letter-spacing: -0.01em;
     color: var(--ink-70);
     z-index: 2;
   }
@@ -141,19 +141,19 @@
   }
   .media .chips {
     position: absolute;
-    left: 50%;
-    top: 45%;
-    transform: translateX(-25%);
+    left: 20%;
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
     flex-direction: column;
     gap: 0;
-    min-width: 220px;
+    min-width: 200px;
   }
   .media .chip {
     background: var(--chip-bg);
     border: 1px solid var(--chip-border);
-    padding: 8px 14px;
-    font-size: 12px;
+    padding: 6px 10px;
+    font-size: 11px;
     letter-spacing: -0.01em;
     color: var(--ink-70);
     white-space: nowrap;
@@ -189,9 +189,9 @@
     bottom: clamp(20px, 4.35vh, 47px);
     display: flex;
     gap: clamp(40px, 6.25vw, 120px);
-    font-size: 12px;
+    font-size: 11px;
     line-height: 1.5;
-    letter-spacing: -0.022em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
     z-index: 3;
   }
@@ -226,7 +226,7 @@
   }
   [data-state="cover"] .nav { opacity: 0; pointer-events: none; }
   .counter {
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: 0.08em;
     color: var(--ink-70);
     font-variant-numeric: tabular-nums;

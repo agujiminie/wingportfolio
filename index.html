@@ -228,7 +228,8 @@
   .protos {
     --dscale: 1;
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: flex-start;
     gap: 18px;
   }
   .demo-ctl {
@@ -289,8 +290,8 @@
     padding: 12px 12px 10px;
     display: flex;
     flex-direction: column;
-    width: calc(var(--dscale, 1) * 100%);
-    margin: 0 auto;
+    flex: 0 0 auto;
+    width: calc(var(--dscale, 1) * (100% + 18px) - 18px);
   }
   .proto-name {
     font-size: 12px;
@@ -977,7 +978,7 @@
               <section class="s2-section">
                 <div class="demo-ctl">
                   <label class="dctl-label" for="dctl">Demo size</label>
-                  <input class="dctl" type="range" id="dctl" min="50" max="100" step="1" value="100" aria-label="Demo window size">
+                  <input class="dctl" type="range" id="dctl" min="33" max="100" step="1" value="100" aria-label="Demo window size">
                   <span class="dctl-val" id="dctlval">100%</span>
                 </div>
                 <div class="protos">

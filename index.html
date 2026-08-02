@@ -206,6 +206,144 @@
     user-select: none;
   }
 
+  /* ---------- step 2: before / after shipping tabs ---------- */
+  .s2 { position: absolute; inset: 0; display: flex; flex-direction: column; }
+  .s2-tabs {
+    flex: none;
+    display: flex;
+    gap: 24px;
+    padding: clamp(14px, 2.6vh, 26px) 5.5% 0;
+  }
+  .s2-tab {
+    background: none;
+    border: 0;
+    padding: 0 0 9px;
+    cursor: pointer;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .s2-tab:hover { color: var(--navy); }
+  .s2-tab[aria-selected="true"] { color: var(--black); border-bottom-color: var(--black); }
+  .s2-tab:focus-visible { outline: 2px solid var(--navy); outline-offset: 4px; }
+  .s2-panels { flex: 1; position: relative; min-height: 0; }
+  .s2-panel {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: clamp(16px, 3vh, 28px) 5.5% clamp(36px, 6vh, 56px);
+    display: none;
+  }
+  .s2-panel.on { display: block; }
+  .s2-panel.s2-center.on { display: flex; align-items: center; justify-content: center; }
+  .s2-panel.s2-center .chips { position: static; transform: none; }
+  .s2-h {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-70);
+    margin: 0 0 14px;
+  }
+  .s2-h .idx { color: var(--muted); margin-right: 8px; }
+  .s2-section + .s2-section { margin-top: clamp(28px, 5vh, 48px); }
+  .protos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+  @media (max-width: 1180px) { .protos { grid-template-columns: 1fr; } }
+  .proto {
+    border: 1px solid var(--chip-border);
+    background: var(--chip-bg);
+    padding: 12px 12px 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  .proto-name {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--black);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .proto-badge {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--navy);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+  .proto-sub {
+    font-size: 11px;
+    line-height: 1.45;
+    color: var(--muted);
+    margin: 5px 0 10px;
+    min-height: 2.9em;
+  }
+  .stepper { background: #fff; border: 1px solid var(--chip-border); }
+  .stepper .frame {
+    position: relative;
+    aspect-ratio: 1506 / 909;
+    cursor: pointer;
+  }
+  .stepper .frame img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: none;
+  }
+  .stepper .frame img.cur { display: block; }
+  .stepper-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .stepper-nav .arrow { width: 26px; height: 26px; border-radius: 4px; }
+  .stepper-nav .arrow svg { width: 11px; height: 11px; }
+  .stepper-count {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ink-70);
+    font-variant-numeric: tabular-nums;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .stepper-hint {
+    margin-left: auto;
+    min-width: 0;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    user-select: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .s2 .ph {
+    display: inline-block;
+    border: 1px dashed var(--chip-border);
+    background: var(--chip-bg);
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: -0.01em;
+    padding: 14px 18px;
+  }
+  .media-item[data-step="2"] .s2 { opacity: 1; }
+
   .panel { position: absolute; inset: 0; }
   .desc-item, .media-item {
     position: absolute;
@@ -373,9 +511,99 @@
         </div>
       </div>
       <div class="media-item" data-step="2">
-        <div class="chips">
-          <div class="chip">20+ exploration 截图(哪个 feature 的?各版本参数是什么)</div>
-          <div class="chip">三方向 prototype 录屏</div>
+        <div class="s2">
+          <div class="s2-tabs" role="tablist" aria-label="Before and after shipping">
+            <button class="s2-tab" role="tab" id="s2t-before" aria-selected="true" aria-controls="s2p-before">Before shipping</button>
+            <button class="s2-tab" role="tab" id="s2t-after" aria-selected="false" aria-controls="s2p-after">After shipping</button>
+          </div>
+          <div class="s2-panels">
+            <div class="s2-panel on" role="tabpanel" id="s2p-before" aria-labelledby="s2t-before" data-real>
+              <section class="s2-section">
+                <h3 class="s2-h"><span class="idx">a</span>Parallel prototyping in code</h3>
+                <div class="protos">
+                  <article class="proto">
+                    <div class="proto-name">Guided Q&amp;A</div>
+                    <p class="proto-sub">The agent asks one question at a time and walks the user from goal to generated flow.</p>
+                    <div class="stepper" data-stepper>
+                      <div class="frame" title="Click to step through">
+                        <img class="cur" src="assets/step2/qa-1.png" alt="Guided Q&A prototype — the agent asks for the goal of the task with quick-pick options" loading="lazy" decoding="async">
+                        <img src="assets/step2/qa-2.png" alt="Guided Q&A prototype — follow-up question about design specs and requirements" loading="lazy" decoding="async">
+                        <img src="assets/step2/qa-3.png" alt="Guided Q&A prototype — step 3 of the question flow" loading="lazy" decoding="async">
+                        <img src="assets/step2/qa-4.png" alt="Guided Q&A prototype — step 4 of the question flow" loading="lazy" decoding="async">
+                        <img src="assets/step2/qa-5.png" alt="Guided Q&A prototype — step 5 of the question flow" loading="lazy" decoding="async">
+                        <img src="assets/step2/qa-6.png" alt="Guided Q&A prototype — final step of the question flow" loading="lazy" decoding="async">
+                      </div>
+                      <div class="stepper-nav">
+                        <button class="arrow sprev" aria-label="Previous frame">
+                          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button class="arrow snext" aria-label="Next frame">
+                          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </button>
+                        <span class="stepper-count">1 / 6</span>
+                        <span class="stepper-hint">click image to step</span>
+                      </div>
+                    </div>
+                  </article>
+                  <article class="proto">
+                    <div class="proto-name">Widgets</div>
+                    <p class="proto-sub">Selection groups appear inline in the chat flow, and the input box adapts to the question.</p>
+                    <div class="stepper" data-stepper>
+                      <div class="frame" title="Click to step through">
+                        <img class="cur" src="assets/step2/wid-1.png" alt="Widgets prototype — grouped selection chips for targeted system, transformation, logging, and error handling" loading="lazy" decoding="async">
+                        <img src="assets/step2/wid-2.png" alt="Widgets prototype — exploration of inline selections in the chat flow" loading="lazy" decoding="async">
+                        <img src="assets/step2/wid-3.png" alt="Widgets prototype — exploration of the adapting input box" loading="lazy" decoding="async">
+                        <img src="assets/step2/wid-4.png" alt="Widgets prototype — refined widget selections in the product design" loading="lazy" decoding="async">
+                        <img src="assets/step2/wid-5.png" alt="Widgets prototype — refined chat flow with selection widgets" loading="lazy" decoding="async">
+                        <img src="assets/step2/wid-6.png" alt="Widgets prototype — refined input box state" loading="lazy" decoding="async">
+                      </div>
+                      <div class="stepper-nav">
+                        <button class="arrow sprev" aria-label="Previous frame">
+                          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button class="arrow snext" aria-label="Next frame">
+                          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </button>
+                        <span class="stepper-count">1 / 6</span>
+                        <span class="stepper-hint">click image to step</span>
+                      </div>
+                    </div>
+                  </article>
+                  <article class="proto">
+                    <div class="proto-name">Context-aware<span class="proto-badge">Final</span></div>
+                    <p class="proto-sub">Describe the goal, connect the repo or files; the agent follows up and compiles a design spec for review.</p>
+                    <div class="stepper" data-stepper>
+                      <div class="frame" title="Click to step through">
+                        <img class="cur" src="assets/step2/ctx-1.png" alt="Context-aware prototype — describe the goal in an open prompt with repo context attached" loading="lazy" decoding="async">
+                        <img src="assets/step2/ctx-2.png" alt="Context-aware prototype — the agent follows up using connected repo and file context" loading="lazy" decoding="async">
+                        <img src="assets/step2/ctx-3.png" alt="Context-aware prototype — everything is turned into a design spec for review" loading="lazy" decoding="async">
+                      </div>
+                      <div class="stepper-nav">
+                        <button class="arrow sprev" aria-label="Previous frame">
+                          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button class="arrow snext" aria-label="Next frame">
+                          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </button>
+                        <span class="stepper-count">1 / 3</span>
+                        <span class="stepper-hint">click image to step</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+              </section>
+              <section class="s2-section">
+                <h3 class="s2-h"><span class="idx">b</span>Align by the variables that may change the experience</h3>
+                <div class="ph">变量对齐内容位 — 发我图或表即可替换</div>
+              </section>
+            </div>
+            <div class="s2-panel s2-center" role="tabpanel" id="s2p-after" aria-labelledby="s2t-after">
+              <div class="chips">
+                <div class="chip">Learn from user and model behavior in production</div>
+                <div class="chip">内容待补 — 发我图即可替换</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="media-item" data-step="3">
@@ -443,12 +671,21 @@
     document.querySelectorAll('.desc-item, .media-item').forEach(function (el) {
       el.classList.toggle('on', el.getAttribute('data-step') == idx);
     });
-    var activeMedia = document.querySelector('.media-item.on');
-    document.querySelector('.media').classList.toggle('filled',
-      !!(activeMedia && activeMedia.querySelector('[data-gallery]')));
+    updateFilled();
     document.getElementById('counter').textContent = '0' + idx + ' / 03';
     document.getElementById('prev').disabled = false;
     document.getElementById('next').disabled = (idx === 3);
+  }
+
+  function updateFilled() {
+    var activeMedia = document.querySelector('.media-item.on');
+    var filled = false;
+    if (activeMedia) {
+      if (activeMedia.querySelector('[data-gallery]')) filled = true;
+      var tabPanel = activeMedia.querySelector('.s2-panel.on');
+      if (tabPanel) filled = tabPanel.hasAttribute('data-real');
+    }
+    document.querySelector('.media').classList.toggle('filled', filled);
   }
 
   function setState(idx, skipAnim) {
@@ -560,6 +797,44 @@
     render();
   });
 
+  document.querySelectorAll('.s2-tabs').forEach(function (tabs) {
+    var buttons = tabs.querySelectorAll('.s2-tab');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        buttons.forEach(function (b) {
+          b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+        });
+        var panels = tabs.parentElement.querySelectorAll('.s2-panel');
+        panels.forEach(function (p) {
+          p.classList.toggle('on', p.id === btn.getAttribute('aria-controls'));
+        });
+        updateFilled();
+      });
+    });
+  });
+
+  document.querySelectorAll('[data-stepper]').forEach(function (s) {
+    var imgs = s.querySelectorAll('.frame img');
+    var count = imgs.length;
+    var pos = 0;
+    var sprev = s.querySelector('.sprev');
+    var snext = s.querySelector('.snext');
+    var scount = s.querySelector('.stepper-count');
+    function render() {
+      imgs.forEach(function (img, i) { img.classList.toggle('cur', i === pos); });
+      scount.textContent = (pos + 1) + ' / ' + count;
+      sprev.disabled = (pos === 0);
+      snext.disabled = (pos === count - 1);
+    }
+    sprev.addEventListener('click', function () { if (pos > 0) { pos--; render(); } });
+    snext.addEventListener('click', function () { if (pos < count - 1) { pos++; render(); } });
+    s.querySelector('.frame').addEventListener('click', function () {
+      pos = (pos + 1) % count;
+      render();
+    });
+    render();
+  });
+
   document.addEventListener('keydown', function (e) {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
       e.preventDefault(); setState(Math.min(current + 1, 3));
@@ -575,6 +850,7 @@
   var wheelAcc = 0, wheelLock = false;
   window.addEventListener('wheel', function (e) {
     if (window.innerWidth <= 860) return;
+    if (e.target.closest && e.target.closest('.s2-panel')) return;
     if (wheelLock) return;
     wheelAcc += e.deltaY;
     if (Math.abs(wheelAcc) > 70) {
@@ -593,6 +869,7 @@
   }, { passive: true });
   window.addEventListener('touchend', function (e) {
     if (touchY === null || window.innerWidth <= 860) return;
+    if (e.target.closest && e.target.closest('.s2-panel')) { touchY = null; return; }
     var dy = touchY - e.changedTouches[0].clientY;
     touchY = null;
     if (Math.abs(dy) > 50) setState(Math.min(Math.max(current + (dy > 0 ? 1 : -1), 0), 3));

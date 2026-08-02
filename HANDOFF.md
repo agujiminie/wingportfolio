@@ -12,13 +12,20 @@ UI 需要像素级对齐 Figma——规则和自动校验流程见 [CLAUDE.md](C
 
 - **GitHub**：`git@github.com:agujiminie/wingportfolio.git`（remote origin，已用 SSH，免密 push）。
   机器上 `~/.ssh/id_ed25519` 已认证为 GitHub 用户 `agujiminie`。
-- **Vercel 自动部署已通**：Vercel 账号 `wingzengying-9232s-projects`（Hobby），
-  项目 `wingportfolio` 通过 GitHub 集成监听 `main` 分支——**push 到 `main` 即自动生产部署**，
-  不需要本地 `vercel` CLI（无 `.vercel` 目录）。2026-07-13 用一个空 commit 实测：
-  GitHub commit status 回写 `Vercel → success`，链路确认可用。
-- **日常工作流**：改代码 → `git add -A && git commit -m "…"` → `git push`，Vercel 自动 build 上线。
-- **待确认**：自定义域名 `wingzeng.design` 是否指向该 Vercel 项目（API 查不到，需在
-  Vercel 项目 Settings → Domains 目视确认；`wingportfolio.vercel.app` 一定是活的）。
+- **两条部署链路，各管各的**（2026-08-02 确认）：
+  1. **正式作品集 = Vercel**：`main` 分支 → Vercel（账号 `wingzengying-9232s-projects`，
+     项目 `wingportfolio`）→ `www.wingzeng.design`。这条链路要保留，**不要断开 Vercel
+     的 Git 集成**。
+  2. **Design process 页面 = GitHub Pages**：`gh-pages` 分支（静态构建产物）→ 内置
+     `pages-build-deployment` workflow。这个页面只上 Pages，**永远不部署到 Vercel**。
+- **Vercel 只准部署 `main`**（2026-08-02）：此前 Vercel 的 GitHub 集成对**所有**分支的
+  push 都会尝试 preview 部署，失败后给用户发邮件（一天十几封）。修复方式：
+  - 根目录 `vercel.json` 设 `ignoreCommand`，非 `main` 分支的部署一律跳过（skip，
+    不会失败也不会发邮件）；`main` 正常生产部署。
+  - `gh-pages` 分支根目录放了一份 `vercel.json`（`git.deploymentEnabled: false`）。
+    **重建/强推 `gh-pages` 时必须保留这个文件**，否则失败邮件会再次出现。
+  - **不要删除这两个 vercel.json。**
+- **日常工作流**：改代码 → `git add -A && git commit -m "…"` → `git push`。
 - 求职流程遗留的游离文件（`circle_state.yml` 等 .yml + `panw_*`）已加进 `.gitignore`，不属于网站。
 
 ## 当前状态（截至 2026-07-02）

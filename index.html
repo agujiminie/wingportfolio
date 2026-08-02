@@ -61,15 +61,7 @@
     font-family: var(--font-title);
     font-weight: 400;
     color: var(--black);
-    text-wrap: balance;
-    transition:
-      font-size 0.68s var(--ease-enter),
-      line-height 0.68s var(--ease-enter),
-      letter-spacing 0.68s var(--ease-enter),
-      margin 0.68s var(--ease-enter),
-      transform 0.68s var(--ease-enter),
-      color 0.45s ease,
-      opacity 0.45s ease;
+    transition: color 0.25s ease, opacity 0.25s ease, transform 0.2s ease-out;
     -webkit-tap-highlight-color: transparent;
   }
   .step:focus-visible {
@@ -304,12 +296,14 @@
 <script>
 (function () {
   var STATES = ['cover', 's1', 's2', 's3'];
+  var DUR = 560;
+  var EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
   var current = 0;
-  var busy = false;
   var body = document.body;
   var stage = document.getElementById('stage');
   var titles = [1, 2, 3].map(function (n) { return document.getElementById('t' + n); });
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var liveClones = [];
 
   function applyRoles(idx) {
     if (idx === 0) {
@@ -330,16 +324,73 @@
 
   function setState(idx, skipAnim) {
     if (idx < 0 || idx >= STATES.length || idx === current) return;
-    if (busy && !skipAnim) return;
+    var animate = !reduced && !skipAnim && window.innerWidth > 860;
+    var snaps = null;
+
+    if (animate) {
+      snaps = titles.map(function (t) {
+        var cs = getComputedStyle(t);
+        return {
+          rect: t.getBoundingClientRect(),
+          font: parseFloat(cs.fontSize),
+          ls: cs.letterSpacing,
+          lh: cs.lineHeight,
+          color: cs.color,
+          op: parseFloat(cs.opacity),
+          clone: t.cloneNode(true)
+        };
+      });
+      titles.forEach(function (t) {
+        t.getAnimations().forEach(function (a) { a.cancel(); });
+      });
+      liveClones.forEach(function (c) { c.remove(); });
+      liveClones = [];
+    }
+
     stage.classList.remove('boot');
     current = idx;
     body.setAttribute('data-state', STATES[idx]);
     applyRoles(idx);
     history.replaceState(null, '', idx === 0 ? location.pathname : '#' + idx);
-    if (!reduced && !skipAnim) {
-      busy = true;
-      setTimeout(function () { busy = false; }, 420);
-    }
+    if (!animate) return;
+
+    titles.forEach(function (t, i) {
+      var s = snaps[i];
+      var n = t.getBoundingClientRect();
+      var fNew = parseFloat(getComputedStyle(t).fontSize);
+      var dx = s.rect.left - n.left;
+      var dy = s.rect.top - n.top;
+      var sc = s.font / fNew;
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5 && Math.abs(sc - 1) < 0.005) return;
+
+      t.style.transformOrigin = '0 0';
+      var incoming = t.animate([
+        { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + sc + ')', opacity: 0 },
+        { opacity: 1, offset: 0.4 },
+        { transform: 'translate(0, 0) scale(1)', opacity: 1 }
+      ], { duration: DUR, easing: EASE, fill: 'both' });
+      incoming.onfinish = function () { t.style.transformOrigin = ''; };
+
+      var c = s.clone;
+      c.removeAttribute('id');
+      c.setAttribute('aria-hidden', 'true');
+      c.style.cssText = 'position:fixed;margin:0;pointer-events:none;z-index:5;'
+        + 'left:' + s.rect.left + 'px;top:' + s.rect.top + 'px;width:' + (s.rect.width + 2) + 'px;'
+        + 'font-size:' + s.font + 'px;letter-spacing:' + s.ls + ';line-height:' + s.lh + ';'
+        + 'color:' + s.color + ';opacity:' + s.op + ';transform-origin:0 0;transition:none;';
+      document.body.appendChild(c);
+      liveClones.push(c);
+      var outgoing = c.animate([
+        { transform: 'translate(0, 0) scale(1)', opacity: s.op },
+        { opacity: 0, offset: 0.45 },
+        { transform: 'translate(' + (-dx) + 'px,' + (-dy) + 'px) scale(' + (fNew / s.font) + ')', opacity: 0 }
+      ], { duration: DUR, easing: EASE, fill: 'forwards' });
+      outgoing.onfinish = function () {
+        c.remove();
+        var k = liveClones.indexOf(c);
+        if (k > -1) liveClones.splice(k, 1);
+      };
+    });
   }
 
   titles.forEach(function (t) {

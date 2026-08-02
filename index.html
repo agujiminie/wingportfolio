@@ -263,65 +263,337 @@
     margin: 5px 0 10px;
     min-height: 2.9em;
   }
+  /* ---------- live coded prototypes ---------- */
   .demo { background: #fff; border: 1px solid var(--chip-border); }
   .dstage {
     position: relative;
-    aspect-ratio: 1506 / 909;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    min-height: 230px;
     overflow: hidden;
     background: #fff;
   }
-  .dframe { position: absolute; inset: 0; display: none; }
-  .dframe.on { display: block; }
-  .dframe img {
+  .app {
     position: absolute;
     inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-ui);
+    -webkit-font-smoothing: antialiased;
   }
-  .hs {
-    position: absolute;
-    background: transparent;
-    border: 0;
-    padding: 0;
+  .app-top {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: #fff;
+  }
+  .app-logo {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: -0.03em;
+    color: #111;
+  }
+  .app-title { font-size: 9.5px; font-weight: 600; color: #111; }
+  .app-grad {
+    flex: none;
+    height: 3px;
+    background: linear-gradient(90deg, #fbe3ee 0%, #e8d5f5 40%, #b9a6f2 100%);
+  }
+  .chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 9px 10px 11px;
+    background: #fbfbfa;
+  }
+  .msg { display: flex; gap: 6px; margin-top: 8px; animation: mrise 0.3s var(--ease-enter) both; }
+  .msg:first-child { margin-top: 0; }
+  @keyframes mrise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+  .msg.user { justify-content: flex-end; }
+  .avatar {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid #d8b4fe;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 7px;
+    color: #a78bda;
+    margin-top: 1px;
+  }
+  .mv { max-width: 85%; min-width: 0; font-size: 10px; line-height: 1.55; }
+  .msg.agent .mv {
+    color: #3f3f3f;
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 9px;
+    letter-spacing: -0.01em;
+  }
+  .msg.user .mv {
+    background: #ececec;
+    border-radius: 10px;
+    padding: 5px 9px;
+    color: #1f1f1f;
+    font-size: 9.5px;
+  }
+  .dots { display: inline-flex; gap: 3px; padding: 5px 1px 3px; }
+  .dots i {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #c6c6c6;
+    animation: dblink 1s ease-in-out infinite;
+  }
+  .dots i:nth-child(2) { animation-delay: 0.16s; }
+  .dots i:nth-child(3) { animation-delay: 0.32s; }
+  @keyframes dblink {
+    0%, 70%, 100% { opacity: 0.35; transform: translateY(0); }
+    35% { opacity: 1; transform: translateY(-2px); }
+  }
+  .pillrow, .wcard, .panes, .optcol, .task-card { animation: mrise 0.3s var(--ease-enter) both; }
+  .pillrow { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
+  .dbtn {
+    font-family: var(--font-ui);
+    font-size: 9px;
+    padding: 4px 9px;
+    border-radius: 7px;
+    border: 1px solid #e3e3e3;
+    background: #fff;
+    color: #333;
     cursor: pointer;
+    transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease, transform 0.12s ease-out;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .dbtn:hover { border-color: #c9c9c9; }
+  .dbtn:active { transform: scale(0.95); }
+  .dbtn.dark { background: #1f1f1f; border-color: #1f1f1f; color: #fff; }
+  .dbtn.sel { background: #ede9fe; border-color: #d8cbfb; color: #5b4bb5; }
+  .dbtn.chosen { background: #ececec; border-color: #dcdcdc; color: #9a9a9a; pointer-events: none; }
+  .wcard {
+    border: 1px solid #e6e6e6;
+    border-radius: 9px;
+    padding: 4px 9px 9px;
+    margin-top: 6px;
+    background: #fff;
+  }
+  .wrow { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+  .wlab { font-family: var(--font-ui); font-size: 9.5px; font-weight: 500; color: #1c1c1c; margin-right: 3px; }
+  .prog { margin-top: 7px; max-width: 92%; }
+  .prog-label { font-size: 9px; color: #4a4a4a; font-variant-numeric: tabular-nums; }
+  .prog-track { height: 2.5px; border-radius: 2px; background: #ececec; margin-top: 5px; overflow: hidden; }
+  .prog-fill {
+    height: 100%;
+    width: 2%;
+    background: linear-gradient(90deg, #cbb9f8, #6d5ac2);
+    transition: width 2.1s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  .optcol { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; align-items: flex-start; }
+  .panes { display: flex; gap: 6px; margin-top: 6px; }
+  .pane {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid #e6e6e6;
+    border-radius: 7px;
+    padding: 6px 7px;
+    min-height: 62px;
+    background: #fcfcfc;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .pane h5 {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 8px;
+    font-weight: 400;
+    color: #6e6e6e;
+    margin: 0 0 3px;
+  }
+  .pane pre {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 7.5px;
+    line-height: 1.5;
+    color: #333;
+    white-space: pre;
+    overflow: hidden;
+  }
+  .pane .ph2 { font-size: 8px; color: #b8b8b8; }
+  .composer {
+    flex: none;
+    margin: 8px 10px 10px;
+    border: 1px solid #ececec;
+    border-radius: 11px;
+    background: #fff;
+    padding: 6px 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 28px;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+  .composer.hot {
+    border-color: #e5c9ef;
+    box-shadow: 0 0 0 3px rgba(185, 166, 242, 0.14);
+  }
+  .ctext { flex: 1; min-width: 0; font-size: 9px; color: #a6a6a6; line-height: 1.45; }
+  .ctext.filled { color: #1f1f1f; }
+  .caret {
+    display: inline-block;
+    width: 1px;
+    height: 9px;
+    background: #444;
+    margin-left: 1px;
+    vertical-align: -1px;
+    animation: dblink 0.9s step-end infinite;
+  }
+  .send {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 0;
+    border-radius: 6px;
+    color: #8b8b8b;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s ease, background 0.2s ease, transform 0.12s ease-out, opacity 0.2s ease;
+    touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }
-  .hs::after {
+  .send:hover { color: #111; background: #f2f2f2; }
+  .send:active { transform: scale(0.92); }
+  .send[disabled] { opacity: 0.35; pointer-events: none; }
+  .screen { position: absolute; inset: 0; transition: opacity 0.3s ease, transform 0.4s var(--ease-enter); }
+  .screen.off { opacity: 0; transform: translateY(12px); pointer-events: none; }
+  .ctx-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    background:
+      radial-gradient(120% 90% at 18% 8%, #f5e7fa 0%, transparent 55%),
+      radial-gradient(110% 90% at 85% 18%, #e4ddfb 0%, transparent 60%),
+      linear-gradient(180deg, #f7f2fb 0%, #fbfaff 68%, #fff 100%);
+  }
+  .ctx-h1 {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    background: linear-gradient(90deg, #9a86dd 0%, #bd8fd8 55%, #93a3de 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .ctx-input {
+    width: 76%;
+    background: #fff;
+    border: 1px solid #ecdfc7;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(150, 120, 220, 0.10);
+    padding: 8px 9px 7px;
+    text-align: left;
+  }
+  .ctx-row2 { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+  .ctx-actions { display: flex; gap: 5px; justify-content: flex-end; margin-top: 7px; }
+  .repo-chip {
+    font-size: 8px;
+    border: 1px solid #e6e6e6;
+    border-radius: 999px;
+    padding: 3px 8px;
+    color: #7a7a7a;
+    white-space: nowrap;
+  }
+  .ctx-spacer { flex: 1; }
+  .ctx-tabs {
+    position: absolute;
+    bottom: 7%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    background: #fff;
+    border-radius: 9px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+  }
+  .ctx-tab { font-size: 8px; padding: 4px 8px; color: #3c3c3c; white-space: nowrap; }
+  .ctx-tab + .ctx-tab { border-left: 1px solid #f1f1f1; }
+  .conv-head {
+    flex: none;
+    padding: 7px 10px 6px;
+    border-bottom: 1px solid #f0f0f0;
+    background: #fff;
+  }
+  .conv-title { font-size: 9px; font-weight: 600; color: #111; }
+  .conv-sub { font-size: 8px; color: #a0a0a0; margin-top: 1px; }
+  .result-pill {
+    background: #fff;
+    border-radius: 999px;
+    padding: 5px 11px;
+    font-size: 9px;
+    color: #2a2a2a;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+  .task-card {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 8px;
+    background: #fff;
+    border-radius: 9px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    padding: 7px 9px;
+    font-size: 9px;
+    color: #1c1c1c;
+    animation: mrise 0.35s var(--ease-enter) both;
+  }
+  .task-card .tmeta { margin-left: auto; color: #9c9c9c; font-size: 8px; white-space: nowrap; }
+  .pulse { position: relative; }
+  .pulse::after {
     content: '';
     position: absolute;
-    inset: 0;
-    border: 1.5px solid rgba(97, 82, 197, 0.65);
-    border-radius: 6px;
-    background: rgba(122, 103, 220, 0.12);
-    animation: hspulse 2.4s ease-in-out infinite;
+    inset: -4px;
+    border: 1.5px solid rgba(109, 90, 205, 0.5);
+    border-radius: 10px;
+    animation: hspulse 1.9s ease-in-out infinite;
     pointer-events: none;
   }
   @keyframes hspulse {
-    0%, 100% { opacity: 0.25; transform: scale(1); }
-    50% { opacity: 0.95; transform: scale(1.045); }
-  }
-  .dstage.flash .hs::after {
-    animation: hsflash 0.4s ease 2;
-  }
-  @keyframes hsflash {
-    0%, 100% { opacity: 0.4; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.12); }
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 0.9; transform: scale(1.04); }
   }
   .demo-bar {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     padding: 8px 10px;
     border-top: 1px solid var(--chip-border);
   }
-  .dcount {
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    color: var(--ink-70);
-    font-variant-numeric: tabular-nums;
-    user-select: none;
-    white-space: nowrap;
+  .livedot {
+    flex: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #6fcf8f;
+    box-shadow: 0 0 0 0 rgba(111, 207, 143, 0.5);
+    animation: livep 2s ease-out infinite;
+  }
+  @keyframes livep {
+    0% { box-shadow: 0 0 0 0 rgba(111, 207, 143, 0.45); }
+    70% { box-shadow: 0 0 0 5px rgba(111, 207, 143, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(111, 207, 143, 0); }
   }
   .dcap {
     flex: 1;
@@ -364,6 +636,109 @@
     padding: 14px 18px;
   }
   .media-item[data-step="2"] .s2 { opacity: 1; }
+
+  /* ---------- step 3: behavior-driven evolution + risk mapping ---------- */
+  .s3-panel {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(16px, 2.8vh, 26px);
+    padding: clamp(20px, 3.6vh, 34px) 5.5% clamp(22px, 3.8vh, 36px);
+  }
+  .s3-evo { flex: 7 1 0; min-height: 0; display: flex; flex-direction: column; }
+  .s3-risk { flex: 3 1 0; min-height: 0; display: flex; flex-direction: column; }
+  .s3-flow {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+  }
+  .s3-stage {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--chip-border);
+    background: var(--chip-bg);
+    padding: 10px 10px 9px;
+  }
+  .s3-shot {
+    flex: 1;
+    min-height: 0;
+    border: 1px dashed var(--chip-border);
+    background: #fff;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8px;
+    margin-bottom: 9px;
+    overflow: hidden;
+  }
+  .s3-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .s3-shot:has(img) { border-style: solid; padding: 0; }
+  .s3-name {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--black);
+  }
+  .s3-note {
+    font-size: 10.5px;
+    line-height: 1.45;
+    color: var(--ink-70);
+    margin-top: 2px;
+  }
+  .s3-arrow {
+    flex: 0 0 auto;
+    align-self: center;
+    display: flex;
+    color: var(--muted);
+  }
+  .s3-arrow svg { display: block; }
+  .s3-table {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    grid-auto-rows: minmax(0, 1fr);
+    border: 1px solid var(--chip-border);
+    background: var(--chip-bg);
+  }
+  .s3-th, .s3-td {
+    display: flex;
+    align-items: center;
+    padding: 4px 14px;
+    min-width: 0;
+  }
+  .s3-th {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .s3-td {
+    font-size: 11.5px;
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+    color: var(--ink-70);
+    border-top: 1px solid var(--chip-border);
+  }
+  .s3-td:nth-child(even) { color: var(--black); }
+  @media (max-width: 1180px) {
+    .s3-flow { flex-wrap: wrap; }
+    .s3-stage { flex: 1 1 42%; }
+    .s3-arrow { display: none; }
+    .s3-panel { overflow-y: auto; }
+    .s3-evo, .s3-risk { flex: none; }
+    .s3-shot { min-height: 90px; }
+  }
 
   .panel { position: absolute; inset: 0; }
   .desc-item, .media-item {
@@ -542,36 +917,11 @@
                   <article class="proto">
                     <div class="proto-name">Guided Q&amp;A</div>
                     <p class="proto-sub">The agent asks one question at a time and walks the user from goal to generated flow.</p>
-                    <div class="demo" data-demo>
-                      <div class="dstage">
-                        <div class="dframe on" data-caption="Describe the flow — hit send">
-                          <img src="assets/step2/qa-1.png" alt="Guided Q&A demo — goal picked, flow described, ready to send" loading="lazy" decoding="async">
-                          <button class="hs" style="left:79.8%;top:86.3%;width:6%;height:8.6%" aria-label="Send the message"></button>
-                        </div>
-                        <div class="dframe" data-caption="Click the input to answer">
-                          <img src="assets/step2/qa-2.png" alt="Guided Q&A demo — the agent asks when the integration should trigger" loading="lazy" decoding="async">
-                          <button class="hs" style="left:31.5%;top:82.7%;width:53%;height:10.7%" aria-label="Click the input to type the answer"></button>
-                        </div>
-                        <div class="dframe" data-caption="Send your answer">
-                          <img src="assets/step2/qa-3.png" alt="Guided Q&A demo — trigger answer typed in the input" loading="lazy" decoding="async">
-                          <button class="hs" style="left:79.8%;top:86.3%;width:6%;height:8.6%" aria-label="Send the answer"></button>
-                        </div>
-                        <div class="dframe" data-caption="Agent drafts the flow — click the chat">
-                          <img src="assets/step2/qa-4.png" alt="Guided Q&A demo — answer sent, agent thinking" loading="lazy" decoding="async">
-                          <button class="hs" style="left:24%;top:45%;width:72%;height:25%" aria-label="See the agent's flow breakdown"></button>
-                        </div>
-                        <div class="dframe" data-caption="Click the input to refine a step">
-                          <img src="assets/step2/qa-5.png" alt="Guided Q&A demo — agent posts a six-step integration breakdown" loading="lazy" decoding="async">
-                          <button class="hs" style="left:31.5%;top:82.7%;width:53%;height:10.7%" aria-label="Click the input to refine a step"></button>
-                        </div>
-                        <div class="dframe" data-caption="Send — restarts the demo">
-                          <img src="assets/step2/qa-6.png" alt="Guided Q&A demo — refinement typed, ready to send" loading="lazy" decoding="async">
-                          <button class="hs" style="left:79.8%;top:86.3%;width:6%;height:8.6%" aria-label="Send and restart the demo"></button>
-                        </div>
-                      </div>
+                    <div class="demo" data-live="qa">
+                      <div class="dstage" aria-label="Live Guided Q&A prototype"></div>
                       <div class="demo-bar">
-                        <span class="dcount">1 / 6</span>
-                        <span class="dcap"></span>
+                        <span class="livedot" aria-hidden="true"></span>
+                        <span class="dcap" aria-live="polite"></span>
                         <button class="dreset" aria-label="Restart demo">
                           <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.5-3.6M13 2v3h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </button>
@@ -581,36 +931,11 @@
                   <article class="proto">
                     <div class="proto-name">Widgets</div>
                     <p class="proto-sub">Selection groups appear inline in the chat flow, and the input box adapts to the question.</p>
-                    <div class="demo" data-demo>
-                      <div class="dstage">
-                        <div class="dframe on" data-caption="Click a chip to answer inline">
-                          <img src="assets/step2/wid-1.png" alt="Widgets demo — grouped selection chips for targeted system, transformation, logging, and error handling" loading="lazy" decoding="async">
-                          <button class="hs" style="left:50.9%;top:33%;width:11.6%;height:5%" aria-label="Select the Scheduled Data Sync chip"></button>
-                        </div>
-                        <div class="dframe" data-caption="Selections made — send">
-                          <img src="assets/step2/wid-2.png" alt="Widgets demo — chips selected across the question groups" loading="lazy" decoding="async">
-                          <button class="hs" style="left:82.3%;top:88%;width:4.6%;height:6.5%" aria-label="Send the selections"></button>
-                        </div>
-                        <div class="dframe" data-caption="Generating — click for the shipped version">
-                          <img src="assets/step2/wid-3.png" alt="Widgets demo — countdown message while the code is generated" loading="lazy" decoding="async">
-                          <button class="hs" style="left:28.5%;top:74%;width:56.3%;height:6.5%" aria-label="See the shipped version of the widget pattern"></button>
-                        </div>
-                        <div class="dframe" data-caption="Pick 'Paste sample data'">
-                          <img src="assets/step2/wid-4.png" alt="Widgets demo — shipped design with option widgets for mapping table, sample data, or scratch" loading="lazy" decoding="async">
-                          <button class="hs" style="left:25.9%;top:57.3%;width:14%;height:6%" aria-label="Choose Paste sample data"></button>
-                        </div>
-                        <div class="dframe" data-caption="Click the pane to paste data">
-                          <img src="assets/step2/wid-5.png" alt="Widgets demo — the input box adapts into XML input and JSON output panes" loading="lazy" decoding="async">
-                          <button class="hs" style="left:25.2%;top:49.4%;width:32.3%;height:27.3%" aria-label="Paste XML into the input pane"></button>
-                        </div>
-                        <div class="dframe" data-caption="Send — restarts the demo">
-                          <img src="assets/step2/wid-6.png" alt="Widgets demo — XML sample pasted into the input pane" loading="lazy" decoding="async">
-                          <button class="hs" style="left:87.4%;top:87.3%;width:5%;height:7.7%" aria-label="Send and restart the demo"></button>
-                        </div>
-                      </div>
+                    <div class="demo" data-live="wid">
+                      <div class="dstage" aria-label="Live Widgets prototype"></div>
                       <div class="demo-bar">
-                        <span class="dcount">1 / 6</span>
-                        <span class="dcap"></span>
+                        <span class="livedot" aria-hidden="true"></span>
+                        <span class="dcap" aria-live="polite"></span>
                         <button class="dreset" aria-label="Restart demo">
                           <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.5-3.6M13 2v3h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </button>
@@ -620,24 +945,11 @@
                   <article class="proto">
                     <div class="proto-name">Context-aware<span class="proto-badge">Final</span></div>
                     <p class="proto-sub">Describe the goal, connect the repo or files; the agent follows up and compiles a design spec for review.</p>
-                    <div class="demo" data-demo>
-                      <div class="dstage">
-                        <div class="dframe on" data-caption="Repo connected — hit Run">
-                          <img src="assets/step2/ctx-1.png" alt="Context-aware demo — open prompt with a repo connected, Ask and Run actions" loading="lazy" decoding="async">
-                          <button class="hs" style="left:69.4%;top:44.9%;width:7.4%;height:6.2%" aria-label="Run the request"></button>
-                        </div>
-                        <div class="dframe" data-caption="Pick a suggested task">
-                          <img src="assets/step2/ctx-2.png" alt="Context-aware demo — flow found in the repo, agent suggests follow-up tasks" loading="lazy" decoding="async">
-                          <button class="hs" style="left:30.2%;top:31.2%;width:18.7%;height:5.6%" aria-label="Pick the Handle new or changed endpoints task"></button>
-                        </div>
-                        <div class="dframe" data-caption="Task starts with context — click restarts">
-                          <img src="assets/step2/ctx-3.png" alt="Context-aware demo — chosen task kicked off at the coder with full context" loading="lazy" decoding="async">
-                          <button class="hs" style="left:25.5%;top:76.6%;width:53%;height:8.4%" aria-label="Open the started task and restart the demo"></button>
-                        </div>
-                      </div>
+                    <div class="demo" data-live="ctx">
+                      <div class="dstage" aria-label="Live Context-aware prototype"></div>
                       <div class="demo-bar">
-                        <span class="dcount">1 / 3</span>
-                        <span class="dcap"></span>
+                        <span class="livedot" aria-hidden="true"></span>
+                        <span class="dcap" aria-live="polite"></span>
                         <button class="dreset" aria-label="Restart demo">
                           <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.5-3.6M13 2v3h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </button>
@@ -654,9 +966,55 @@
         </div>
       </div>
       <div class="media-item" data-step="3">
-        <div class="chips">
-          <div class="chip">Learn from user and model behavior in production</div>
-          <div class="chip">内容待补 — 发我图即可替换</div>
+        <div class="s3-panel" data-real>
+          <section class="s3-evo">
+            <h3 class="s2-h">User behavior shaped how verification evolved.</h3>
+            <div class="s3-flow">
+              <!-- To drop in a real asset: inside .s3-shot, replace the text with <img src="assets/step3/....png" alt="..."> -->
+              <article class="s3-stage">
+                <div class="s3-shot">IDE plugin 截图位 — 发我图即可替换</div>
+                <div class="s3-name">IDE review</div>
+                <p class="s3-note">Users stayed in their workflow</p>
+              </article>
+              <div class="s3-arrow" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <article class="s3-stage">
+                <div class="s3-shot">Summary 截图位 — 发我图即可替换</div>
+                <div class="s3-name">Structured summary</div>
+                <p class="s3-note">Users stopped reading every line</p>
+              </article>
+              <div class="s3-arrow" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <article class="s3-stage">
+                <div class="s3-shot">Control bar 截图位 — 发我图即可替换</div>
+                <div class="s3-name">Control bar</div>
+                <p class="s3-note">Users didn&rsquo;t know what remained</p>
+              </article>
+              <div class="s3-arrow" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <article class="s3-stage">
+                <div class="s3-shot">Collaboration / approval 截图位 — 发我图即可替换</div>
+                <div class="s3-name">Shared review</div>
+                <p class="s3-note">Enterprise verification required handoffs</p>
+              </article>
+            </div>
+          </section>
+          <section class="s3-risk">
+            <h3 class="s2-h">Model risks shaped the safeguards.</h3>
+            <div class="s3-table" role="table" aria-label="Model and execution risks mapped to design responses">
+              <div class="s3-th" role="columnheader">Model / execution risk</div>
+              <div class="s3-th" role="columnheader">Design response</div>
+              <div class="s3-td" role="cell">Incomplete or unsupported output</div>
+              <div class="s3-td" role="cell">Evidence-linked summary</div>
+              <div class="s3-td" role="cell">False completion or tool failure</div>
+              <div class="s3-td" role="cell">System status + recovery</div>
+              <div class="s3-td" role="cell">AI cannot own the shipping decision</div>
+              <div class="s3-td" role="cell">Human review + approval</div>
+            </div>
+          </section>
         </div>
       </div>
       <div class="media-item" data-step="4">
@@ -845,39 +1203,346 @@
     render();
   });
 
-  document.querySelectorAll('[data-demo]').forEach(function (d) {
-    var frames = d.querySelectorAll('.dframe');
-    var count = frames.length;
-    var pos = 0;
-    var stage = d.querySelector('.dstage');
-    var dcount = d.querySelector('.dcount');
-    var dcap = d.querySelector('.dcap');
-    function render() {
-      frames.forEach(function (f, i) { f.classList.toggle('on', i === pos); });
-      dcount.textContent = (pos + 1) + ' / ' + count;
-      dcap.textContent = frames[pos].getAttribute('data-caption') || '';
+  /* ---------- live coded prototypes ---------- */
+  var SEND_SVG = '<svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8h11M9 3.5L13.5 8 9 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, reduced ? 0 : ms); }); }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function el(cls, html) {
+    var e = document.createElement('div');
+    e.className = cls;
+    if (html != null) e.innerHTML = html;
+    return e;
+  }
+  function dbtn(label, cls) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'dbtn' + (cls ? ' ' + cls : '');
+    b.textContent = label;
+    return b;
+  }
+  function scrollBottom(chat) {
+    if (chat.scrollTo) chat.scrollTo({ top: chat.scrollHeight, behavior: reduced ? 'auto' : 'smooth' });
+    else chat.scrollTop = chat.scrollHeight;
+  }
+  function makeChatApp(stage, title) {
+    var app = el('app');
+    app.appendChild(el('app-top', '<span class="app-logo">curie</span><span class="app-title">' + title + '</span>'));
+    app.appendChild(el('app-grad'));
+    var chat = el('chat');
+    var composer = el('composer');
+    var ctext = el('ctext');
+    var send = document.createElement('button');
+    send.type = 'button';
+    send.className = 'send';
+    send.setAttribute('aria-label', 'Send');
+    send.innerHTML = SEND_SVG;
+    send.disabled = true;
+    composer.appendChild(ctext);
+    composer.appendChild(send);
+    app.appendChild(chat);
+    app.appendChild(composer);
+    stage.appendChild(app);
+    return { chat: chat, composer: composer, ctext: ctext, send: send };
+  }
+  function addUser(chat, text) {
+    var m = el('msg user');
+    var v = el('mv');
+    v.textContent = text;
+    m.appendChild(v);
+    chat.appendChild(m);
+    scrollBottom(chat);
+  }
+  function agentMsg(chat, html) {
+    var m = el('msg agent', '<span class="avatar">c</span>');
+    var v = el('mv', html);
+    m.appendChild(v);
+    chat.appendChild(m);
+    scrollBottom(chat);
+    return v;
+  }
+  function agentSay(chat, html, thinkMs) {
+    var v = agentMsg(chat, '<span class="dots"><i></i><i></i><i></i></span>');
+    return sleep(thinkMs || 700).then(function () {
+      v.innerHTML = html;
+      scrollBottom(chat);
+      return v;
+    });
+  }
+  async function typeInto(ctext, text) {
+    ctext.classList.add('filled');
+    if (reduced) { ctext.textContent = text; return; }
+    var step = Math.max(1, Math.ceil(text.length / 26));
+    for (var i = step; i < text.length + step; i += step) {
+      ctext.innerHTML = esc(text.slice(0, Math.min(i, text.length))) + '<span class="caret"></span>';
+      await sleep(14);
     }
-    frames.forEach(function (f) {
-      var hs = f.querySelector('.hs');
-      if (!hs) return;
-      hs.addEventListener('click', function (e) {
-        e.stopPropagation();
-        stage.classList.remove('flash');
-        pos = (pos + 1) % count;
-        render();
+    ctext.innerHTML = esc(text);
+  }
+  function armComposer(ui, cap, capText, text, onSent) {
+    cap(capText);
+    var composer = ui.composer;
+    composer.classList.add('hot', 'pulse');
+    composer.style.cursor = 'pointer';
+    composer.onclick = async function () {
+      composer.onclick = null;
+      composer.classList.remove('pulse');
+      composer.style.cursor = '';
+      await typeInto(ui.ctext, text);
+      cap('Send it');
+      ui.send.disabled = false;
+      ui.send.classList.add('pulse');
+      ui.send.onclick = function () {
+        ui.send.onclick = null;
+        ui.send.disabled = true;
+        ui.send.classList.remove('pulse');
+        composer.classList.remove('hot');
+        ui.ctext.innerHTML = '';
+        ui.ctext.classList.remove('filled');
+        addUser(ui.chat, text);
+        onSent();
+      };
+    };
+  }
+
+  function initQA(stage, cap) {
+    stage.innerHTML = '';
+    var ui = makeChatApp(stage, 'Coding Agent');
+    ui.ctext.textContent = 'Add your design specs or any related documents…';
+    agentMsg(ui.chat, 'Ok, what\'s your goal for this task?');
+    var row = el('pillrow');
+    var b1 = dbtn('Generate Integration', 'dark pulse');
+    var b2 = dbtn('Generate Dataweave');
+    row.appendChild(b1);
+    row.appendChild(b2);
+    ui.chat.appendChild(row);
+    cap('Live demo — pick a goal to start');
+    function choose(label) {
+      b1.classList.remove('pulse');
+      b1.classList.add('chosen');
+      b2.classList.add('chosen');
+      addUser(ui.chat, label);
+      (async function () {
+        await agentSay(ui.chat, 'Got it. Do you want to upload your design specs to start with? or just simply tell me what to do. (You can do both)', 800);
+        armComposer(ui, cap, 'One question at a time — click the input',
+          'The flow fetches product information from a mysql database and order information from Salesforce',
+          async function () {
+            await agentSay(ui.chat, 'Great! <b>When should this integration be triggered?</b> Should it run on a schedule, in response to an API call, or when a specific event happens in one of the systems?', 850);
+            armComposer(ui, cap, 'Answer in plain words — click the input',
+              'trigger when a new order is placed in our e-commerce system.',
+              async function () {
+                var v = await agentSay(ui.chat, 'Now, let\'s define the detailed steps of the integration flow. Here\'s an initial breakdown—let me know if this aligns:', 950);
+                var steps = [
+                  '1. Trigger: Detect a new order in the e-commerce system.',
+                  '2. Fetch Order Data: Retrieve order details.',
+                  '3. Fetch Product Details: Get product info from mysql.',
+                  '4. Merge Data: Combine order and product details.',
+                  '5. Store or Forward: Send merged data to BI for reporting.',
+                  '6. Error Handling: Retry failed calls up to 3 times.'
+                ];
+                for (var i = 0; i < steps.length; i++) {
+                  v.innerHTML += '<br>' + esc(steps[i]);
+                  scrollBottom(ui.chat);
+                  await sleep(120);
+                }
+                armComposer(ui, cap, 'Refine any step — click the input',
+                  'After merging the data, store it in our internal database first instead of sending it directly to BI.',
+                  async function () {
+                    await agentSay(ui.chat, 'Updated ✓ Step 5 now stores merged data in your internal database before reporting. Ready to generate the flow.', 900);
+                    cap('Goal → spec, one question at a time. Restart ↺');
+                  });
+              });
+          });
+      })();
+    }
+    b1.onclick = function () { choose('Generate Integration'); };
+    b2.onclick = function () { choose('Generate Dataweave'); };
+  }
+
+  function initWid(stage, cap) {
+    stage.innerHTML = '';
+    var ui = makeChatApp(stage, 'Coding Agent');
+    ui.ctext.textContent = 'tell me directly your requirements…';
+    addUser(ui.chat, 'Sync updated customer data to an external CRM system.');
+    agentMsg(ui.chat, 'Sure! Help me understand by selecting, or just type your requirements:');
+    var card = el('wcard');
+    var rows = ['Targeted system', 'Logging', 'Error handling'];
+    var picked = 0;
+    rows.forEach(function (label) {
+      var r = el('wrow');
+      r.appendChild(el('wlab', esc(label)));
+      ['API Integration', 'Scheduled Data Sync', 'More'].forEach(function (c) {
+        var b = dbtn(c);
+        b.onclick = function () {
+          b.classList.toggle('sel');
+          picked += b.classList.contains('sel') ? 1 : -1;
+          if (picked >= 2 && ui.send.disabled) {
+            cap('Nice — now send the selections');
+            ui.send.disabled = false;
+            ui.send.classList.add('pulse');
+          }
+        };
+        r.appendChild(b);
       });
+      card.appendChild(r);
     });
-    stage.addEventListener('click', function () {
-      stage.classList.remove('flash');
-      void stage.offsetWidth;
-      stage.classList.add('flash');
-    });
-    d.querySelector('.dreset').addEventListener('click', function () {
-      stage.classList.remove('flash');
-      pos = 0;
-      render();
-    });
-    render();
+    ui.chat.appendChild(card);
+    requestAnimationFrame(function () { ui.chat.scrollTop = ui.chat.scrollHeight; });
+    var first = card.querySelector('.dbtn');
+    first.classList.add('pulse');
+    card.addEventListener('click', function () { first.classList.remove('pulse'); }, { once: true });
+    cap('Live demo — answer by clicking chips');
+    ui.send.onclick = async function () {
+      ui.send.onclick = null;
+      ui.send.disabled = true;
+      ui.send.classList.remove('pulse');
+      card.querySelectorAll('.dbtn').forEach(function (b) { b.style.pointerEvents = 'none'; });
+      cap('Selections feed straight into generation');
+      var v = await agentSay(ui.chat, '', 500);
+      v.innerHTML = '<div class="prog"><div class="prog-label"></div><div class="prog-track"><div class="prog-fill"></div></div></div>';
+      var label = v.querySelector('.prog-label');
+      var fill = v.querySelector('.prog-fill');
+      var secs = 321;
+      label.textContent = '5 min 21 sec left to have the code for you..';
+      scrollBottom(ui.chat);
+      requestAnimationFrame(function () { fill.style.width = '62%'; });
+      var timer = setInterval(function () {
+        secs -= 7;
+        if (secs <= 154) { clearInterval(timer); return; }
+        label.textContent = Math.floor(secs / 60) + ' min ' + (secs % 60) + ' sec left to have the code for you..';
+      }, reduced ? 1 : 90);
+      await sleep(2300);
+      clearInterval(timer);
+      await agentSay(ui.chat, 'Shipped version — the same pattern in production. Do you want to provide a <b>mapping table</b> or paste <b>a sample of your XML input and desired JSON output</b>?', 800);
+      var opts = el('optcol');
+      var names = ['Upload mapping table', 'Paste sample data', 'Start from scratch'];
+      names.forEach(function (n, i) {
+        var b = dbtn(n);
+        b.style.animation = 'mrise 0.3s var(--ease-enter) both';
+        b.style.animationDelay = (i * 0.05) + 's';
+        if (n === 'Paste sample data') b.classList.add('pulse');
+        b.onclick = function () { pick(n, opts); };
+        opts.appendChild(b);
+      });
+      ui.chat.appendChild(opts);
+      scrollBottom(ui.chat);
+      cap('Options render as widgets — pick one');
+    };
+    async function pick(name, opts) {
+      opts.querySelectorAll('.dbtn').forEach(function (b) {
+        b.classList.remove('pulse');
+        b.classList.toggle('chosen', b.textContent !== name);
+        b.style.pointerEvents = 'none';
+      });
+      addUser(ui.chat, name);
+      await agentSay(ui.chat, 'Sounds good, paste in the input and output data and send it back to me.', 750);
+      var panes = el('panes');
+      var p1 = el('pane', '<h5>Input sample data (XML)</h5><pre></pre>');
+      var p2 = el('pane', '<h5>Output sample data (JSON)</h5><span class="ph2">Paste expected output data here</span>');
+      panes.appendChild(p1);
+      panes.appendChild(p2);
+      ui.chat.appendChild(panes);
+      scrollBottom(ui.chat);
+      p1.classList.add('pulse');
+      p1.style.cursor = 'pointer';
+      cap('The input box became a data pane — click it');
+      p1.onclick = async function () {
+        p1.onclick = null;
+        p1.classList.remove('pulse');
+        p1.style.cursor = '';
+        var pre = p1.querySelector('pre');
+        var lines = ["<?xml version='1.0'?>", '<order>', '  <product>', '    <price>5</price>', '    <model>MuleSoft Connect 2016</model>', '  </product>', '  <item_amount>3</item_amount>', '</order>'];
+        for (var i = 0; i < lines.length; i++) {
+          pre.textContent += (i ? '\n' : '') + lines[i];
+          scrollBottom(ui.chat);
+          await sleep(70);
+        }
+        cap('Send the samples');
+        ui.send.disabled = false;
+        ui.send.classList.add('pulse');
+        ui.send.onclick = async function () {
+          ui.send.onclick = null;
+          ui.send.disabled = true;
+          ui.send.classList.remove('pulse');
+          await agentSay(ui.chat, 'Perfect — generating the DataWeave transform from your samples ✓', 800);
+          cap('The input adapts to every question. Restart ↺');
+        };
+      };
+    }
+  }
+
+  function initCtx(stage, cap) {
+    stage.innerHTML = '';
+    var hero = el('screen ctx-hero');
+    hero.appendChild(el('ctx-h1', 'How can I help you today?'));
+    var box = el('ctx-input');
+    var q = el('ctext');
+    box.appendChild(q);
+    box.appendChild(el('ctx-row2', '<span class="repo-chip">curie-dev/osb-edi-api ▾</span>'));
+    var actions = el('ctx-actions');
+    var ask = dbtn('Ask');
+    var run = dbtn('Run ▾', 'dark');
+    actions.appendChild(ask);
+    actions.appendChild(run);
+    box.appendChild(actions);
+    hero.appendChild(box);
+    hero.appendChild(el('ctx-tabs', '<span class="ctx-tab">Coding</span><span class="ctx-tab">Testing</span><span class="ctx-tab">Documentation</span>'));
+    stage.appendChild(hero);
+    cap('Live demo — the repo is already connected');
+    (async function () {
+      await sleep(500);
+      await typeInto(q, 'give me all the APIs');
+      run.classList.add('pulse');
+      cap('Repo connected — hit Run');
+    })();
+    run.onclick = async function () {
+      run.onclick = null;
+      run.classList.remove('pulse');
+      hero.classList.add('off');
+      var conv = el('screen app');
+      conv.appendChild(el('conv-head', '<div class="conv-title">Conversation: List all the flow names</div><div class="conv-sub">Description</div>'));
+      var chat = el('chat');
+      conv.appendChild(chat);
+      stage.appendChild(conv);
+      var m = el('msg user');
+      m.appendChild(el('result-pill', 'prc-curie-employee-syncFlow'));
+      chat.appendChild(m);
+      await agentSay(chat, 'Perfect ✅ I found some tasks you might want to run:', 850);
+      var opts = el('optcol');
+      var tasks = ['New data sources or fields', 'Handle new or changed endpoints', 'Update DataWeave transformations', 'Change business logic or connectors', 'Update MUnit tests', 'Test edge cases', 'Documentation update'];
+      tasks.forEach(function (t, i) {
+        var b = dbtn(t);
+        b.style.animation = 'mrise 0.3s var(--ease-enter) both';
+        b.style.animationDelay = (i * 0.045) + 's';
+        if (t === 'Handle new or changed endpoints') b.classList.add('pulse');
+        b.onclick = function () {
+          opts.querySelectorAll('.dbtn').forEach(function (x) {
+            x.classList.remove('pulse');
+            x.style.pointerEvents = 'none';
+            x.classList.toggle('chosen', x !== b);
+          });
+          b.classList.add('sel');
+          var card = el('task-card', '<svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 1.5h5.5L13 5v9.5H4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M9.5 1.5V5H13" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg><span>' + esc(t) + '</span><span class="tmeta">New task started at Coder ›</span>');
+          chat.appendChild(card);
+          scrollBottom(chat);
+          cap('Task starts with full repo context. Restart ↺');
+        };
+        opts.appendChild(b);
+      });
+      chat.appendChild(opts);
+      scrollBottom(chat);
+      await agentSay(chat, 'Click and tell me which to start with, or ask me anything about your project first.', 700);
+      cap('It read the codebase — pick a task');
+    };
+  }
+
+  document.querySelectorAll('[data-live]').forEach(function (d) {
+    var kind = d.getAttribute('data-live');
+    var stage = d.querySelector('.dstage');
+    var capEl = d.querySelector('.dcap');
+    function cap(t) { capEl.textContent = t; }
+    var init = kind === 'qa' ? initQA : kind === 'wid' ? initWid : initCtx;
+    d.querySelector('.dreset').addEventListener('click', function () { init(stage, cap); });
+    init(stage, cap);
   });
 
   document.addEventListener('keydown', function (e) {

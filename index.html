@@ -226,17 +226,71 @@
   .s2-h .idx { color: var(--muted); margin-right: 8px; }
   .s2-section + .s2-section { margin-top: clamp(28px, 5vh, 48px); }
   .protos {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
+    --dscale: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
   }
-  @media (max-width: 1180px) { .protos { grid-template-columns: 1fr; } }
+  .demo-ctl {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    margin-bottom: 6px;
+  }
+  .dctl-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    user-select: none;
+  }
+  .dctl {
+    -webkit-appearance: none;
+    appearance: none;
+    width: min(200px, 40%);
+    height: 2px;
+    border-radius: 2px;
+    background: #e3e3e3;
+    outline: none;
+    cursor: pointer;
+  }
+  .dctl::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    transition: transform 0.15s ease-out;
+  }
+  .dctl::-webkit-slider-thumb:hover { transform: scale(1.12); }
+  .dctl::-webkit-slider-thumb:active { transform: scale(0.98); }
+  .dctl::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  }
+  .dctl:focus-visible { outline: 2px solid var(--navy); outline-offset: 6px; }
+  .dctl-val {
+    font-size: 11px;
+    color: var(--ink-70);
+    font-variant-numeric: tabular-nums;
+    min-width: 38px;
+    user-select: none;
+  }
   .proto {
     border: 1px solid var(--chip-border);
     background: var(--chip-bg);
     padding: 12px 12px 10px;
     display: flex;
     flex-direction: column;
+    width: calc(var(--dscale, 1) * 100%);
+    margin: 0 auto;
   }
   .proto-name {
     font-size: 12px;
@@ -265,11 +319,19 @@
   }
   /* ---------- live coded prototypes ---------- */
   .demo { background: #fff; border: 1px solid var(--chip-border); }
-  .dstage {
+  .dview {
     position: relative;
     width: 100%;
-    aspect-ratio: 4 / 3;
-    min-height: 230px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .dstage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 560px;
+    height: 338px;
+    transform-origin: 0 0;
     overflow: hidden;
     background: #fff;
   }
@@ -913,12 +975,17 @@
         <div class="s2">
             <div class="s2-panel" data-real>
               <section class="s2-section">
+                <div class="demo-ctl">
+                  <label class="dctl-label" for="dctl">Demo size</label>
+                  <input class="dctl" type="range" id="dctl" min="50" max="100" step="1" value="100" aria-label="Demo window size">
+                  <span class="dctl-val" id="dctlval">100%</span>
+                </div>
                 <div class="protos">
                   <article class="proto">
                     <div class="proto-name">Guided Q&amp;A</div>
                     <p class="proto-sub">The agent asks one question at a time and walks the user from goal to generated flow.</p>
                     <div class="demo" data-live="qa">
-                      <div class="dstage" aria-label="Live Guided Q&A prototype"></div>
+                      <div class="dview"><div class="dstage" aria-label="Live Guided Q&A prototype"></div></div>
                       <div class="demo-bar">
                         <span class="livedot" aria-hidden="true"></span>
                         <span class="dcap" aria-live="polite"></span>
@@ -932,7 +999,7 @@
                     <div class="proto-name">Widgets</div>
                     <p class="proto-sub">Selection groups appear inline in the chat flow, and the input box adapts to the question.</p>
                     <div class="demo" data-live="wid">
-                      <div class="dstage" aria-label="Live Widgets prototype"></div>
+                      <div class="dview"><div class="dstage" aria-label="Live Widgets prototype"></div></div>
                       <div class="demo-bar">
                         <span class="livedot" aria-hidden="true"></span>
                         <span class="dcap" aria-live="polite"></span>
@@ -946,7 +1013,7 @@
                     <div class="proto-name">Context-aware<span class="proto-badge">Final</span></div>
                     <p class="proto-sub">Describe the goal, connect the repo or files; the agent follows up and compiles a design spec for review.</p>
                     <div class="demo" data-live="ctx">
-                      <div class="dstage" aria-label="Live Context-aware prototype"></div>
+                      <div class="dview"><div class="dstage" aria-label="Live Context-aware prototype"></div></div>
                       <div class="demo-bar">
                         <span class="livedot" aria-hidden="true"></span>
                         <span class="dcap" aria-live="polite"></span>
@@ -1083,6 +1150,7 @@
       el.classList.toggle('on', el.getAttribute('data-step') == idx);
     });
     updateFilled();
+    fitDemos();
     document.getElementById('counter').textContent = '0' + idx + ' / 04';
     document.getElementById('prev').disabled = false;
     document.getElementById('next').disabled = (idx === 4);
@@ -1544,6 +1612,29 @@
     d.querySelector('.dreset').addEventListener('click', function () { init(stage, cap); });
     init(stage, cap);
   });
+
+  /* demo windows: fixed desktop-ratio design size, scaled to fill their column */
+  var DVW = 560, DVH = 338;
+  function fitDemos() {
+    document.querySelectorAll('.dview').forEach(function (v) {
+      var w = v.clientWidth;
+      if (!w) return;
+      var s = w / DVW;
+      v.style.height = Math.round(DVH * s) + 'px';
+      v.firstElementChild.style.transform = 'scale(' + s + ')';
+    });
+  }
+  var dctl = document.getElementById('dctl');
+  if (dctl) {
+    dctl.addEventListener('input', function () {
+      var protos = document.querySelector('.protos');
+      if (protos) protos.style.setProperty('--dscale', dctl.value / 100);
+      document.getElementById('dctlval').textContent = dctl.value + '%';
+      fitDemos();
+    });
+  }
+  window.addEventListener('resize', fitDemos);
+  fitDemos();
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {

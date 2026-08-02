@@ -93,7 +93,7 @@
     line-height: 1.32;
     letter-spacing: -0.02em;
     color: var(--muted);
-    opacity: 0.5;
+    opacity: var(--dim, 0.5);
   }
   .step[data-role="done"]:hover, .step[data-role="upcoming"]:hover {
     opacity: 0.85;
@@ -169,7 +169,7 @@
     transform: translateY(22px);
     transition: opacity 0.4s ease, transform 0.55s var(--ease-enter);
   }
-  .media-item { transform: translateY(0); transition: opacity 0.45s ease; }
+  .media-item { transform: translateY(14px); transition: opacity 0.45s ease, transform 0.6s var(--ease-enter); }
   .desc-item.on, .media-item.on {
     opacity: 1;
     pointer-events: auto;
@@ -207,10 +207,51 @@
     text-transform: uppercase;
     color: var(--muted);
     z-index: 3;
+    opacity: 0;
     transition: opacity 0.4s ease;
     user-select: none;
   }
-  [data-state="s3"] .hint { opacity: 0; }
+  [data-state="cover"] .hint { opacity: 1; }
+
+  .nav {
+    position: absolute;
+    right: var(--mx);
+    bottom: clamp(14px, 3vh, 34px);
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    z-index: 3;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+  }
+  [data-state="cover"] .nav { opacity: 0; pointer-events: none; }
+  .counter {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--ink-70);
+    font-variant-numeric: tabular-nums;
+    user-select: none;
+  }
+  .arrow {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid #eaeaea;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--ink-70);
+    padding: 0;
+    transition: border-color 0.2s ease, color 0.2s ease, transform 0.15s ease-out, opacity 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .arrow:hover { border-color: #d6d6d6; color: var(--black); }
+  .arrow:active { transform: scale(0.96); }
+  .arrow:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+  .arrow[disabled] { opacity: 0.35; cursor: default; pointer-events: none; }
+  .arrow svg { display: block; }
 
   /* first paint: gentle rise-in of the cover lines */
   .boot .step { animation: rise 0.7s var(--ease-enter) both; }
@@ -239,6 +280,7 @@
     .media { position: relative; }
     .foot { position: static; padding: 28px var(--mx) 40px; gap: 24px; flex-wrap: wrap; }
     .hint { display: none; }
+    .nav { display: none; }
     [data-state="cover"] .desc, [data-state="cover"] .media { display: none; }
   }
 </style>
@@ -291,6 +333,16 @@
 
   <div class="hint" id="hint" aria-hidden="true">Scroll&ensp;/&ensp;&rarr;</div>
 
+  <div class="nav" id="nav">
+    <span class="counter" id="counter" aria-live="polite">01 / 03</span>
+    <button class="arrow" id="prev" aria-label="Previous step">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="arrow" id="next" aria-label="Next step">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
 </main>
 
 <script>
@@ -307,19 +359,31 @@
 
   function applyRoles(idx) {
     if (idx === 0) {
-      titles.forEach(function (t) { t.removeAttribute('data-role'); t.removeAttribute('aria-current'); });
+      titles.forEach(function (t) {
+        t.removeAttribute('data-role');
+        t.removeAttribute('aria-current');
+        t.style.removeProperty('--dim');
+      });
       return;
     }
     titles.forEach(function (t, i) {
       var step = i + 1;
       var role = step < idx ? 'done' : step === idx ? 'active' : 'upcoming';
       t.setAttribute('data-role', role);
-      if (role === 'active') { t.setAttribute('aria-current', 'step'); }
-      else { t.removeAttribute('aria-current'); }
+      if (role === 'active') {
+        t.setAttribute('aria-current', 'step');
+        t.style.removeProperty('--dim');
+      } else {
+        t.removeAttribute('aria-current');
+        t.style.setProperty('--dim', role === 'done' ? '0.45' : (step === idx + 1 ? '0.55' : '0.4'));
+      }
     });
     document.querySelectorAll('.desc-item, .media-item').forEach(function (el) {
       el.classList.toggle('on', el.getAttribute('data-step') == idx);
     });
+    document.getElementById('counter').textContent = '0' + idx + ' / 03';
+    document.getElementById('prev').disabled = false;
+    document.getElementById('next').disabled = (idx === 3);
   }
 
   function setState(idx, skipAnim) {
@@ -398,6 +462,9 @@
       setState(parseInt(t.getAttribute('data-step'), 10));
     });
   });
+
+  document.getElementById('prev').addEventListener('click', function () { setState(Math.max(current - 1, 0)); });
+  document.getElementById('next').addEventListener('click', function () { setState(Math.min(current + 1, 3)); });
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {

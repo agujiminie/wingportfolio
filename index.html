@@ -1637,10 +1637,12 @@
     left: var(--mx);
     bottom: clamp(20px, 4.35vh, 47px);
     display: flex;
-    gap: clamp(40px, 6.25vw, 120px);
-    font-size: 12px;
+    width: calc(var(--split) - var(--mx) - var(--gutter));
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 10.5px;
     line-height: 1.5;
-    letter-spacing: -0.022em;
+    letter-spacing: -0.01em;
     text-transform: uppercase;
     z-index: 3;
   }
@@ -2080,7 +2082,7 @@
     current = idx;
     body.setAttribute('data-state', STATES[idx]);
     applyRoles(idx);
-    history.replaceState(null, '', idx === 0 ? location.pathname : '#' + idx);
+    history.replaceState(null, '', location.pathname);
     if (!animate) return;
 
     titles.forEach(function (t, i) {

@@ -713,38 +713,9 @@
   }
   .ctx-fig .pulse::after { inset: -8px; border-width: 3px; border-radius: 18px; }
   .ctx-fig img { flex: none; }
-  .cf-avatar, .cf-attach, .cf-send, .cf-repo, .cf-vtag, .cf-close, .cf-ticon { flex: none; }
-  .cf-side {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 80px;
-    height: 100%;
-    background: #fff;
-    border-right: 1px solid #eaeaea;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 3;
-  }
-  .cf-side-top { display: flex; flex-direction: column; align-items: center; width: 100%; }
-  .cf-collapse { height: 75px; display: flex; align-items: center; justify-content: center; width: 100%; }
+  .cf-attach, .cf-send, .cf-repo, .cf-vtag, .cf-close, .cf-ticon { flex: none; }
   .cf-i24 { width: 24px; height: 24px; display: block; }
   .cf-i16 { width: 16px; height: 16px; display: block; }
-  .cf-laptop { margin-top: 21px; }
-  .cf-plusrow { margin-top: 10px; height: 32px; display: flex; align-items: center; justify-content: center; }
-  .cf-side-bot { display: flex; flex-direction: column; gap: 25px; align-items: center; padding: 24px 0; }
-  .cf-avatar {
-    width: 24px;
-    height: 24px;
-    border-radius: 99px;
-    border: 2.5px solid #ab97fe;
-    background: #f9f1f8;
-    overflow: hidden;
-    position: relative;
-  }
-  .cf-avatar img { position: absolute; width: 46px; height: 46px; left: 50%; transform: translateX(-50%); top: 1.5px; }
   .cf-main {
     position: absolute;
     left: 0;
@@ -965,25 +936,10 @@
   }
   .cf-send:active { transform: scale(0.94); }
   .cf-send.dis { background: rgba(29, 27, 32, 0.12); pointer-events: none; }
-  .cf-tabs { display: flex; gap: 12px; padding: 20px 8px; flex-wrap: wrap; justify-content: center; }
-  .cf-tab {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    border: 1px solid #d6d6d6;
-    border-radius: 24px;
-    padding: 8px 14px;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 22px;
-    color: rgba(0, 0, 0, 0.88);
-    white-space: nowrap;
-  }
   .cf-ticon { width: 16px; height: 16px; position: relative; flex: none; display: block; }
   .cf-ticon span { display: block; }
   .cf-ticon img { display: block; }
   .cf-laptop { margin-top: 21px; }
-  .cf-tab .cf-ticon { display: inline-block; }
   .cf-conv { position: absolute; inset: 0; display: flex; flex-direction: column; animation: mrise 0.4s var(--ease-enter) both; }
   .cf-chead {
     flex: none;

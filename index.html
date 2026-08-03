@@ -702,9 +702,9 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 1506px;
-    height: 909px;
-    transform: scale(0.371846);
+    width: 800px;
+    height: 483px;
+    transform: scale(0.7);
     transform-origin: 0 0;
     background: #fff;
     font-family: 'Geist', var(--font-ui);
@@ -719,7 +719,7 @@
     left: 0;
     top: 0;
     width: 80px;
-    height: 909px;
+    height: 100%;
     background: #fff;
     border-right: 1px solid #eaeaea;
     display: flex;
@@ -749,37 +749,38 @@
     position: absolute;
     left: 80px;
     top: 0;
-    width: 1426px;
-    height: 909px;
+    right: 0;
+    bottom: 0;
     background: #fcfcfc;
     overflow: hidden;
-    transition: width 0.5s var(--ease-enter);
+    transition: right 0.5s var(--ease-enter);
   }
-  .cf-main.split { width: 693px; }
+  .cf-main.split { right: 52%; }
   .cf-hero {
     position: absolute;
     inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 249px;
+    padding-top: 88px;
     transition: opacity 0.35s ease, transform 0.45s var(--ease-enter);
   }
   .cf-hero.off { opacity: 0; transform: translateY(-28px); pointer-events: none; }
   .cf-h1 {
-    font-size: 36px;
+    font-size: 32px;
     font-weight: 500;
     line-height: normal;
     text-align: center;
-    width: 800px;
+    width: auto;
+    max-width: 92%;
     background: linear-gradient(90deg, #897ccb 0%, #a9928f 82%, #86a5c1 99%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
   .cf-chatbox {
-    width: 800px;
-    height: 160px;
+    width: min(800px, 90%);
+    height: 150px;
     margin-top: 48px;
     border-radius: 24px;
     border: 1px solid transparent;
@@ -803,7 +804,126 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.18s ease, transform 0.12s ease-out;
   }
+  .cf-attach:hover { border-color: #c9c9c9; }
+  .cf-attach:active { transform: scale(0.94); }
+  .cf-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(86, 76, 98, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 6;
+  }
+  .cf-overlay.on { opacity: 1; pointer-events: auto; }
+  .cf-modal {
+    width: min(560px, 86%);
+    max-height: 90%;
+    background: #fff;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+    transform: scale(0.96) translateY(10px);
+    transition: transform 0.3s var(--ease-enter);
+    overflow: hidden;
+  }
+  .cf-overlay.on .cf-modal { transform: none; }
+  .cf-mhead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 22px;
+    border-bottom: 1px solid #f0f0f0;
+    flex: none;
+  }
+  .cf-mtitle { font-size: 16px; font-weight: 700; color: #111; }
+  .cf-mclose { background: none; border: 0; cursor: pointer; padding: 4px; color: #111; display: flex; }
+  .cf-mbody { padding: 16px 22px 12px; display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+  .cf-seg { align-self: center; display: flex; background: #f4f4f4; border-radius: 999px; padding: 4px; }
+  .cf-seg span { padding: 7px 20px; font-size: 13.5px; font-weight: 500; color: #9b9b9b; border-radius: 999px; }
+  .cf-seg .on { background: #fff; color: #111; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); }
+  .cf-mcard {
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+  }
+  .cf-msearch {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    border: 1.5px solid #8b7cf0;
+    border-radius: 12px;
+    padding: 9px 12px;
+    flex: none;
+  }
+  .cf-msearch svg { flex: none; color: #9a9a9a; }
+  .cf-msearch input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: none;
+    font-size: 14px;
+    font-family: inherit;
+    color: #111;
+    background: none;
+  }
+  .cf-msearch input::placeholder { color: #b3b3b3; }
+  .cf-mlabel {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 12.5px;
+    color: #8a8a8a;
+    padding-left: 4px;
+  }
+  .cf-mlist { overflow-y: auto; max-height: 205px; }
+  .cf-mrow {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 11px 14px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #141414;
+    background: none;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s ease;
+  }
+  .cf-mrow:hover { background: #f7f6f3; }
+  .cf-mrow.sel { background: #efeafe; color: #4b3fae; }
+  .cf-mfoot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 12px 22px 16px;
+    border-top: 1px solid #f0f0f0;
+    flex: none;
+  }
+  .cf-btn2 {
+    font-size: 14px;
+    font-weight: 500;
+    font-family: inherit;
+    border-radius: 12px;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease, transform 0.12s ease-out;
+  }
+  .cf-btn2:active { transform: scale(0.97); }
+  .cf-cancel { background: #fff; border: 1px solid #dcdcdc; color: #111; }
+  .cf-save { background: #e9e9e9; border: 0; color: #a3a3a3; pointer-events: none; }
+  .cf-save.ready { background: #1f1f1f; color: #fff; pointer-events: auto; }
   .cf-repo {
     width: 263px;
     height: 32px;
@@ -815,7 +935,7 @@
     gap: 8px;
     align-items: center;
   }
-  .cf-repo span {
+  .cf-repo > span:first-child {
     flex: 1;
     min-width: 0;
     font-size: 12px;
@@ -842,14 +962,14 @@
   }
   .cf-send:active { transform: scale(0.94); }
   .cf-send.dis { background: rgba(29, 27, 32, 0.12); pointer-events: none; }
-  .cf-tabs { display: flex; gap: 20px; padding: 24px 16px; }
+  .cf-tabs { display: flex; gap: 12px; padding: 20px 8px; flex-wrap: wrap; justify-content: center; }
   .cf-tab {
     display: flex;
     gap: 12px;
     align-items: center;
     border: 1px solid #d6d6d6;
     border-radius: 24px;
-    padding: 8px 20px;
+    padding: 8px 14px;
     font-size: 14px;
     font-weight: 500;
     line-height: 22px;
@@ -876,7 +996,7 @@
   .cf-csub { font-size: 12px; font-weight: 500; line-height: 16px; color: rgba(0, 0, 0, 0.65); }
   .cf-chat { flex: 1; min-height: 0; overflow-y: auto; padding: 24px 0 16px; }
   .cf-col {
-    width: 800px;
+    width: min(800px, 92%);
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -884,12 +1004,12 @@
     align-items: flex-end;
     transition: width 0.5s var(--ease-enter);
   }
-  .cf-main.split .cf-col { width: 640px; }
+  .cf-main.split .cf-col { width: 90%; }
   .cf-user {
     background: rgba(0, 0, 0, 0.04);
     border-radius: 24px;
     padding: 16px;
-    max-width: 640px;
+    max-width: 80%;
     font-size: 14px;
     letter-spacing: 0.56px;
     line-height: 16px;
@@ -966,10 +1086,10 @@
     -webkit-tap-highlight-color: transparent;
   }
   .cf-specs-link:hover { color: rgba(0, 0, 0, 0.75); }
-  .cf-dock { flex: none; height: 128px; background: #fcfcfc; display: flex; align-items: center; justify-content: center; }
+  .cf-dock { flex: none; height: 96px; background: #fcfcfc; display: flex; align-items: center; justify-content: center; }
   .cf-composer {
-    width: 800px;
-    min-height: 60px;
+    width: min(800px, 92%);
+    min-height: 56px;
     border-radius: 24px;
     border: 1px solid transparent;
     background: linear-gradient(#fff, #fff) padding-box, linear-gradient(90deg, #ab97fe 0%, #d3b6b8 60%, #ecc76a 100%) border-box;
@@ -980,14 +1100,14 @@
     align-items: center;
     transition: width 0.5s var(--ease-enter);
   }
-  .cf-main.split .cf-composer { width: 640px; }
+  .cf-main.split .cf-composer { width: 90%; }
   .cf-ph { flex: 1; min-width: 0; font-size: 14px; font-weight: 500; line-height: 22px; color: rgba(0, 0, 0, 0.25); }
   .cf-spec {
     position: absolute;
     top: 0;
-    right: -763px;
-    width: 733px;
-    height: 909px;
+    right: -56%;
+    width: 52%;
+    height: 100%;
     background: #fff;
     border-left: 1px solid #e3e3e3;
     display: flex;
@@ -1029,7 +1149,7 @@
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: 16px 30px;
+    padding: 14px 20px;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -1052,7 +1172,7 @@
     font-family: inherit;
     cursor: pointer;
   }
-  .cf-doc { width: 624px; display: flex; flex-direction: column; gap: 24px; padding: 0 16px; }
+  .cf-doc { width: auto; max-width: 640px; display: flex; flex-direction: column; gap: 24px; padding: 0 12px; }
   .cf-sec { display: flex; flex-direction: column; gap: 4px; }
   .cf-sec h6 { font-size: 14px; font-weight: 700; line-height: 18px; color: rgba(0, 0, 0, 0.65); margin: 0; }
   .cf-sec .cf-body14 { font-size: 14px; font-weight: 500; line-height: 22px; color: rgba(0, 0, 0, 0.45); }
@@ -2344,7 +2464,7 @@
 
     var q = hero.querySelector('.cf-query');
     var send = hero.querySelector('.cf-send');
-    cap('Live demo \u2014 repos already connected');
+    cap('Live demo \u2014 hit + to connect a repo, or send');
     (async function () {
       await sleep(600);
       if (reduced) { q.textContent = 'give me all the APIs'; }
@@ -2495,6 +2615,63 @@
       main.classList.remove('split');
       cap('Design spec, versioned and reviewable. Restart \u21ba');
     };
+
+    var REPOS = ['main-branch-at75-fsc-integration', 'sub-branch-at75-fsc-integration', 'feature-two-at75-fsc-integration', 'feature-three-at75-fsc-integration', 'feature-four-at75-fsc-integration', 'feature-five-at75-fsc-integration', 'bugfix-one-at75-fsc-integration'];
+    var overlay = el('cf-overlay');
+    var SEARCH_SVG = '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+    var X_SVG = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 3L13 13M13 3L3 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+    overlay.innerHTML =
+      '<div class="cf-modal" role="dialog" aria-label="Add Repository">' +
+        '<div class="cf-mhead"><span class="cf-mtitle">Add Repository</span><button class="cf-mclose" type="button" aria-label="Close">' + X_SVG + '</button></div>' +
+        '<div class="cf-mbody">' +
+          '<div class="cf-seg"><span class="on">Select Repo</span><span>Upload Repo</span></div>' +
+          '<div class="cf-mcard">' +
+            '<label class="cf-msearch">' + SEARCH_SVG + '<input type="text" placeholder="Search or select repositories..." aria-label="Search repositories"></label>' +
+            '<div class="cf-mlabel">Select Repository</div>' +
+            '<div class="cf-mlist"></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="cf-mfoot"><button class="cf-btn2 cf-cancel" type="button">Cancel</button><button class="cf-btn2 cf-save" type="button">Save</button></div>' +
+      '</div>';
+    fig.appendChild(overlay);
+    var mlist = overlay.querySelector('.cf-mlist');
+    var msave = overlay.querySelector('.cf-save');
+    var msearch = overlay.querySelector('.cf-msearch input');
+    var selectedRepo = null;
+    REPOS.forEach(function (name) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'cf-mrow';
+      b.textContent = name;
+      b.onclick = function () {
+        mlist.querySelectorAll('.cf-mrow').forEach(function (x) { x.classList.remove('sel'); });
+        b.classList.add('sel');
+        selectedRepo = name;
+        msave.classList.add('ready');
+      };
+      mlist.appendChild(b);
+    });
+    msearch.addEventListener('input', function () {
+      var qq = msearch.value.toLowerCase();
+      mlist.querySelectorAll('.cf-mrow').forEach(function (x) {
+        x.style.display = x.textContent.toLowerCase().indexOf(qq) > -1 ? '' : 'none';
+      });
+    });
+    function closeModal() { overlay.classList.remove('on'); }
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) closeModal(); });
+    overlay.querySelector('.cf-mclose').onclick = closeModal;
+    overlay.querySelector('.cf-cancel').onclick = closeModal;
+    msave.onclick = function () {
+      if (!selectedRepo) return;
+      closeModal();
+      fig.querySelectorAll('.cf-repo span').forEach(function (sp) {
+        sp.textContent = sp.textContent + ', ' + selectedRepo;
+      });
+      cap('Repo connected \u2014 ' + selectedRepo + ' is now context');
+    };
+    fig.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('.cf-attach')) overlay.classList.add('on');
+    });
   }
 
   document.querySelectorAll('[data-live]').forEach(function (d) {

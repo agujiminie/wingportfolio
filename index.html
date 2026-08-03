@@ -803,6 +803,167 @@
     .s3-shot { min-height: 90px; }
   }
 
+  /* ---------- step 4: Design.md living document ---------- */
+  .s4-panel {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(10px, 1.8vh, 16px);
+    padding: clamp(18px, 3vh, 28px) 5.5% clamp(56px, 10vh, 96px);
+  }
+  .s4-loop {
+    flex: none;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px 4px;
+  }
+  .s4-node {
+    background: var(--chip-bg);
+    border: 1px solid var(--chip-border);
+    border-bottom-width: 2px;
+    padding: 4px 9px 3px;
+    font-size: 10.5px;
+    letter-spacing: -0.01em;
+    color: var(--ink-70);
+    white-space: nowrap;
+  }
+  .s4-node.n-doc {
+    border-color: var(--black);
+    color: var(--black);
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 10px;
+  }
+  .s4-node.n-b { border-bottom-color: #b7a5ec; }
+  .s4-node.n-r { border-bottom-color: #ecc76a; }
+  .s4-node.n-f { border-bottom-color: #efa08f; }
+  .s4-larr { flex: 0 0 auto; display: flex; color: var(--muted); }
+  .s4-larr svg { display: block; }
+  .s4-back {
+    font-size: 10px;
+    letter-spacing: -0.01em;
+    color: var(--muted);
+    font-style: italic;
+    margin-left: 2px;
+    white-space: nowrap;
+  }
+  .s4-docwrap {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--chip-border);
+    background: #fff;
+  }
+  .s4-dochead {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--chip-border);
+    background: var(--chip-bg);
+  }
+  .s4-filedot { width: 7px; height: 7px; border-radius: 50%; background: #846fe1; flex: none; }
+  .s4-file {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 11px;
+    color: var(--black);
+    letter-spacing: -0.01em;
+  }
+  .s4-legend {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .s4-key {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    letter-spacing: -0.01em;
+    color: var(--ink-70);
+    white-space: nowrap;
+  }
+  .s4-key i { width: 10px; height: 10px; border-radius: 2px; flex: none; font-style: normal; }
+  .s4-key.k-b i { background: #e6defc; }
+  .s4-key.k-r i { background: #ffedbf; }
+  .s4-key.k-f i { background: #ffd9d1; }
+  .s4-doc {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: clamp(16px, 2.6vh, 24px) clamp(18px, 2vw, 30px) 34px;
+    font-size: 12px;
+    line-height: 1.62;
+    letter-spacing: -0.005em;
+    color: #3a3a3a;
+  }
+  .s4-doc::-webkit-scrollbar { width: 8px; }
+  .s4-doc::-webkit-scrollbar-thumb { background: #e2e2e2; border-radius: 4px; }
+  .s4-doc::-webkit-scrollbar-thumb:hover { background: #cfcfcf; }
+  .s4-doc h1 {
+    font-size: 15.5px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--black);
+    margin-bottom: 4px;
+  }
+  .s4-doc h2 {
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--black);
+    margin: 20px 0 6px;
+    padding-top: 14px;
+    border-top: 1px solid #f1f1f0;
+  }
+  .s4-doc h3 {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--black);
+    margin: 12px 0 4px;
+  }
+  .s4-doc p { margin: 6px 0; }
+  .s4-doc ul, .s4-doc ol { margin: 6px 0; padding-left: 20px; }
+  .s4-doc li { margin: 3px 0; }
+  .s4-doc code {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 10.5px;
+    background: #f5f5f4;
+    border: 1px solid #eeeeec;
+    border-radius: 3px;
+    padding: 0 4px;
+    color: #4a4458;
+    white-space: nowrap;
+  }
+  .s4-doc .s4-meta { font-size: 11px; color: var(--muted); margin: 2px 0 4px; }
+  .s4-doc mark {
+    color: inherit;
+    border-radius: 2px;
+    padding: 1px 2px;
+    margin: -1px -2px;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 0 55%;
+    background-size: 0% 82%;
+    transition: background-size 0.55s var(--ease-enter);
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+  .s4-doc mark.hl-b { background-image: linear-gradient(#e6defc, #e6defc); }
+  .s4-doc mark.hl-r { background-image: linear-gradient(#ffedbf, #ffedbf); }
+  .s4-doc mark.hl-f { background-image: linear-gradient(#ffd9d1, #ffd9d1); }
+  .s4-doc mark.lit { background-size: 100% 82%; }
+  @media (max-width: 860px) {
+    .s4-panel { padding: 16px 5% 20px; }
+    .s4-legend { gap: 8px; }
+  }
+
   .panel { position: absolute; inset: 0; }
   .desc-item, .media-item {
     position: absolute;
@@ -1086,9 +1247,114 @@
         </div>
       </div>
       <div class="media-item" data-step="4">
-        <div class="chips">
-          <div class="chip">Design.md 真实片段</div>
-          <div class="chip">AI review / design QA 实例截图</div>
+        <div class="s4-panel" data-real>
+          <div class="s4-loop" aria-label="Design judgment loop: Design judgment, Design.md, Implementation, AI review, Human QA, Production issue, Better rule, feeding back into Design.md">
+            <span class="s4-node">Design judgment</span>
+            <span class="s4-larr" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="s4-node n-doc">Design.md</span>
+            <span class="s4-larr" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="s4-node n-b">Implementation</span>
+            <span class="s4-larr" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="s4-node n-r">AI review</span>
+            <span class="s4-larr" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="s4-node n-r">Human QA</span>
+            <span class="s4-larr" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="s4-node n-f">Production issue</span>
+            <span class="s4-larr" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="s4-node n-f">Better rule</span>
+            <span class="s4-back">&#8635; feeds back into Design.md</span>
+          </div>
+          <section class="s4-docwrap">
+            <div class="s4-dochead">
+              <span class="s4-filedot" aria-hidden="true"></span>
+              <span class="s4-file">DESIGN.md</span>
+              <div class="s4-legend" aria-label="Highlight legend">
+                <span class="s4-key k-b"><i aria-hidden="true"></i><span data-count="b">How it behaves</span></span>
+                <span class="s4-key k-r"><i aria-hidden="true"></i><span data-count="r">What gets reviewed</span></span>
+                <span class="s4-key k-f"><i aria-hidden="true"></i><span data-count="f">Failure patterns</span></span>
+              </div>
+            </div>
+            <div class="s4-doc" id="s4doc" tabindex="0" aria-label="DESIGN.md excerpt, scrollable">
+              <h1>Design System: Curie</h1>
+              <p class="s4-meta"><strong>Source of truth:</strong> Curie Figma design tokens, <code>design-tokens.json</code>, <code>tailwind.config.ts</code>, and Storybook stories.</p>
+
+              <h2>1. Visual Theme &amp; Atmosphere</h2>
+              <p>Curie is a light, precise, engineering-focused product interface. The visual language is clean and restrained: pale surfaces, soft inset/onset shadows, crisp borders, compact controls, and a muted purple brand layer used sparingly for meaning and attention.</p>
+              <p>The overall mood should feel sleek, modern, calm, and operational. Surfaces are mostly neutral, interaction states are subtle, and hierarchy comes from typography, spacing, elevation, and controlled contrast rather than saturated color.</p>
+              <p>Curie screens should feel like focused workspaces: generous enough to breathe, dense enough for developer workflows, and visually quiet around the content. The strongest visual moments are reserved for primary actions, agent/chat entry points, status feedback, and selected states.</p>
+
+              <h2>2. Color Palette &amp; Roles</h2>
+              <p>Always use semantic Tailwind token classes in production UI. Do not hardcode raw colors in new user-facing surfaces unless a token does not exist and the exception is documented.</p>
+              <ul>
+                <li>Deep Aubergine (<code>#2e1f36</code>): primary brand text and high-emphasis purple identity. Use via <code>tokens-primary-1</code>.</li>
+                <li>Lavender Mist (<code>#f9f0ff</code>): pale purple wash for gentle brand backgrounds and selected areas. Use via <code>tokens-primary-3</code>.</li>
+                <li>Action Charcoal (<code>#262626</code>): dark primary button background and high-emphasis neutral action. Use via <code>tokens-neutral-bg-action</code>.</li>
+                <li>Success Green (<code>#2c8450</code>), Warning Amber (<code>#d48806</code>), Error Red (<code>#d94b36</code>): status text and icons, always via <code>tokens-status-*</code>.</li>
+                <li>Link Purple (<code>#846fe1</code>): link and interactive accent. Use via <code>tokens-status-link-1</code>.</li>
+              </ul>
+
+              <h2>3. Typography Rules</h2>
+              <p>All application text should use the <code>Typography</code> component. Avoid raw headings, paragraphs, or spans for new Curie UI text unless wrapping third-party or markdown-rendered content.</p>
+              <p>Text should feel compact and precise. Use semibold for section headers and selected controls, medium for interactive labels, and bold only when the design needs explicit emphasis.</p>
+              <p>For settings-like surfaces, prefer <code>titleLg</code> with <code>semibold</code> for page titles. Avoid oversized bold headers on dense product screens because they overpower the workspace.</p>
+
+              <h2>4. Shape, Depth, and Motion</h2>
+              <ul>
+                <li>Compact controls: 8&ndash;10px radius. Standard controls: 12px. Prominent containers: 14&ndash;16px. Pill-shaped controls: full radius for search inputs, chat entry fields, and toggles.</li>
+                <li>Depth should be quiet and layered. Prefer border plus subtle shadow over heavy drop shadows. Cards combine a light border with <code>shadow-segment</code>, then lift on hover.</li>
+              </ul>
+              <p>Microinteractions should be fast and subtle, usually 150ms to 300ms. Prefer opacity, transform, and shadow changes. Respect reduced-motion expectations for anything beyond basic state transitions.</p>
+
+              <h2>5. Component Styling</h2>
+              <p>Before creating any component, search the existing component and story directories. Storybook is the practical reference surface for component variants and expected behavior.</p>
+              <h3>Buttons</h3>
+              <p>Primary buttons use Action Charcoal with white text, 12px corners, 36px height, and a subtle shadow. Hover and active states use white overlay fills rather than changing the base color abruptly. Destructive buttons are transparent with Error Text Red and an error-tinted hover state.</p>
+              <h3>Cards and Rows</h3>
+              <ul>
+                <li>Hover: increase elevation or fill softly, never jump to saturated color.</li>
+                <li>Actions: reveal secondary actions on hover/focus rather than showing every action permanently.</li>
+                <li>Avoid raw tables for these surfaces unless the data is genuinely tabular and scanning columns is the primary task.</li>
+              </ul>
+              <h3>Segmented Controls and Tabs</h3>
+              <p>Standard segment controls use a soft grey track, 12px radius, and a white selected indicator. Sliding indicators should animate smoothly and stay visually aligned before paint.</p>
+              <h3>Dropdown Menus and Popovers</h3>
+              <p>Dropdown menus are for short action lists; popovers are non-blocking anchored panels. Do not call a rich picker a menu unless it is literally a list of actions. Use the shared dropdown primitives instead of hand-rolling positioning, clipping, hover, and keyboard behavior.</p>
+
+              <h2>7. Interaction and Accessibility</h2>
+              <ul>
+                <li>Buttons, tabs, dropdown items, tags, tooltips, and UI chrome should generally be non-selectable.</li>
+                <li>Long-form text, chat, markdown, code, logs, diffs, URLs, IDs, and data values should remain selectable.</li>
+                <li>Icon-only actions need accessible labels.</li>
+                <li>Modal flows should trap focus and close with Escape.</li>
+                <li>Dropdowns and menus should support keyboard navigation and visible focus.</li>
+                <li>Disable buttons during async operations and expose loading states.</li>
+              </ul>
+
+              <h2>8. Storybook and Component Practice</h2>
+              <p>Every reusable component must have a Storybook story. Stories should include a playground with representative defaults, plus common variants and states, especially disabled, error, selected, loading, empty, and destructive states.</p>
+              <p>Storybook should be checked before creating a new primitive. If a component already exists, extend it with clear props rather than forking a near-duplicate.</p>
+
+              <h2>9. Implementation Rules</h2>
+              <ol>
+                <li>Use design tokens, not raw color classes, for new user-facing surfaces.</li>
+                <li>Use <code>Typography</code> for application text.</li>
+                <li>Prefer existing components before creating new ones.</li>
+                <li>Add or update Storybook whenever a reusable component changes.</li>
+                <li>Keep icons inline until at least two sibling consumers share them; then extract to a shared icons file.</li>
+                <li>Do not bulk-rewrite existing historical color violations unless already touching nearby code.</li>
+                <li>Preserve component vocabulary: Modal, Popover, DropdownMenu, Tooltip, Drawer, Sheet, and Form have distinct meanings.</li>
+              </ol>
+
+              <h2>10. Automation Workflows Feature Design</h2>
+              <p>Prototype accents must translate to semantic Curie tokens in production:</p>
+              <ul>
+                <li>Accent purple (<code>#6b46e5</code>) &rarr; Link Purple <code>tokens-status-link-1</code>.</li>
+                <li>Step &ldquo;done&rdquo; green (<code>#10b981</code>, emerald) &rarr; Success Green tokens. Do not ship raw emerald.</li>
+                <li>Live/running indicators (pulsing dot, spinner) should respect reduced-motion.</li>
+                <li>Keep step numbers, IDs, and file paths in Geist Mono and selectable; keep chrome non-selectable.</li>
+              </ul>
+            </div>
+          </section>
         </div>
       </div>
     </div>
@@ -1637,6 +1903,92 @@
   window.addEventListener('resize', fitDemos);
   fitDemos();
 
+  /* ---------- step 4: auto-highlight the Design.md excerpt ---------- */
+  var S4_HL = [
+    { cls: 'hl-b', key: 'b', phrases: [
+      'Hover and active states use white overlay fills rather than changing the base color abruptly.',
+      'Sliding indicators should animate smoothly and stay visually aligned before paint.',
+      'Microinteractions should be fast and subtle, usually 150ms to 300ms.',
+      'Respect reduced-motion expectations for anything beyond basic state transitions.',
+      'reveal secondary actions on hover/focus rather than showing every action permanently',
+      'Modal flows should trap focus and close with Escape.',
+      'Dropdowns and menus should support keyboard navigation and visible focus.',
+      'Disable buttons during async operations and expose loading states.',
+      'Live/running indicators (pulsing dot, spinner) should respect reduced-motion.'
+    ]},
+    { cls: 'hl-r', key: 'r', phrases: [
+      'Do not hardcode raw colors in new user-facing surfaces unless a token does not exist and the exception is documented.',
+      'Avoid raw headings, paragraphs, or spans for new Curie UI text',
+      'Before creating any component, search the existing component and story directories.',
+      'Use the shared dropdown primitives instead of hand-rolling positioning, clipping, hover, and keyboard behavior.',
+      'Icon-only actions need accessible labels.',
+      'Every reusable component must have a Storybook story.',
+      'especially disabled, error, selected, loading, empty, and destructive states',
+      'Storybook should be checked before creating a new primitive.',
+      'Use design tokens, not raw color classes, for new user-facing surfaces.',
+      'Prefer existing components before creating new ones.',
+      'Add or update Storybook whenever a reusable component changes.'
+    ]},
+    { cls: 'hl-f', key: 'f', phrases: [
+      'Avoid oversized bold headers on dense product screens because they overpower the workspace.',
+      'Prefer border plus subtle shadow over heavy drop shadows.',
+      'never jump to saturated color',
+      'Avoid raw tables for these surfaces unless the data is genuinely tabular and scanning columns is the primary task.',
+      'Do not call a rich picker a menu unless it is literally a list of actions.',
+      'Do not bulk-rewrite existing historical color violations unless already touching nearby code.',
+      'Do not ship raw emerald.'
+    ]}
+  ];
+
+  function s4WrapPhrase(root, phrase, cls) {
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+    var node;
+    while ((node = walker.nextNode())) {
+      var idx = node.data.indexOf(phrase);
+      if (idx === -1) continue;
+      var range = document.createRange();
+      range.setStart(node, idx);
+      range.setEnd(node, idx + phrase.length);
+      var m = document.createElement('mark');
+      m.className = cls;
+      range.surroundContents(m);
+      return true;
+    }
+    return false;
+  }
+
+  (function initS4() {
+    var doc = document.getElementById('s4doc');
+    var item = document.querySelector('.media-item[data-step="4"]');
+    if (!doc || !item) return;
+    var counts = { b: 0, r: 0, f: 0 };
+    S4_HL.forEach(function (group) {
+      group.phrases.forEach(function (p) {
+        if (s4WrapPhrase(doc, p, group.cls)) counts[group.key] += 1;
+      });
+    });
+    document.querySelectorAll('.s4-legend [data-count]').forEach(function (el) {
+      var n = counts[el.getAttribute('data-count')];
+      if (n) el.textContent += ' · ' + n;
+    });
+    var marks = doc.querySelectorAll('mark');
+    function sweep(on) {
+      marks.forEach(function (m, i) {
+        if (on) {
+          m.style.transitionDelay = (0.35 + i * 0.07) + 's';
+          m.classList.add('lit');
+        } else {
+          m.style.transitionDelay = '0s';
+          m.classList.remove('lit');
+        }
+      });
+    }
+    new MutationObserver(function () {
+      sweep(item.classList.contains('on'));
+    }).observe(item, { attributes: true, attributeFilter: ['class'] });
+    sweep(item.classList.contains('on'));
+  })();
+
   document.addEventListener('keydown', function (e) {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
       e.preventDefault(); setState(Math.min(current + 1, 4));
@@ -1652,7 +2004,7 @@
   var wheelAcc = 0, wheelLock = false;
   window.addEventListener('wheel', function (e) {
     if (window.innerWidth <= 860) return;
-    if (e.target.closest && e.target.closest('.s2-panel')) return;
+    if (e.target.closest && e.target.closest('.s2-panel, .s4-doc')) return;
     if (wheelLock) return;
     wheelAcc += e.deltaY;
     if (Math.abs(wheelAcc) > 70) {
@@ -1671,7 +2023,7 @@
   }, { passive: true });
   window.addEventListener('touchend', function (e) {
     if (touchY === null || window.innerWidth <= 860) return;
-    if (e.target.closest && e.target.closest('.s2-panel')) { touchY = null; return; }
+    if (e.target.closest && e.target.closest('.s2-panel, .s4-doc')) { touchY = null; return; }
     var dy = touchY - e.changedTouches[0].clientY;
     touchY = null;
     if (Math.abs(dy) > 50) setState(Math.min(Math.max(current + (dy > 0 ? 1 : -1), 0), 4));

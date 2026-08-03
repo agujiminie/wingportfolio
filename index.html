@@ -306,6 +306,61 @@
     min-width: 38px;
     user-select: none;
   }
+  /* ---------- variable sliders: re-rank demos ---------- */
+  .vars-hint {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+    margin: -4px 0 16px;
+    max-width: 560px;
+  }
+  .vars { display: flex; flex-direction: column; gap: 4px; max-width: 680px; }
+  .var-row {
+    display: grid;
+    grid-template-columns: minmax(96px, 128px) 1fr minmax(120px, 158px);
+    gap: 14px;
+    align-items: center;
+    min-height: 42px;
+    padding: 2px 12px;
+    border-radius: 10px;
+    transition: background 0.25s ease;
+  }
+  .var-row.active { background: #fff; box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04); }
+  .var-l, .var-r {
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--ink-70);
+    user-select: none;
+    transition: color 0.2s ease;
+  }
+  .var-l { text-align: right; }
+  .var-row.lean-l .var-l, .var-row.lean-r .var-r { color: var(--black); font-weight: 500; }
+  .var-slider { width: 100%; }
+  .proto { transition: border-color 0.3s ease; }
+  .proto.lead { border-color: #cfc4f2; }
+  .var-read { display: none; align-items: center; gap: 8px; margin: 0 0 10px; }
+  .var-read.on { display: flex; }
+  .vr-name { font-size: 10px; letter-spacing: 0.04em; color: var(--muted); white-space: nowrap; }
+  .vr-track { position: relative; flex: 1; height: 2px; background: #e3e3e3; border-radius: 2px; }
+  .vr-dot {
+    position: absolute;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #6d5ac2;
+    transform: translate(-50%, -50%);
+    transition: left 0.3s var(--ease-enter);
+  }
+  .vr-you {
+    position: absolute;
+    top: 50%;
+    width: 1.5px;
+    height: 10px;
+    background: rgba(0, 0, 0, 0.35);
+    transform: translate(-50%, -50%);
+    transition: left 0.2s ease;
+  }
   .proto {
     border: 1px solid var(--glass-border);
     background: var(--glass);
@@ -1510,7 +1565,34 @@
               </section>
               <section class="s2-section">
                 <h3 class="s2-h">Align by the variables that may change the experience</h3>
-                <div class="ph">变量对齐内容位 — 发我图或表即可替换</div>
+                <p class="vars-hint">The five variables the three directions actually disagree on. Drag one — the demos above re-rank by how close each sits to your setting.</p>
+                <div class="vars" id="vars">
+                  <div class="var-row" data-var="input">
+                    <span class="var-l">Structured input</span>
+                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Structured input versus open conversation">
+                    <span class="var-r">Open conversation</span>
+                  </div>
+                  <div class="var-row" data-var="context">
+                    <span class="var-l">Manual context</span>
+                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Manual context versus connected context">
+                    <span class="var-r">Connected context</span>
+                  </div>
+                  <div class="var-row" data-var="prompts">
+                    <span class="var-l">Frequent prompts</span>
+                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Frequent prompts versus selective clarification">
+                    <span class="var-r">Selective clarification</span>
+                  </div>
+                  <div class="var-row" data-var="autonomy">
+                    <span class="var-l">Low autonomy</span>
+                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Low autonomy versus high autonomy">
+                    <span class="var-r">High autonomy</span>
+                  </div>
+                  <div class="var-row" data-var="review">
+                    <span class="var-l">Review upfront</span>
+                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Review upfront versus review before action">
+                    <span class="var-r">Review before action</span>
+                  </div>
+                </div>
               </section>
             </div>
         </div>
@@ -2367,6 +2449,74 @@
       fitDemos();
     });
   }
+  /* variable sliders: re-rank demos by proximity to the setting */
+  var VAR_DEF = {
+    input:    { l: 'Structured input',  r: 'Open conversation',       s: { qa: 12, wid: 38, ctx: 90 } },
+    context:  { l: 'Manual context',    r: 'Connected context',       s: { qa: 18, wid: 30, ctx: 92 } },
+    prompts:  { l: 'Frequent prompts',  r: 'Selective clarification', s: { qa: 10, wid: 42, ctx: 86 } },
+    autonomy: { l: 'Low autonomy',      r: 'High autonomy',           s: { qa: 20, wid: 45, ctx: 88 } },
+    review:   { l: 'Review upfront',    r: 'Review before action',    s: { qa: 15, wid: 40, ctx: 85 } }
+  };
+  var protosBox = document.querySelector('.protos');
+  var protoByKey = {};
+  document.querySelectorAll('.proto').forEach(function (p) {
+    var live = p.querySelector('[data-live]');
+    if (!live) return;
+    protoByKey[live.getAttribute('data-live')] = p;
+    var read = el('var-read', '<span class="vr-name"></span><span class="vr-track"><i class="vr-dot"></i><i class="vr-you"></i></span>');
+    var sub = p.querySelector('.proto-sub');
+    sub.parentNode.insertBefore(read, sub.nextSibling);
+  });
+  function rankDemos(varKey, v) {
+    var def = VAR_DEF[varKey];
+    document.querySelectorAll('.var-row').forEach(function (r) {
+      var on = r.getAttribute('data-var') === varKey;
+      r.classList.toggle('active', on);
+      if (on) {
+        r.classList.toggle('lean-l', v < 42);
+        r.classList.toggle('lean-r', v > 58);
+      } else {
+        r.classList.remove('lean-l', 'lean-r');
+      }
+    });
+    var keys = Object.keys(protoByKey);
+    var first = {};
+    keys.forEach(function (k) { first[k] = protoByKey[k].getBoundingClientRect(); });
+    keys.sort(function (a, b) { return Math.abs(def.s[a] - v) - Math.abs(def.s[b] - v); });
+    keys.forEach(function (k, i) {
+      var p = protoByKey[k];
+      protosBox.appendChild(p);
+      p.classList.toggle('lead', i === 0);
+      var read = p.querySelector('.var-read');
+      read.classList.add('on');
+      read.querySelector('.vr-name').textContent = def.s[k] >= 50 ? def.r : def.l;
+      read.querySelector('.vr-dot').style.left = def.s[k] + '%';
+      read.querySelector('.vr-you').style.left = v + '%';
+    });
+    if (!reduced) {
+      keys.forEach(function (k) {
+        var p = protoByKey[k];
+        var last = p.getBoundingClientRect();
+        var dx = first[k].left - last.left;
+        var dy = first[k].top - last.top;
+        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+        p.style.transition = 'none';
+        p.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+        requestAnimationFrame(function () {
+          p.style.transition = 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
+          p.style.transform = '';
+          setTimeout(function () { p.style.transition = ''; }, 500);
+        });
+      });
+    }
+  }
+  document.querySelectorAll('.var-row').forEach(function (r) {
+    var slider = r.querySelector('.var-slider');
+    slider.addEventListener('input', function () {
+      rankDemos(r.getAttribute('data-var'), parseInt(slider.value, 10));
+    });
+  });
+
   window.addEventListener('resize', fitDemos);
   fitDemos();
 

@@ -160,8 +160,7 @@
     right: clamp(16px, 1.9vw, 36px);
     top: 28.5%;
     bottom: clamp(16px, 3.4vh, 36px);
-    background: var(--chip-bg);
-    border-radius: var(--radius-lg);
+    background: transparent;
     overflow: hidden;
     z-index: 1;
   }
@@ -196,7 +195,6 @@
   .media .chip + .chip { border-top: 0; }
 
   /* ---------- gallery (real content: placeholder tint gives way to a clean page) ---------- */
-  .media.filled { background: #fff; }
   /* ---------- stacked shots ---------- */
   .stack {
     position: absolute;
@@ -223,13 +221,10 @@
     object-fit: contain;
     object-position: center;
     display: block;
-    border: 1px solid var(--chip-border);
-    border-radius: var(--radius-sm);
-    background: #fff;
     cursor: zoom-in;
-    transition: border-color 0.2s ease;
+    transition: opacity 0.2s ease;
   }
-  .shot img:hover { border-color: rgba(0, 0, 0, 0.18); }
+  .shot img:hover { opacity: 0.88; }
   .shot figcaption {
     flex: 0 0 auto;
     font-family: var(--font-ui);
@@ -258,8 +253,6 @@
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-    border: 1px solid var(--chip-border);
-    border-radius: var(--radius-sm);
     animation: zoomin 0.32s var(--ease-enter) both;
   }
   @keyframes zoomin {

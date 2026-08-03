@@ -362,11 +362,15 @@
   .zslider:focus-visible { outline: 2px solid var(--navy); outline-offset: 6px; }
   @media (max-width: 860px) { .zoomctl { display: none; } }
   /* ---------- variable sliders: re-rank demos ---------- */
+  .s2-section { position: relative; }
   .varreset {
+    position: absolute;
+    top: -6px;
+    right: 0;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    margin: 0 0 12px;
+    margin: 0;
     padding: 6px 12px;
     font-family: var(--font-ui);
     font-size: 11px;
@@ -1661,7 +1665,7 @@
             </div>
             <div class="zoomctl">
               <svg class="zicon" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M5 1.5V8.5M1.5 5H8.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-              <input class="zslider" type="range" id="dctl" min="33" max="100" step="1" value="100" aria-label="Demo window size">
+              <input class="zslider" type="range" id="dctl" min="33" max="100" step="1" value="33" aria-label="Demo window size">
               <svg class="zicon" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 5H8.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
             </div>
         </div>
@@ -2521,6 +2525,8 @@
       if (protos) protos.style.setProperty('--dscale', dctl.value / 100);
       fitDemos();
     });
+    var protos0 = document.querySelector('.protos');
+    if (protos0) protos0.style.setProperty('--dscale', dctl.value / 100);
   }
   var s3ctl = document.getElementById('s3ctl');
   if (s3ctl) {

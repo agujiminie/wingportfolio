@@ -25,13 +25,13 @@
     --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     --font-title: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
     --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-    /* liquid glass material + HIG radii (concentric: inner + padding = outer) */
-    --glass: rgba(255, 255, 255, 0.55);
-    --glass-thick: rgba(255, 255, 255, 0.72);
-    --glass-border: rgba(0, 0, 0, 0.08);
-    --glass-blur: blur(18px) saturate(180%);
-    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
-    --shadow-float: 0 2px 6px rgba(0, 0, 0, 0.05), 0 12px 32px rgba(0, 0, 0, 0.10);
+    /* minimal flat material: solid surfaces, 1px hairline borders, near-invisible shadows */
+    --glass: #fff;
+    --glass-thick: #fff;
+    --glass-border: #eaeaea;
+    --glass-blur: none;
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.03);
+    --shadow-float: 0 2px 8px rgba(0, 0, 0, 0.04);
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
@@ -141,10 +141,12 @@
   .media {
     position: absolute;
     left: 50%;
-    right: 0;
+    right: clamp(16px, 1.9vw, 36px);
     top: 28.5%;
-    bottom: 0;
-    background: var(--panel);
+    bottom: clamp(16px, 3.4vh, 36px);
+    background: var(--chip-bg);
+    border: 1px solid var(--chip-border);
+    border-radius: var(--radius-lg);
     overflow: hidden;
     z-index: 1;
   }
@@ -178,8 +180,8 @@
   }
   .media .chip + .chip { border-top: 0; }
 
-  /* ---------- gallery (real content: gray placeholder bg goes away) ---------- */
-  .media.filled { background: transparent; }
+  /* ---------- gallery (real content: placeholder tint gives way to a clean page) ---------- */
+  .media.filled { background: #fff; }
   .gallery { position: absolute; inset: 0; overflow: hidden; }
   .gslides { display: flex; height: 100%; transition: transform 0.45s var(--ease-enter); }
   .gslide {
@@ -197,6 +199,8 @@
     height: auto;
     object-fit: contain;
     display: block;
+    border: 1px solid var(--chip-border);
+    border-radius: var(--radius-sm);
   }
   .gslide .ph {
     border: 1px dashed var(--chip-border);
@@ -306,9 +310,7 @@
   .proto {
     border: 1px solid var(--glass-border);
     background: var(--glass);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-md);
     box-shadow: var(--shadow-card);
     padding: 12px 12px 10px;
     display: flex;
@@ -1029,9 +1031,7 @@
     flex-direction: column;
     border: 1px solid var(--glass-border);
     background: var(--glass);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     box-shadow: var(--shadow-card);
     padding: 10px 10px 9px;
   }
@@ -1401,7 +1401,7 @@
     .desc { position: static; width: auto; padding: 28px var(--mx) 0; min-height: 5.2em; }
     .desc-item { position: static; display: none; }
     .desc-item.on { display: block; }
-    .media { position: static; margin-top: 28px; min-height: 46vh; flex: 1; }
+    .media { position: static; margin: 28px 16px 0; min-height: 46vh; flex: 1; }
     .media-item { display: none; position: absolute; }
     .media-item.on { display: block; }
     .media { position: relative; left: auto; right: auto; top: auto; bottom: auto; }

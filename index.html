@@ -197,6 +197,88 @@
 
   /* ---------- gallery (real content: placeholder tint gives way to a clean page) ---------- */
   .media.filled { background: #fff; }
+  /* ---------- stacked shots ---------- */
+  .stack {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(14px, 2.2vh, 26px);
+    padding: clamp(18px, 2.6vh, 32px) clamp(18px, 2vw, 34px);
+  }
+  .shot {
+    flex: 59 1 0;
+    min-height: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .shot-wide { flex: 41 1 0; }
+  .shot img {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    border: 1px solid var(--chip-border);
+    border-radius: var(--radius-sm);
+    background: #fff;
+    cursor: zoom-in;
+    transition: border-color 0.2s ease;
+  }
+  .shot img:hover { border-color: rgba(0, 0, 0, 0.18); }
+  .shot figcaption {
+    flex: 0 0 auto;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  /* ---------- zoom overlay ---------- */
+  .zoom {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(20px, 4vh, 56px);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(8px);
+    cursor: zoom-out;
+  }
+  body.zoomed .zoom { display: flex; }
+  .zoom img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border: 1px solid var(--chip-border);
+    border-radius: var(--radius-sm);
+    animation: zoomin 0.32s var(--ease-enter) both;
+  }
+  @keyframes zoomin {
+    from { opacity: 0; transform: scale(0.985); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .zoom-hint {
+    position: absolute;
+    bottom: clamp(16px, 3vh, 32px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    user-select: none;
+  }
+
   .gallery { position: absolute; inset: 0; overflow: hidden; }
   .gslides { display: flex; height: 100%; transition: transform 0.45s var(--ease-enter); }
   .gslide {
@@ -1647,7 +1729,7 @@
 
   <div class="desc" aria-live="polite">
     <div class="panel">
-      <p class="desc-item" data-step="1">Map the user flows, agent system, and model&rsquo;s current capabilities together.</p>
+      <p class="desc-item" data-step="1">Map the current workflows and user&ndash;AI systems, and build shared understanding with the team to find product direction.</p>
       <p class="desc-item" data-step="2">Parallel prototyping in code, and align through variables that represent the tradeoffs.</p>
       <p class="desc-item" data-step="3">Iterate from user behavior and model behavior.</p>
       <p class="desc-item" data-step="4">Turn what we learn into a reusable system, so every project improves the next one.</p>
@@ -1658,12 +1740,15 @@
     <div class="panel">
       <!-- To drop in a real asset: replace .chips with <img src="assets/....png" alt="..."> -->
       <div class="media-item" data-step="1">
-        <div class="gallery" data-gallery>
-          <div class="gslides">
-            <figure class="gslide">
-              <img src="assets/step1-system-map.jpg?v=2" alt="Hand-drawn system map on the office whiteboard: start, plan, run, return, review columns mapped against users, agent system, model capability, and design response" loading="lazy" decoding="async">
-            </figure>
-          </div>
+        <div class="stack">
+          <figure class="shot shot-wide">
+            <img src="assets/step1-journey-map.jpg" alt="User journey map for building API flows: plan and build-and-test swimlanes across roles, big steps, actions, touchpoints, and outputs" loading="lazy" decoding="async">
+            <figcaption>User journey — how integration teams plan, build, and ship an API flow today</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="assets/step1-system-map.jpg?v=2" alt="Hand-drawn system map on the office whiteboard: start, plan, run, return, review columns mapped against users, agent system, model capability, and design response" loading="lazy" decoding="async">
+            <figcaption>System map — the same journey re-cut into users, agent system, model capability, and design response</figcaption>
+          </figure>
         </div>
       </div>
       <div class="media-item" data-step="2">
@@ -1929,6 +2014,11 @@
   </footer>
 
 </main>
+
+<div class="zoom" id="zoom" role="dialog" aria-modal="true" aria-label="Enlarged image">
+  <img id="zoomimg" src="" alt="">
+  <span class="zoom-hint">Click anywhere or press Esc to close</span>
+</div>
 
 <script>
 (function () {
@@ -2827,7 +2917,27 @@
     sweep(item.classList.contains('on'));
   })();
 
+  var zoom = document.getElementById('zoom');
+  var zoomImg = document.getElementById('zoomimg');
+  function openZoom(src, alt) {
+    zoomImg.src = src;
+    zoomImg.alt = alt || '';
+    document.body.classList.add('zoomed');
+  }
+  function closeZoom() {
+    document.body.classList.remove('zoomed');
+    zoomImg.src = '';
+  }
+  document.querySelectorAll('.shot img').forEach(function (im) {
+    im.addEventListener('click', function () { openZoom(im.currentSrc || im.src, im.alt); });
+  });
+  zoom.addEventListener('click', closeZoom);
+
   document.addEventListener('keydown', function (e) {
+    if (document.body.classList.contains('zoomed')) {
+      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); closeZoom(); }
+      return;
+    }
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
       e.preventDefault(); setState(Math.min(current + 1, 4));
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') {

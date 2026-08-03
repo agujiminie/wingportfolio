@@ -747,7 +747,7 @@
   .cf-avatar img { position: absolute; width: 46px; height: 46px; left: 50%; transform: translateX(-50%); top: 1.5px; }
   .cf-main {
     position: absolute;
-    left: 80px;
+    left: 0;
     top: 0;
     right: 0;
     bottom: 0;
@@ -934,7 +934,10 @@
     display: flex;
     gap: 8px;
     align-items: center;
+    cursor: pointer;
+    transition: border-color 0.18s ease;
   }
+  .cf-repo:hover { border-color: #c9c9c9; }
   .cf-repo > span:first-child {
     flex: 1;
     min-width: 0;
@@ -2410,42 +2413,8 @@
     var fig = el('ctx-fig');
     stage.appendChild(fig);
 
-    fig.appendChild(el('cf-side',
-      '<div class="cf-side-top">' +
-        '<div class="cf-collapse">' + ficon(24, [fpart('8.33%', null, 'panel.svg')]) + '</div>' +
-        '<div class="cf-laptop">' + ficon(24, [fpart('13.28% 6.37% 13.28% 6.44%', null, 'laptop.svg')]) + '</div>' +
-        '<div class="cf-plusrow">' + ficon(16, [fpart('12.5%', null, 'plus.svg')]) + '</div>' +
-      '</div>' +
-      '<div class="cf-side-bot">' +
-        '<div class="cf-avatar"><img src="' + A + 'person.svg" alt=""></div>' +
-        ficon(24, [fpart('9.12% 9.11% 9.11% 9.12%', null, 'settings.svg')]) +
-      '</div>'));
-
     var main = el('cf-main');
     fig.appendChild(main);
-
-    var TABS =
-      '<div class="cf-tabs">' +
-        '<span class="cf-tab">' + ficon(16, [
-          fpart('25% 43.75% 22.92% 41.67%', '-9% -32.15%', 'code-a.svg'),
-          fpart('35.42% 72.92% 35.42% 12.5%', '-16.07% -32.14%', 'code-b.svg'),
-          fpart('35.42% 12.5% 35.42% 72.92%', '-16.07% -32.14%', 'code-c.svg')
-        ]) + 'Coding</span>' +
-        '<span class="cf-tab">' + ficon(16, [fpart('9.38% 12.5% 12.5% 12.51%', null, 'lab.svg')]) + 'Testing</span>' +
-        '<span class="cf-tab">' + ficon(16, [fpart('0%', null, 'doc.svg')]) + 'Document</span>' +
-        '<span class="cf-tab">' + ficon(16, [
-          fpart('0%', null, 'eye-base.svg'),
-          fpart('41.67%', '-24.37%', 'eye-1.svg'),
-          fpart('20.83% 8.33%', '-6.96% -3.73%', 'eye-2.svg'),
-          fpart('70.83% 12.5% 12.5% 62.5%', '-24.37% -16.25%', 'eye-3.svg')
-        ]) + 'Code Review</span>' +
-        '<span class="cf-tab">' + ficon(16, [
-          fpart('6.25% 15.63% 43.75% 56.25%', null, 'swap-1.svg'),
-          fpart('28.13% 18.97% 65.63% 15.63%', null, 'swap-2.svg'),
-          fpart('43.75% 56.25% 6.25% 15.63%', null, 'swap-3.svg'),
-          fpart('65.63% 15.63% 28.13% 19.14%', null, 'swap-4.svg')
-        ]) + 'Migration</span>' +
-      '</div>';
 
     var hero = el('cf-hero');
     hero.innerHTML =
@@ -2459,7 +2428,7 @@
           '</div>' +
           '<button class="cf-send dis" type="button" aria-label="Send">' + I_ARROW + '</button>' +
         '</div>' +
-      '</div>' + TABS;
+      '</div>';
     main.appendChild(hero);
 
     var q = hero.querySelector('.cf-query');
@@ -2670,7 +2639,7 @@
       cap('Repo connected \u2014 ' + selectedRepo + ' is now context');
     };
     fig.addEventListener('click', function (e) {
-      if (e.target.closest && e.target.closest('.cf-attach')) overlay.classList.add('on');
+      if (e.target.closest && e.target.closest('.cf-attach, .cf-repo')) overlay.classList.add('on');
     });
   }
 

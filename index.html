@@ -80,7 +80,7 @@
   .step:focus-visible {
     outline: 2px solid var(--navy);
     outline-offset: 6px;
-    border-radius: 2px;
+    border-radius: var(--radius-sm);
   }
 
   /* cover: 48px stacked lines */
@@ -89,13 +89,15 @@
     line-height: 1.32;
     letter-spacing: -0.02em;
     color: var(--navy);
+    margin-bottom: 0.4em;
   }
   [data-state="cover"] .step:first-child {
     line-height: 1.03;
     letter-spacing: -0.05em;
     color: var(--black);
-    margin-bottom: 0.35em;
   }
+  /* cover shows the three statements only (Figma 962:172) */
+  [data-state="cover"] .step[data-step="2"] { display: none; }
   [data-state="cover"] .step:hover { transform: translateX(6px); }
   [data-state="cover"] .step .dot { display: inline; }
 
@@ -1345,49 +1347,15 @@
     bottom: clamp(20px, 4.35vh, 47px);
     display: flex;
     gap: clamp(40px, 6.25vw, 120px);
-    font-size: 11px;
+    font-size: 12px;
     line-height: 1.5;
-    letter-spacing: 0.04em;
+    letter-spacing: -0.022em;
     text-transform: uppercase;
     z-index: 3;
   }
   .foot span { color: var(--ink-70); }
   .foot span:first-child { color: var(--black); }
 
-  .hint {
-    position: absolute;
-    right: var(--mx);
-    bottom: clamp(20px, 4.35vh, 47px);
-    font-size: 12px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--muted);
-    z-index: 3;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    user-select: none;
-  }
-  [data-state="cover"] .hint { opacity: 1; }
-
-  .nav {
-    position: absolute;
-    right: var(--mx);
-    bottom: clamp(14px, 3vh, 34px);
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    z-index: 3;
-    opacity: 1;
-    transition: opacity 0.4s ease;
-  }
-  [data-state="cover"] .nav { opacity: 0; pointer-events: none; }
-  .counter {
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    color: var(--ink-70);
-    font-variant-numeric: tabular-nums;
-    user-select: none;
-  }
   .arrow {
     width: 44px;
     height: 44px;
@@ -1414,9 +1382,8 @@
 
   /* first paint: gentle rise-in of the cover lines */
   .boot .step { animation: rise 0.7s var(--ease-enter) both; }
-  .boot .step:nth-child(2) { animation-delay: 0.07s; }
-  .boot .step:nth-child(3) { animation-delay: 0.14s; }
-  .boot .step:nth-child(4) { animation-delay: 0.21s; }
+  .boot .step:nth-child(3) { animation-delay: 0.07s; }
+  .boot .step:nth-child(4) { animation-delay: 0.14s; }
   @keyframes rise {
     from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
@@ -1439,8 +1406,6 @@
     .media-item.on { display: block; }
     .media { position: relative; left: auto; right: auto; top: auto; bottom: auto; }
     .foot { position: static; padding: 28px var(--mx) 40px; gap: 24px; flex-wrap: wrap; }
-    .hint { display: none; }
-    .nav { display: none; }
     [data-state="cover"] .desc, [data-state="cover"] .media { display: none; }
   }
 </style>
@@ -1723,18 +1688,6 @@
     <span>Design process</span>
   </footer>
 
-  <div class="hint" id="hint" aria-hidden="true">Scroll&ensp;/&ensp;&rarr;</div>
-
-  <div class="nav" id="nav">
-    <span class="counter" id="counter" aria-live="polite">01 / 03</span>
-    <button class="arrow" id="prev" aria-label="Previous step">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-    <button class="arrow" id="next" aria-label="Next step">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-  </div>
-
 </main>
 
 <script>
@@ -1775,9 +1728,6 @@
     });
     updateFilled();
     fitDemos();
-    document.getElementById('counter').textContent = '0' + idx + ' / 04';
-    document.getElementById('prev').disabled = false;
-    document.getElementById('next').disabled = (idx === 4);
   }
 
   function updateFilled() {
@@ -1821,6 +1771,7 @@
     titles.forEach(function (t, i) {
       var s = snaps[i];
       var n = t.getBoundingClientRect();
+      if (!s.rect.width || !n.width) return; /* line hidden on one side of the transition */
       var fNew = parseFloat(getComputedStyle(t).fontSize);
       var dx = s.rect.left - n.left;
       var dy = s.rect.top - n.top;
@@ -1862,9 +1813,6 @@
       setState(parseInt(t.getAttribute('data-step'), 10));
     });
   });
-
-  document.getElementById('prev').addEventListener('click', function () { setState(Math.max(current - 1, 0)); });
-  document.getElementById('next').addEventListener('click', function () { setState(Math.min(current + 1, 4)); });
 
   document.querySelectorAll('[data-gallery]').forEach(function (g) {
     var slides = g.querySelector('.gslides');
@@ -2517,34 +2465,6 @@
       setState(parseInt(e.key, 10));
     }
   });
-
-  var wheelAcc = 0, wheelLock = false;
-  window.addEventListener('wheel', function (e) {
-    if (window.innerWidth <= 860) return;
-    if (e.target.closest && e.target.closest('.s2-panel, .s4-doc')) return;
-    if (wheelLock) return;
-    wheelAcc += e.deltaY;
-    if (Math.abs(wheelAcc) > 70) {
-      var dir = wheelAcc > 0 ? 1 : -1;
-      wheelAcc = 0;
-      wheelLock = true;
-      setTimeout(function () { wheelLock = false; }, 900);
-      setState(Math.min(Math.max(current + dir, 0), 4));
-    }
-  }, { passive: true });
-
-  var touchY = null;
-  window.addEventListener('touchstart', function (e) {
-    if (window.innerWidth <= 860) return;
-    touchY = e.touches[0].clientY;
-  }, { passive: true });
-  window.addEventListener('touchend', function (e) {
-    if (touchY === null || window.innerWidth <= 860) return;
-    if (e.target.closest && e.target.closest('.s2-panel, .s4-doc')) { touchY = null; return; }
-    var dy = touchY - e.changedTouches[0].clientY;
-    touchY = null;
-    if (Math.abs(dy) > 50) setState(Math.min(Math.max(current + (dy > 0 ? 1 : -1), 0), 4));
-  }, { passive: true });
 
   var h = parseInt((location.hash || '').replace('#', ''), 10);
   if (h >= 1 && h <= 4) setState(h, true);

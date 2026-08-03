@@ -65,7 +65,8 @@
     z-index: 2;
   }
   .step {
-    display: block;
+    display: flex;
+    align-items: baseline;
     background: none;
     border: 0;
     padding: 0;
@@ -77,6 +78,21 @@
     transition: color 0.25s ease, opacity 0.25s ease, transform 0.2s ease-out;
     -webkit-tap-highlight-color: transparent;
   }
+  .step .num {
+    flex: 0 0 auto;
+    width: 24px;
+    margin-left: -34px;
+    margin-right: 10px;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    user-select: none;
+    transition: color 0.25s ease;
+  }
+  .step[data-role="active"] .num { color: var(--ink-70); }
   .step:focus-visible {
     outline: 2px solid var(--navy);
     outline-offset: 6px;
@@ -98,6 +114,7 @@
   }
   /* cover shows the three statements only (Figma 962:172) */
   [data-state="cover"] .step[data-step="2"] { display: none; }
+  [data-state="cover"] .step .num { display: none; }
   [data-state="cover"] .step:hover { transform: translateX(6px); }
   [data-state="cover"] .step .dot { display: inline; }
 
@@ -209,23 +226,6 @@
     font-size: 11px;
     letter-spacing: -0.01em;
     padding: 14px 18px;
-  }
-  .gnav {
-    position: absolute;
-    left: 5.5%;
-    bottom: clamp(14px, 3vh, 34px);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    z-index: 2;
-  }
-  .gnav .arrow { width: 36px; height: 36px; }
-  .gcount {
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    color: var(--ink-70);
-    font-variant-numeric: tabular-nums;
-    user-select: none;
   }
 
   /* ---------- step 2: parallel prototyping demos ---------- */
@@ -1540,6 +1540,7 @@
     body { overflow-y: auto; }
     .stage { position: relative; min-height: 100dvh; display: flex; flex-direction: column; }
     .steps { position: static; width: auto; padding: var(--my) var(--mx) 0; }
+    .step .num { margin-left: 0; width: auto; margin-right: 8px; }
     .desc { position: static; width: auto; padding: 28px var(--mx) 0; min-height: 5.2em; }
     .desc-item { position: static; display: none; }
     .desc-item.on { display: block; }
@@ -1556,10 +1557,10 @@
 <main class="stage boot" id="stage">
 
   <nav class="steps" id="steps" aria-label="Design process steps">
-    <button class="step" data-step="1" id="t1">Understand the system<span class="dot">s.</span></button>
-    <button class="step" data-step="2" id="t2">Parallel prototyping in code<span class="dot">.</span></button>
-    <button class="step" data-step="3" id="t3">Let real behavior decide<span class="dot">.</span></button>
-    <button class="step" data-step="4" id="t4">Build systems that evolve<span class="dot">.</span></button>
+    <button class="step" data-step="1" id="t1"><span class="num" aria-hidden="true">01</span><span class="label">Understand the system<span class="dot">s.</span></span></button>
+    <button class="step" data-step="2" id="t2"><span class="num" aria-hidden="true">02</span><span class="label">Parallel prototyping in code<span class="dot">.</span></span></button>
+    <button class="step" data-step="3" id="t3"><span class="num" aria-hidden="true">03</span><span class="label">Let real behavior decide<span class="dot">.</span></span></button>
+    <button class="step" data-step="4" id="t4"><span class="num" aria-hidden="true">04</span><span class="label">Build systems that evolve<span class="dot">.</span></span></button>
   </nav>
 
   <div class="desc" aria-live="polite">
@@ -1580,18 +1581,6 @@
             <figure class="gslide">
               <img src="assets/step1-system-map.jpg?v=2" alt="Hand-drawn system map on the office whiteboard: start, plan, run, return, review columns mapped against users, agent system, model capability, and design response" loading="lazy" decoding="async">
             </figure>
-            <figure class="gslide">
-              <div class="ph">第二张截图位 — 发我图即可替换</div>
-            </figure>
-          </div>
-          <div class="gnav">
-            <button class="arrow gprev" aria-label="Previous image">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <button class="arrow gnext" aria-label="Next image">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <span class="gcount">1 / 2</span>
           </div>
         </div>
       </div>
@@ -1992,12 +1981,12 @@
     var gcount = g.querySelector('.gcount');
     function render() {
       slides.style.transform = 'translateX(' + (-pos * 100) + '%)';
-      gcount.textContent = (pos + 1) + ' / ' + count;
-      gprev.disabled = (pos === 0);
-      gnext.disabled = (pos === count - 1);
+      if (gcount) gcount.textContent = (pos + 1) + ' / ' + count;
+      if (gprev) gprev.disabled = (pos === 0);
+      if (gnext) gnext.disabled = (pos === count - 1);
     }
-    gprev.addEventListener('click', function (e) { e.stopPropagation(); if (pos > 0) { pos--; render(); } });
-    gnext.addEventListener('click', function (e) { e.stopPropagation(); if (pos < count - 1) { pos++; render(); } });
+    if (gprev) gprev.addEventListener('click', function (e) { e.stopPropagation(); if (pos > 0) { pos--; render(); } });
+    if (gnext) gnext.addEventListener('click', function (e) { e.stopPropagation(); if (pos < count - 1) { pos++; render(); } });
     var gx = null;
     g.addEventListener('touchstart', function (e) { gx = e.touches[0].clientX; }, { passive: true });
     g.addEventListener('touchend', function (e) {

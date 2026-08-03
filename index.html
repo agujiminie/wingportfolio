@@ -21,6 +21,9 @@
     --chip-border: #eaeaea;
     --mx: clamp(24px, 5.2vw, 100px);
     --my: clamp(48px, 9.26vh, 100px);
+    /* 12-col grid: left column spans 1-4, the right column starts on this line */
+    --split: 40%;
+    --gutter: clamp(20px, 2.4vw, 44px);
     --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     --font-title: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
@@ -61,7 +64,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    width: min(45.2vw, 867px);
+    width: calc(var(--split) - var(--mx) - var(--gutter));
     z-index: 2;
   }
   .step {
@@ -132,8 +135,8 @@
     transform: translateX(6px);
   }
   .step[data-role="active"] {
-    font-size: clamp(38px, 4.7vw, 90px);
-    line-height: 1.03;
+    font-size: clamp(32px, 3.7vw, 68px);
+    line-height: 1.06;
     letter-spacing: -0.05em;
     color: var(--black);
     cursor: default;
@@ -144,9 +147,9 @@
   /* ---------- right column ---------- */
   .desc {
     position: absolute;
-    left: 60%;
+    left: var(--split);
     top: var(--my);
-    width: min(30vw, 560px);
+    width: min(36vw, 640px);
     font-family: var(--font-ui);
     font-size: clamp(15px, 1.15vw, 22px);
     line-height: 1.5;
@@ -156,10 +159,10 @@
   }
   .media {
     position: absolute;
-    left: 50%;
+    left: var(--split);
     right: clamp(16px, 1.9vw, 36px);
-    top: 28.5%;
-    bottom: clamp(16px, 3.4vh, 36px);
+    top: 24%;
+    bottom: clamp(56px, 8.6vh, 82px);
     background: transparent;
     overflow: hidden;
     z-index: 1;
@@ -201,8 +204,8 @@
     inset: 0;
     display: flex;
     flex-direction: column;
-    gap: clamp(14px, 2.2vh, 26px);
-    padding: clamp(18px, 2.6vh, 32px) clamp(18px, 2vw, 34px);
+    gap: clamp(16px, 2.6vh, 30px);
+    padding: 0 0 clamp(8px, 1.6vh, 20px);
   }
   .shot {
     flex: 59 1 0;
@@ -210,7 +213,7 @@
     margin: 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 8px;
   }
   .shot-wide { flex: 41 1 0; }
@@ -219,7 +222,7 @@
     min-height: 0;
     max-width: 100%;
     object-fit: contain;
-    object-position: center;
+    object-position: left center;
     display: block;
     cursor: zoom-in;
     transition: opacity 0.2s ease;
@@ -232,7 +235,7 @@
     line-height: 1.4;
     letter-spacing: -0.01em;
     color: var(--muted);
-    text-align: center;
+    text-align: left;
   }
 
   /* ---------- zoom overlay ---------- */

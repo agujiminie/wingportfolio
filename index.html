@@ -392,7 +392,7 @@
   .vars { display: flex; flex-direction: column; gap: 4px; max-width: 680px; }
   .var-row {
     display: grid;
-    grid-template-columns: minmax(96px, 128px) 1fr minmax(120px, 158px);
+    grid-template-columns: minmax(110px, 158px) 1fr minmax(130px, 178px);
     gap: 14px;
     align-items: center;
     min-height: 42px;
@@ -1646,7 +1646,7 @@
               </section>
               <section class="s2-section">
                 <h3 class="s2-h">Align by the variables that may change the experience</h3>
-                <p class="vars-hint">The five variables the three directions actually disagree on. Drag one — the demos above re-rank by how close each sits to your setting.</p>
+                <p class="vars-hint">The three variables the directions actually disagree on. Drag one — the demos above re-rank by how close each sits to your setting.</p>
                 <button class="varreset" id="varreset" type="button">
                   <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.5-3.6M13 2v3h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   Default ranking
@@ -1658,24 +1658,14 @@
                     <span class="var-r">Open conversation</span>
                   </div>
                   <div class="var-row" data-var="context">
-                    <span class="var-l">Manual context</span>
-                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Manual context versus connected context">
-                    <span class="var-r">Connected context</span>
+                    <span class="var-l">User-provided context</span>
+                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="User-provided context versus system-identified context">
+                    <span class="var-r">System-identified context</span>
                   </div>
-                  <div class="var-row" data-var="prompts">
-                    <span class="var-l">Frequent prompts</span>
-                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Frequent prompts versus selective clarification">
-                    <span class="var-r">Selective clarification</span>
-                  </div>
-                  <div class="var-row" data-var="autonomy">
-                    <span class="var-l">Low autonomy</span>
-                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Low autonomy versus high autonomy">
-                    <span class="var-r">High autonomy</span>
-                  </div>
-                  <div class="var-row" data-var="review">
-                    <span class="var-l">Review upfront</span>
-                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Review upfront versus review before action">
-                    <span class="var-r">Review before action</span>
+                  <div class="var-row" data-var="exec">
+                    <span class="var-l">Guided execution</span>
+                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Guided execution versus autonomous execution">
+                    <span class="var-r">Autonomous execution</span>
                   </div>
                 </div>
               </section>
@@ -2555,11 +2545,9 @@
   }
   /* variable sliders: re-rank demos by proximity to the setting */
   var VAR_DEF = {
-    input:    { l: 'Structured input',  r: 'Open conversation',       s: { qa: 12, wid: 38, ctx: 90 } },
-    context:  { l: 'Manual context',    r: 'Connected context',       s: { qa: 18, wid: 30, ctx: 92 } },
-    prompts:  { l: 'Frequent prompts',  r: 'Selective clarification', s: { qa: 10, wid: 42, ctx: 86 } },
-    autonomy: { l: 'Low autonomy',      r: 'High autonomy',           s: { qa: 20, wid: 45, ctx: 88 } },
-    review:   { l: 'Review upfront',    r: 'Review before action',    s: { qa: 15, wid: 40, ctx: 85 } }
+    input:   { l: 'Structured input',      r: 'Open conversation',        s: { qa: 12, wid: 38, ctx: 90 } },
+    context: { l: 'User-provided context', r: 'System-identified context', s: { qa: 18, wid: 30, ctx: 92 } },
+    exec:    { l: 'Guided execution',      r: 'Autonomous execution',      s: { qa: 15, wid: 42, ctx: 88 } }
   };
   var protosBox = document.querySelector('.protos');
   var protoByKey = {};

@@ -306,7 +306,82 @@
     min-width: 38px;
     user-select: none;
   }
+  /* ---------- floating map-style zoom control (vertical, right edge) ---------- */
+  .zoomctl {
+    position: absolute;
+    right: clamp(10px, 1.2vw, 18px);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 4;
+    padding: 10px 7px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-float);
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+  }
+  .zoomctl:hover, .zoomctl:focus-within { opacity: 1; }
+  .zoomctl .zicon { color: var(--muted); display: block; }
+  .zslider {
+    -webkit-appearance: none;
+    appearance: none;
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 2px;
+    height: clamp(72px, 12vh, 112px);
+    border-radius: 2px;
+    background: #e3e3e3;
+    outline: none;
+    cursor: pointer;
+  }
+  .zslider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    transition: transform 0.15s ease-out;
+  }
+  .zslider::-webkit-slider-thumb:hover { transform: scale(1.12); }
+  .zslider::-webkit-slider-thumb:active { transform: scale(0.98); }
+  .zslider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  }
+  .zslider:focus-visible { outline: 2px solid var(--navy); outline-offset: 6px; }
+  @media (max-width: 860px) { .zoomctl { display: none; } }
   /* ---------- variable sliders: re-rank demos ---------- */
+  .varreset {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 12px;
+    padding: 6px 12px;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    color: var(--ink-70);
+    background: #fff;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease-out;
+  }
+  .varreset:hover { background: #f7f6f3; }
+  .varreset:active { transform: scale(0.98); }
+  .varreset:focus-visible { outline: 2px solid var(--navy); outline-offset: 4px; }
+  .varreset svg { color: var(--muted); }
   .vars-hint {
     font-size: 12px;
     line-height: 1.5;
@@ -1165,6 +1240,17 @@
     border-top: 1px solid var(--chip-border);
   }
   .s3-td:nth-child(even) { color: var(--black); }
+  /* zoomed: slider enlarges the cards; strip wraps and the panel scrolls */
+  .s3-panel.zoomed { overflow-y: auto; overscroll-behavior: contain; }
+  .s3-panel.zoomed .s3-evo, .s3-panel.zoomed .s3-risk { flex: none; }
+  .s3-panel.zoomed .s3-flow { flex-wrap: wrap; align-items: flex-start; }
+  .s3-panel.zoomed .s3-arrow { display: none; }
+  .s3-panel.zoomed .s3-stage {
+    flex: 0 0 auto;
+    width: calc(var(--s3scale, 0.25) * (100% + 6px) - 6px);
+  }
+  .s3-panel.zoomed .s3-shot { flex: none; }
+  .s3-panel.zoomed .s3-shot img { height: auto; max-height: 74vh; object-fit: contain; }
   @media (max-width: 1180px) {
     .s3-flow { flex-wrap: wrap; }
     .s3-stage { flex: 1 1 42%; }
@@ -1513,11 +1599,6 @@
         <div class="s2">
             <div class="s2-panel" data-real>
               <section class="s2-section">
-                <div class="demo-ctl">
-                  <label class="dctl-label" for="dctl">Demo size</label>
-                  <input class="dctl" type="range" id="dctl" min="33" max="100" step="1" value="100" aria-label="Demo window size">
-                  <span class="dctl-val" id="dctlval">100%</span>
-                </div>
                 <div class="protos">
                   <article class="proto">
                     <div class="proto-name">Guided Q&amp;A</div>
@@ -1566,6 +1647,10 @@
               <section class="s2-section">
                 <h3 class="s2-h">Align by the variables that may change the experience</h3>
                 <p class="vars-hint">The five variables the three directions actually disagree on. Drag one — the demos above re-rank by how close each sits to your setting.</p>
+                <button class="varreset" id="varreset" type="button">
+                  <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.5-3.6M13 2v3h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Default ranking
+                </button>
                 <div class="vars" id="vars">
                   <div class="var-row" data-var="input">
                     <span class="var-l">Structured input</span>
@@ -1595,6 +1680,11 @@
                 </div>
               </section>
             </div>
+            <div class="zoomctl">
+              <svg class="zicon" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M5 1.5V8.5M1.5 5H8.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <input class="zslider" type="range" id="dctl" min="33" max="100" step="1" value="100" aria-label="Demo window size">
+              <svg class="zicon" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 5H8.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </div>
         </div>
       </div>
       <div class="media-item" data-step="3">
@@ -1604,32 +1694,32 @@
             <div class="s3-flow">
               <article class="s3-stage">
                 <div class="s3-shot"><img src="assets/step3/plugin.png" alt="CurieTech AI IDE plugin panel listing agent tasks with Apply Changes and View Task actions"></div>
-                <div class="s3-name">IDE review</div>
-                <p class="s3-note">Users stayed in their workflow</p>
+                <div class="s3-name">&ldquo;Users stayed in their workflow&rdquo;</div>
+                <p class="s3-note">IDE review</p>
               </article>
               <div class="s3-arrow" aria-hidden="true">
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </div>
               <article class="s3-stage">
                 <div class="s3-shot"><img src="assets/step3/summary.png" alt="Structured task summary with verification bullets and follow-up actions"></div>
-                <div class="s3-name">Structured summary</div>
-                <p class="s3-note">Users stopped reading every line</p>
+                <div class="s3-name">&ldquo;Users stopped reading every line&rdquo;</div>
+                <p class="s3-note">Structured summary</p>
               </article>
               <div class="s3-arrow" aria-hidden="true">
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </div>
               <article class="s3-stage">
                 <div class="s3-shot fit"><img src="assets/step3/control.png" alt="Review control bar: per-step feedback with All looks good and Regenerate"></div>
-                <div class="s3-name">Control bar</div>
-                <p class="s3-note">Users didn&rsquo;t know what remained</p>
+                <div class="s3-name">&ldquo;Users didn&rsquo;t know what remained&rdquo;</div>
+                <p class="s3-note">Control bar</p>
               </article>
               <div class="s3-arrow" aria-hidden="true">
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </div>
               <article class="s3-stage">
                 <div class="s3-shot fit"><img src="assets/step3/collaboration.png" alt="Design review invite: teammate asked to review and approve the design document"></div>
-                <div class="s3-name">Shared review</div>
-                <p class="s3-note">Enterprise verification required handoffs</p>
+                <div class="s3-name">&ldquo;Enterprise verification required handoffs&rdquo;</div>
+                <p class="s3-note">Shared review</p>
               </article>
             </div>
           </section>
@@ -1648,6 +1738,11 @@
               <div class="s3-td" role="cell">Recovery action</div>
             </div>
           </section>
+        </div>
+        <div class="zoomctl">
+          <svg class="zicon" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M5 1.5V8.5M1.5 5H8.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          <input class="zslider" type="range" id="s3ctl" min="25" max="100" step="1" value="25" aria-label="Screenshot card size">
+          <svg class="zicon" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 5H8.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
         </div>
       </div>
       <div class="media-item" data-step="4">
@@ -2445,8 +2540,17 @@
     dctl.addEventListener('input', function () {
       var protos = document.querySelector('.protos');
       if (protos) protos.style.setProperty('--dscale', dctl.value / 100);
-      document.getElementById('dctlval').textContent = dctl.value + '%';
       fitDemos();
+    });
+  }
+  var s3ctl = document.getElementById('s3ctl');
+  if (s3ctl) {
+    s3ctl.addEventListener('input', function () {
+      var v = parseInt(s3ctl.value, 10);
+      var panel = document.querySelector('.s3-panel');
+      if (!panel) return;
+      panel.classList.toggle('zoomed', v > 27);
+      panel.querySelector('.s3-flow').style.setProperty('--s3scale', v / 100);
     });
   }
   /* variable sliders: re-rank demos by proximity to the setting */
@@ -2515,6 +2619,39 @@
     slider.addEventListener('input', function () {
       rankDemos(r.getAttribute('data-var'), parseInt(slider.value, 10));
     });
+  });
+  var varreset = document.getElementById('varreset');
+  if (varreset) varreset.addEventListener('click', function () {
+    document.querySelectorAll('.var-slider').forEach(function (s) { s.value = 50; });
+    document.querySelectorAll('.var-row').forEach(function (r) {
+      r.classList.remove('active', 'lean-l', 'lean-r');
+    });
+    var order = ['qa', 'wid', 'ctx'].filter(function (k) { return protoByKey[k]; });
+    var first = {};
+    order.forEach(function (k) { first[k] = protoByKey[k].getBoundingClientRect(); });
+    order.forEach(function (k) {
+      var p = protoByKey[k];
+      protosBox.appendChild(p);
+      p.classList.remove('lead');
+      var read = p.querySelector('.var-read');
+      if (read) read.classList.remove('on');
+    });
+    if (!reduced) {
+      order.forEach(function (k) {
+        var p = protoByKey[k];
+        var last = p.getBoundingClientRect();
+        var dx = first[k].left - last.left;
+        var dy = first[k].top - last.top;
+        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+        p.style.transition = 'none';
+        p.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+        requestAnimationFrame(function () {
+          p.style.transition = 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
+          p.style.transform = '';
+          setTimeout(function () { p.style.transition = ''; }, 500);
+        });
+      });
+    }
   });
 
   window.addEventListener('resize', fitDemos);

@@ -22,8 +22,21 @@
     --mx: clamp(24px, 5.2vw, 100px);
     --my: clamp(48px, 9.26vh, 100px);
     --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     --font-title: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
     --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    /* liquid glass material + HIG radii (concentric: inner + padding = outer) */
+    --glass: rgba(255, 255, 255, 0.55);
+    --glass-thick: rgba(255, 255, 255, 0.72);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --glass-blur: blur(18px) saturate(180%);
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
+    --shadow-float: 0 2px 6px rgba(0, 0, 0, 0.05), 0 12px 32px rgba(0, 0, 0, 0.10);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-full: 999px;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; }
@@ -149,10 +162,13 @@
     gap: 0;
     min-width: 200px;
   }
+  .media .chips { border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-card); }
   .media .chip {
-    background: var(--chip-bg);
-    border: 1px solid var(--chip-border);
-    padding: 6px 10px;
+    background: var(--glass);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    padding: 6px 12px;
     font-size: 11px;
     letter-spacing: -0.01em;
     color: var(--ink-70);
@@ -182,7 +198,8 @@
   }
   .gslide .ph {
     border: 1px dashed var(--chip-border);
-    background: var(--chip-bg);
+    background: var(--glass);
+    border-radius: var(--radius-md);
     color: var(--muted);
     font-size: 11px;
     letter-spacing: -0.01em;
@@ -285,8 +302,12 @@
     user-select: none;
   }
   .proto {
-    border: 1px solid var(--chip-border);
-    background: var(--chip-bg);
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
     padding: 12px 12px 10px;
     display: flex;
     flex-direction: column;
@@ -308,8 +329,8 @@
     text-transform: uppercase;
     color: #fff;
     background: var(--navy);
-    padding: 2px 6px;
-    border-radius: 3px;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
   }
   .proto-sub {
     font-size: 11px;
@@ -319,7 +340,7 @@
     min-height: 2.9em;
   }
   /* ---------- live coded prototypes ---------- */
-  .demo { background: #fff; border: 1px solid var(--chip-border); }
+  .demo { background: #fff; border: 1px solid var(--chip-border); border-radius: var(--radius-sm); overflow: hidden; }
   .dview {
     position: relative;
     width: 100%;
@@ -957,21 +978,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fff;
-    border: 1px solid #eaeaea;
-    border-radius: 4px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-full);
     cursor: pointer;
     color: var(--ink-70);
     padding: 0;
-    transition: border-color 0.2s ease, color 0.2s ease;
+    transition: border-color 0.2s ease, color 0.2s ease, transform 0.15s var(--ease-spring);
     -webkit-tap-highlight-color: transparent;
   }
-  .dreset:hover { border-color: #d6d6d6; color: var(--black); }
+  .dreset:hover { border-color: rgba(0, 0, 0, 0.16); color: var(--black); transform: scale(1.06); }
+  .dreset:active { transform: scale(0.94); }
   .dreset svg { display: block; }
   .s2 .ph {
     display: inline-block;
     border: 1px dashed var(--chip-border);
-    background: var(--chip-bg);
+    border-radius: var(--radius-md);
+    background: var(--glass);
     color: var(--muted);
     font-size: 11px;
     letter-spacing: -0.01em;
@@ -1002,14 +1025,20 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    border: 1px solid var(--chip-border);
-    background: var(--chip-bg);
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
     padding: 10px 10px 9px;
   }
   .s3-shot {
     flex: 1;
     min-height: 0;
     border: 1px dashed var(--chip-border);
+    border-radius: 6px;
+    overflow: hidden;
     background: #fff;
     color: var(--muted);
     font-size: 10px;
@@ -1050,8 +1079,13 @@
     display: grid;
     grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
     grid-auto-rows: minmax(0, 1fr);
-    border: 1px solid var(--chip-border);
-    background: var(--chip-bg);
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
   }
   .s3-th, .s3-td {
     display: flex;
@@ -1099,24 +1133,37 @@
     gap: 5px 4px;
   }
   .s4-node {
-    background: var(--chip-bg);
-    border: 1px solid var(--chip-border);
-    border-bottom-width: 2px;
-    padding: 4px 9px 3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--glass);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-full);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    padding: 5px 12px;
     font-size: 10.5px;
     letter-spacing: -0.01em;
     color: var(--ink-70);
     white-space: nowrap;
   }
+  .s4-node.n-b::before, .s4-node.n-r::before, .s4-node.n-f::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex: none;
+  }
   .s4-node.n-doc {
-    border-color: var(--black);
+    border-color: rgba(0, 0, 0, 0.35);
     color: var(--black);
     font-family: ui-monospace, 'SF Mono', Menlo, monospace;
     font-size: 10px;
   }
-  .s4-node.n-b { border-bottom-color: #b7a5ec; }
-  .s4-node.n-r { border-bottom-color: #ecc76a; }
-  .s4-node.n-f { border-bottom-color: #efa08f; }
+  .s4-node.n-b::before { background: #b7a5ec; }
+  .s4-node.n-r::before { background: #ecc76a; }
+  .s4-node.n-f::before { background: #efa08f; }
   .s4-larr { flex: 0 0 auto; display: flex; color: var(--muted); }
   .s4-larr svg { display: block; }
   .s4-back {
@@ -1132,17 +1179,24 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
-    border: 1px solid var(--chip-border);
-    background: #fff;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: var(--shadow-card);
   }
   .s4-dochead {
-    flex: none;
+    position: sticky;
+    top: 0;
+    z-index: 2;
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 14px;
-    border-bottom: 1px solid var(--chip-border);
-    background: var(--chip-bg);
+    padding: 9px 16px;
+    border-bottom: 1px solid var(--glass-border);
+    background: var(--glass-thick);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
   }
   .s4-filedot { width: 7px; height: 7px; border-radius: 50%; background: #846fe1; flex: none; }
   .s4-file {
@@ -1166,22 +1220,27 @@
     letter-spacing: -0.01em;
     color: var(--ink-70);
     white-space: nowrap;
+    padding: 3px 9px;
+    border-radius: var(--radius-full);
   }
-  .s4-key i { width: 10px; height: 10px; border-radius: 2px; flex: none; font-style: normal; }
-  .s4-key.k-b i { background: #e6defc; }
-  .s4-key.k-r i { background: #ffedbf; }
-  .s4-key.k-f i { background: #ffd9d1; }
+  .s4-key.k-b { background: rgba(230, 222, 252, 0.55); }
+  .s4-key.k-r { background: rgba(255, 237, 191, 0.55); }
+  .s4-key.k-f { background: rgba(255, 217, 209, 0.55); }
+  .s4-key i { width: 6px; height: 6px; border-radius: 50%; flex: none; font-style: normal; }
+  .s4-key.k-b i { background: #b7a5ec; }
+  .s4-key.k-r i { background: #ecc76a; }
+  .s4-key.k-f i { background: #efa08f; }
   .s4-doc {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: clamp(16px, 2.6vh, 24px) clamp(18px, 2vw, 30px) 34px;
     font-size: 12px;
     line-height: 1.62;
     letter-spacing: -0.005em;
     color: #3a3a3a;
   }
+  .s4-docbody { padding: clamp(16px, 2.6vh, 24px) clamp(18px, 2vw, 30px) 34px; }
   .s4-doc::-webkit-scrollbar { width: 8px; }
   .s4-doc::-webkit-scrollbar-thumb { background: #e2e2e2; border-radius: 4px; }
   .s4-doc::-webkit-scrollbar-thumb:hover { background: #cfcfcf; }
@@ -1215,7 +1274,7 @@
     font-size: 10.5px;
     background: #f5f5f4;
     border: 1px solid #eeeeec;
-    border-radius: 3px;
+    border-radius: 6px;
     padding: 0 4px;
     color: #4a4458;
     white-space: nowrap;
@@ -1223,7 +1282,7 @@
   .s4-doc .s4-meta { font-size: 11px; color: var(--muted); margin: 2px 0 4px; }
   .s4-doc mark {
     color: inherit;
-    border-radius: 2px;
+    border-radius: 4px;
     padding: 1px 2px;
     margin: -1px -2px;
     background-color: transparent;
@@ -1240,7 +1299,21 @@
   .s4-doc mark.lit { background-size: 100% 82%; }
   @media (max-width: 860px) {
     .s4-panel { padding: 16px 5% 20px; }
-    .s4-legend { gap: 8px; }
+    .s4-legend { gap: 6px; }
+  }
+
+  /* glass fallbacks: solid surfaces when blur is unsupported or unwanted */
+  @supports not (backdrop-filter: blur(1px)) {
+    .media .chip, .arrow, .proto, .dreset, .s3-stage, .s3-table, .s4-node, .s4-dochead {
+      background: var(--chip-bg);
+    }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .media .chip, .arrow, .proto, .dreset, .s3-stage, .s3-table, .s4-node, .s4-dochead {
+      background: var(--chip-bg);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
   }
 
   .panel { position: absolute; inset: 0; }
@@ -1321,17 +1394,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fff;
-    border: 1px solid #eaeaea;
-    border-radius: 6px;
+    background: var(--glass);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-full);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     cursor: pointer;
     color: var(--ink-70);
     padding: 0;
-    transition: border-color 0.2s ease, color 0.2s ease, transform 0.15s ease-out, opacity 0.2s ease;
+    transition: border-color 0.2s ease, color 0.2s ease, transform 0.15s var(--ease-spring), box-shadow 0.2s ease, opacity 0.2s ease;
     -webkit-tap-highlight-color: transparent;
   }
-  .arrow:hover { border-color: #d6d6d6; color: var(--black); }
-  .arrow:active { transform: scale(0.96); }
+  .arrow:hover { border-color: rgba(0, 0, 0, 0.16); color: var(--black); box-shadow: var(--shadow-float); transform: translateY(-1px); }
+  .arrow:active { transform: scale(0.96); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); }
   .arrow:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
   .arrow[disabled] { opacity: 0.35; cursor: default; pointer-events: none; }
   .arrow svg { display: block; }
@@ -1544,16 +1620,17 @@
             <span class="s4-back">&#8635; feeds back into Design.md</span>
           </div>
           <section class="s4-docwrap">
-            <div class="s4-dochead">
-              <span class="s4-filedot" aria-hidden="true"></span>
-              <span class="s4-file">DESIGN.md</span>
-              <div class="s4-legend" aria-label="Highlight legend">
-                <span class="s4-key k-b"><i aria-hidden="true"></i><span data-count="b">How it behaves</span></span>
-                <span class="s4-key k-r"><i aria-hidden="true"></i><span data-count="r">What gets reviewed</span></span>
-                <span class="s4-key k-f"><i aria-hidden="true"></i><span data-count="f">Failure patterns</span></span>
-              </div>
-            </div>
             <div class="s4-doc" id="s4doc" tabindex="0" aria-label="DESIGN.md excerpt, scrollable">
+              <div class="s4-dochead">
+                <span class="s4-filedot" aria-hidden="true"></span>
+                <span class="s4-file">DESIGN.md</span>
+                <div class="s4-legend" aria-label="Highlight legend">
+                  <span class="s4-key k-b"><i aria-hidden="true"></i><span data-count="b">How it behaves</span></span>
+                  <span class="s4-key k-r"><i aria-hidden="true"></i><span data-count="r">What gets reviewed</span></span>
+                  <span class="s4-key k-f"><i aria-hidden="true"></i><span data-count="f">Failure patterns</span></span>
+                </div>
+              </div>
+              <div class="s4-docbody">
               <h1>Design System: Curie</h1>
               <p class="s4-meta"><strong>Source of truth:</strong> Curie Figma design tokens, <code>design-tokens.json</code>, <code>tailwind.config.ts</code>, and Storybook stories.</p>
 
@@ -1632,6 +1709,7 @@
                 <li>Live/running indicators (pulsing dot, spinner) should respect reduced-motion.</li>
                 <li>Keep step numbers, IDs, and file paths in Geist Mono and selectable; keep chrome non-selectable.</li>
               </ul>
+              </div>
             </div>
           </section>
         </div>

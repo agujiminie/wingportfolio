@@ -1414,8 +1414,10 @@
     display: flex;
     flex-direction: column;
     gap: clamp(10px, 1.8vh, 16px);
-    padding: clamp(18px, 3vh, 28px) clamp(12px, 1.6vw, 28px) clamp(56px, 10vh, 96px) 0;
+    padding: clamp(18px, 3vh, 28px) clamp(12px, 1.6vw, 28px) 0 0;
   }
+  /* step 4: let the Design.md canvas run down to 20px above the page edge */
+  [data-state="s4"] .media { bottom: 20px; }
   .s4-loop {
     flex: none;
     display: flex;
@@ -1500,18 +1502,18 @@
     margin-left: auto;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     flex-wrap: wrap;
   }
   .s4-key {
     display: flex;
     align-items: center;
-    gap: 5px;
-    font-size: 10px;
+    gap: 4px;
+    font-size: 9.5px;
     letter-spacing: -0.01em;
     color: var(--ink-70);
     white-space: nowrap;
-    padding: 3px 9px;
+    padding: 2px 7px;
     border-radius: var(--radius-full);
   }
   .s4-key.k-b { background: rgba(230, 222, 252, 0.55); }

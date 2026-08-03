@@ -1054,7 +1054,9 @@
     overflow: hidden;
   }
   .s3-shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .s3-shot.fit img { object-fit: contain; object-position: center; }
   .s3-shot:has(img) { border-style: solid; padding: 0; }
+  .s3-shot.fit:has(img) { padding: 10px; background: var(--chip-bg); }
   .s3-name {
     font-size: 12px;
     font-weight: 500;
@@ -1518,9 +1520,8 @@
           <section class="s3-evo">
             <h3 class="s2-h">User behavior shaped how verification evolved.</h3>
             <div class="s3-flow">
-              <!-- To drop in a real asset: inside .s3-shot, replace the text with <img src="assets/step3/....png" alt="..."> -->
               <article class="s3-stage">
-                <div class="s3-shot">IDE plugin 截图位 — 发我图即可替换</div>
+                <div class="s3-shot"><img src="assets/step3/plugin.png" alt="CurieTech AI IDE plugin panel listing agent tasks with Apply Changes and View Task actions"></div>
                 <div class="s3-name">IDE review</div>
                 <p class="s3-note">Users stayed in their workflow</p>
               </article>
@@ -1528,7 +1529,7 @@
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </div>
               <article class="s3-stage">
-                <div class="s3-shot">Summary 截图位 — 发我图即可替换</div>
+                <div class="s3-shot"><img src="assets/step3/summary.png" alt="Structured task summary with verification bullets and follow-up actions"></div>
                 <div class="s3-name">Structured summary</div>
                 <p class="s3-note">Users stopped reading every line</p>
               </article>
@@ -1536,7 +1537,7 @@
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </div>
               <article class="s3-stage">
-                <div class="s3-shot">Control bar 截图位 — 发我图即可替换</div>
+                <div class="s3-shot fit"><img src="assets/step3/control.png" alt="Review control bar: per-step feedback with All looks good and Regenerate"></div>
                 <div class="s3-name">Control bar</div>
                 <p class="s3-note">Users didn&rsquo;t know what remained</p>
               </article>
@@ -1544,7 +1545,7 @@
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </div>
               <article class="s3-stage">
-                <div class="s3-shot">Collaboration / approval 截图位 — 发我图即可替换</div>
+                <div class="s3-shot fit"><img src="assets/step3/collaboration.png" alt="Design review invite: teammate asked to review and approve the design document"></div>
                 <div class="s3-name">Shared review</div>
                 <p class="s3-note">Enterprise verification required handoffs</p>
               </article>

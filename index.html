@@ -9,7 +9,7 @@
 <meta property="og:description" content="Understand the system. Parallel prototyping in code. Let real behavior decide. Build systems that evolve.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400&family=Inter:wght@400;500&family=Geist:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --black: #000;
@@ -539,90 +539,369 @@
   .send[disabled] { opacity: 0.35; pointer-events: none; }
   .screen { position: absolute; inset: 0; transition: opacity 0.3s ease, transform 0.4s var(--ease-enter); }
   .screen.off { opacity: 0; transform: translateY(12px); pointer-events: none; }
-  .ctx-hero {
+  /* ---------- Context-aware demo: 1:1 Figma implementation (Landing-page 651-*) ---------- */
+  .ctx-fig {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1506px;
+    height: 909px;
+    transform: scale(0.371846);
+    transform-origin: 0 0;
+    background: #fff;
+    font-family: 'Geist', var(--font-ui);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  .ctx-fig .pulse::after { inset: -8px; border-width: 3px; border-radius: 18px; }
+  .ctx-fig img { flex: none; }
+  .cf-avatar, .cf-attach, .cf-send, .cf-repo, .cf-vtag, .cf-close, .cf-ticon { flex: none; }
+  .cf-side {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80px;
+    height: 909px;
+    background: #fff;
+    border-right: 1px solid #eaeaea;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 3;
+  }
+  .cf-side-top { display: flex; flex-direction: column; align-items: center; width: 100%; }
+  .cf-collapse { height: 75px; display: flex; align-items: center; justify-content: center; width: 100%; }
+  .cf-i24 { width: 24px; height: 24px; display: block; }
+  .cf-i16 { width: 16px; height: 16px; display: block; }
+  .cf-laptop { margin-top: 21px; }
+  .cf-plusrow { margin-top: 10px; height: 32px; display: flex; align-items: center; justify-content: center; }
+  .cf-side-bot { display: flex; flex-direction: column; gap: 25px; align-items: center; padding: 24px 0; }
+  .cf-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 99px;
+    border: 2.5px solid #ab97fe;
+    background: #f9f1f8;
+    overflow: hidden;
+    position: relative;
+  }
+  .cf-avatar img { position: absolute; width: 46px; height: 46px; left: 50%; transform: translateX(-50%); top: 1.5px; }
+  .cf-main {
+    position: absolute;
+    left: 80px;
+    top: 0;
+    width: 1426px;
+    height: 909px;
+    background: #fcfcfc;
+    overflow: hidden;
+    transition: width 0.5s var(--ease-enter);
+  }
+  .cf-main.split { width: 693px; }
+  .cf-hero {
+    position: absolute;
+    inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 9px;
-    background:
-      radial-gradient(120% 90% at 18% 8%, #f5e7fa 0%, transparent 55%),
-      radial-gradient(110% 90% at 85% 18%, #e4ddfb 0%, transparent 60%),
-      linear-gradient(180deg, #f7f2fb 0%, #fbfaff 68%, #fff 100%);
+    padding-top: 249px;
+    transition: opacity 0.35s ease, transform 0.45s var(--ease-enter);
   }
-  .ctx-h1 {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    background: linear-gradient(90deg, #9a86dd 0%, #bd8fd8 55%, #93a3de 100%);
+  .cf-hero.off { opacity: 0; transform: translateY(-28px); pointer-events: none; }
+  .cf-h1 {
+    font-size: 36px;
+    font-weight: 500;
+    line-height: normal;
+    text-align: center;
+    width: 800px;
+    background: linear-gradient(90deg, #897ccb 0%, #a9928f 82%, #86a5c1 99%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  .ctx-input {
-    width: 76%;
-    background: #fff;
-    border: 1px solid #ecdfc7;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(150, 120, 220, 0.10);
-    padding: 8px 9px 7px;
-    text-align: left;
-  }
-  .ctx-row2 { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
-  .ctx-actions { display: flex; gap: 5px; justify-content: flex-end; margin-top: 7px; }
-  .repo-chip {
-    font-size: 8px;
-    border: 1px solid #e6e6e6;
-    border-radius: 999px;
-    padding: 3px 8px;
-    color: #7a7a7a;
-    white-space: nowrap;
-  }
-  .ctx-spacer { flex: 1; }
-  .ctx-tabs {
-    position: absolute;
-    bottom: 7%;
-    left: 50%;
-    transform: translateX(-50%);
+  .cf-chatbox {
+    width: 800px;
+    height: 160px;
+    margin-top: 48px;
+    border-radius: 24px;
+    border: 1px solid transparent;
+    background: linear-gradient(#fff, #fff) padding-box, linear-gradient(90deg, #ab97fe 0%, #d3b6b8 60%, #ecc76a 100%) border-box;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 1px rgba(0, 0, 0, 0.03);
+    padding: 16px;
     display: flex;
-    background: #fff;
-    border-radius: 9px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-    overflow: hidden;
+    flex-direction: column;
+    justify-content: space-between;
   }
-  .ctx-tab { font-size: 8px; padding: 4px 8px; color: #3c3c3c; white-space: nowrap; }
-  .ctx-tab + .ctx-tab { border-left: 1px solid #f1f1f1; }
-  .conv-head {
-    flex: none;
-    padding: 7px 10px 6px;
-    border-bottom: 1px solid #f0f0f0;
+  .cf-query { font-size: 14px; letter-spacing: 0.56px; line-height: 16px; color: rgba(0, 0, 0, 0.88); min-height: 22px; display: flex; align-items: center; }
+  .cf-caret { display: inline-block; width: 1.5px; height: 16px; background: #333; margin-left: 1px; animation: dblink 0.9s step-end infinite; }
+  .cf-ctlrow { display: flex; align-items: flex-end; justify-content: space-between; }
+  .cf-ctlleft { display: flex; gap: 8px; align-items: center; }
+  .cf-attach {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #eaeaea;
+    border-radius: 12px;
     background: #fff;
-  }
-  .conv-title { font-size: 9px; font-weight: 600; color: #111; }
-  .conv-sub { font-size: 8px; color: #a0a0a0; margin-top: 1px; }
-  .result-pill {
-    background: #fff;
-    border-radius: 999px;
-    padding: 5px 11px;
-    font-size: 9px;
-    color: #2a2a2a;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
-    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-  }
-  .task-card {
     display: flex;
     align-items: center;
-    gap: 7px;
-    margin-top: 8px;
+    justify-content: center;
+  }
+  .cf-repo {
+    width: 263px;
+    height: 32px;
+    border: 1px solid #eaeaea;
+    border-radius: 16px;
     background: #fff;
-    border-radius: 9px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-    padding: 7px 9px;
-    font-size: 9px;
-    color: #1c1c1c;
+    padding: 0 12px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .cf-repo span {
+    flex: 1;
+    min-width: 0;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: rgba(0, 0, 0, 0.65);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cf-send {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 12px;
+    background: #262626;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.12s ease-out, background 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cf-send:active { transform: scale(0.94); }
+  .cf-send.dis { background: rgba(29, 27, 32, 0.12); pointer-events: none; }
+  .cf-tabs { display: flex; gap: 20px; padding: 24px 16px; }
+  .cf-tab {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    border: 1px solid #d6d6d6;
+    border-radius: 24px;
+    padding: 8px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    color: rgba(0, 0, 0, 0.88);
+    white-space: nowrap;
+  }
+  .cf-ticon { width: 16px; height: 16px; position: relative; flex: none; display: block; }
+  .cf-ticon span { display: block; }
+  .cf-ticon img { display: block; }
+  .cf-laptop { margin-top: 21px; }
+  .cf-tab .cf-ticon { display: inline-block; }
+  .cf-conv { position: absolute; inset: 0; display: flex; flex-direction: column; animation: mrise 0.4s var(--ease-enter) both; }
+  .cf-chead {
+    flex: none;
+    height: 64px;
+    background: #fff;
+    border-bottom: 1px solid #eaeaea;
+    padding: 8px 0 8px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .cf-ctitle { font-size: 14px; font-weight: 700; line-height: 18px; color: #000; }
+  .cf-csub { font-size: 12px; font-weight: 500; line-height: 16px; color: rgba(0, 0, 0, 0.65); }
+  .cf-chat { flex: 1; min-height: 0; overflow-y: auto; padding: 24px 0 16px; }
+  .cf-col {
+    width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-end;
+    transition: width 0.5s var(--ease-enter);
+  }
+  .cf-main.split .cf-col { width: 640px; }
+  .cf-user {
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 24px;
+    padding: 16px;
+    max-width: 640px;
+    font-size: 14px;
+    letter-spacing: 0.56px;
+    line-height: 16px;
+    color: rgba(0, 0, 0, 0.88);
+    align-self: flex-end;
+    animation: mrise 0.3s var(--ease-enter) both;
+  }
+  .cf-div { height: 1px; background: rgba(5, 5, 5, 0.08); width: 100%; flex: none; }
+  .cf-agent {
+    width: 100%;
+    padding: 8px 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
     animation: mrise 0.35s var(--ease-enter) both;
   }
-  .task-card .tmeta { margin-left: auto; color: #9c9c9c; font-size: 8px; white-space: nowrap; }
+  .cf-worked {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    color: rgba(0, 0, 0, 0.65);
+  }
+  .cf-atext { font-size: 14px; font-weight: 500; line-height: 22px; color: #000; opacity: 0.7; padding: 0 16px; }
+  .cf-tasks { display: flex; flex-direction: column; gap: 4px; padding: 8px 0; }
+  .cf-task {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.1px;
+    color: #262626;
+    background: none;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.18s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cf-task::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: #262626; margin: 0 8px 0 5px; flex: none; }
+  .cf-task:hover { background: rgba(0, 0, 0, 0.04); }
+  .cf-plancard {
+    width: 100%;
+    height: 76px;
+    background: #fff;
+    border: 1px solid #eaeaea;
+    border-radius: 24px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .cf-plancard .cf-plabel { font-size: 14px; font-weight: 500; line-height: 20px; letter-spacing: 0.1px; color: #262626; margin-left: 16px; }
+  .cf-specs-link {
+    margin-left: auto;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    color: rgba(0, 0, 0, 0.45);
+    background: none;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+    padding: 0;
+    transition: color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cf-specs-link:hover { color: rgba(0, 0, 0, 0.75); }
+  .cf-dock { flex: none; height: 128px; background: #fcfcfc; display: flex; align-items: center; justify-content: center; }
+  .cf-composer {
+    width: 800px;
+    min-height: 60px;
+    border-radius: 24px;
+    border: 1px solid transparent;
+    background: linear-gradient(#fff, #fff) padding-box, linear-gradient(90deg, #ab97fe 0%, #d3b6b8 60%, #ecc76a 100%) border-box;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 1px rgba(0, 0, 0, 0.03);
+    padding: 14px 16px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    transition: width 0.5s var(--ease-enter);
+  }
+  .cf-main.split .cf-composer { width: 640px; }
+  .cf-ph { flex: 1; min-width: 0; font-size: 14px; font-weight: 500; line-height: 22px; color: rgba(0, 0, 0, 0.25); }
+  .cf-spec {
+    position: absolute;
+    top: 0;
+    right: -763px;
+    width: 733px;
+    height: 909px;
+    background: #fff;
+    border-left: 1px solid #e3e3e3;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.5s var(--ease-enter);
+    z-index: 2;
+  }
+  .cf-spec.on { right: 0; }
+  .cf-shead {
+    flex: none;
+    height: 64px;
+    border-bottom: 1px solid #eaeaea;
+    display: flex;
+    align-items: center;
+    padding-left: 24px;
+  }
+  .cf-stitle { font-size: 14px; font-weight: 700; line-height: 18px; color: #000; white-space: nowrap; }
+  .cf-vtag {
+    margin-left: 8px;
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid #eaeaea;
+    border-radius: 50px;
+    padding: 4px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.65);
+    white-space: nowrap;
+  }
+  .cf-close {
+    margin-left: auto;
+    padding: 16px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    display: flex;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cf-sbody {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 16px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .cf-dl {
+    align-self: flex-end;
+    flex: none;
+    height: 36px;
+    border: 1px solid #d6d6d6;
+    border-radius: 12px;
+    background: #fff;
+    padding: 8px 16px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    color: #262626;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .cf-doc { width: 624px; display: flex; flex-direction: column; gap: 24px; padding: 0 16px; }
+  .cf-sec { display: flex; flex-direction: column; gap: 4px; }
+  .cf-sec h6 { font-size: 14px; font-weight: 700; line-height: 18px; color: rgba(0, 0, 0, 0.65); margin: 0; }
+  .cf-sec .cf-body14 { font-size: 14px; font-weight: 500; line-height: 22px; color: rgba(0, 0, 0, 0.45); }
+  .cf-sec ul { margin: 0; padding-left: 18px; font-size: 12px; font-weight: 500; line-height: 16px; color: rgba(0, 0, 0, 0.45); }
+  .cf-sub { padding: 0 16px; display: flex; flex-direction: column; }
+  .cf-sub .cf-subhead { height: 32px; display: flex; align-items: center; font-size: 14px; font-weight: 500; line-height: 22px; color: rgba(0, 0, 0, 0.65); }
+  .cf-sub .cf-note { font-size: 12px; font-weight: 500; line-height: 16px; color: rgba(0, 0, 0, 0.45); margin: 0 0 4px; }
   .pulse { position: relative; }
   .pulse::after {
     content: '';
@@ -1807,66 +2086,226 @@
 
   function initCtx(stage, cap) {
     stage.innerHTML = '';
-    var hero = el('screen ctx-hero');
-    hero.appendChild(el('ctx-h1', 'How can I help you today?'));
-    var box = el('ctx-input');
-    var q = el('ctext');
-    box.appendChild(q);
-    box.appendChild(el('ctx-row2', '<span class="repo-chip">curie-dev/osb-edi-api ▾</span>'));
-    var actions = el('ctx-actions');
-    var ask = dbtn('Ask');
-    var run = dbtn('Run ▾', 'dark');
-    actions.appendChild(ask);
-    actions.appendChild(run);
-    box.appendChild(actions);
-    hero.appendChild(box);
-    hero.appendChild(el('ctx-tabs', '<span class="ctx-tab">Coding</span><span class="ctx-tab">Testing</span><span class="ctx-tab">Documentation</span>'));
-    stage.appendChild(hero);
-    cap('Live demo — the repo is already connected');
+    var A = 'assets/ctx/';
+    function fpart(inset, wrapInset, src) {
+      var img = '<img src="' + A + src + '" style="position:absolute;inset:0;width:100%;height:100%" alt="">';
+      var core = wrapInset ? '<span style="position:absolute;inset:' + wrapInset + '">' + img + '</span>' : img;
+      return '<span style="position:absolute;inset:' + inset + '">' + core + '</span>';
+    }
+    function ficon(size, parts, extra) {
+      return '<span class="cf-ticon' + (extra ? ' ' + extra : '') + '" style="width:' + size + 'px;height:' + size + 'px">' + parts.join('') + '</span>';
+    }
+    var I_ATTACH = ficon(16, [fpart('15%', null, 'attach.svg')]);
+    var I_CHEV = ficon(16, [fpart('30.39% 13.72% 27.44% 13.72%', null, 'chev-down.svg')]);
+    var I_ARROW = ficon(16, [fpart('6.61% 17.89% 8.33% 17.89%', null, 'arrow-up.svg')]);
+    var I_CARET = ficon(16, [fpart('15.62% 28.12% 15.62% 34.37%', null, 'caret-right.svg')]);
+    var fig = el('ctx-fig');
+    stage.appendChild(fig);
+
+    fig.appendChild(el('cf-side',
+      '<div class="cf-side-top">' +
+        '<div class="cf-collapse">' + ficon(24, [fpart('8.33%', null, 'panel.svg')]) + '</div>' +
+        '<div class="cf-laptop">' + ficon(24, [fpart('13.28% 6.37% 13.28% 6.44%', null, 'laptop.svg')]) + '</div>' +
+        '<div class="cf-plusrow">' + ficon(16, [fpart('12.5%', null, 'plus.svg')]) + '</div>' +
+      '</div>' +
+      '<div class="cf-side-bot">' +
+        '<div class="cf-avatar"><img src="' + A + 'person.svg" alt=""></div>' +
+        ficon(24, [fpart('9.12% 9.11% 9.11% 9.12%', null, 'settings.svg')]) +
+      '</div>'));
+
+    var main = el('cf-main');
+    fig.appendChild(main);
+
+    var TABS =
+      '<div class="cf-tabs">' +
+        '<span class="cf-tab">' + ficon(16, [
+          fpart('25% 43.75% 22.92% 41.67%', '-9% -32.15%', 'code-a.svg'),
+          fpart('35.42% 72.92% 35.42% 12.5%', '-16.07% -32.14%', 'code-b.svg'),
+          fpart('35.42% 12.5% 35.42% 72.92%', '-16.07% -32.14%', 'code-c.svg')
+        ]) + 'Coding</span>' +
+        '<span class="cf-tab">' + ficon(16, [fpart('9.38% 12.5% 12.5% 12.51%', null, 'lab.svg')]) + 'Testing</span>' +
+        '<span class="cf-tab">' + ficon(16, [fpart('0%', null, 'doc.svg')]) + 'Document</span>' +
+        '<span class="cf-tab">' + ficon(16, [
+          fpart('0%', null, 'eye-base.svg'),
+          fpart('41.67%', '-24.37%', 'eye-1.svg'),
+          fpart('20.83% 8.33%', '-6.96% -3.73%', 'eye-2.svg'),
+          fpart('70.83% 12.5% 12.5% 62.5%', '-24.37% -16.25%', 'eye-3.svg')
+        ]) + 'Code Review</span>' +
+        '<span class="cf-tab">' + ficon(16, [
+          fpart('6.25% 15.63% 43.75% 56.25%', null, 'swap-1.svg'),
+          fpart('28.13% 18.97% 65.63% 15.63%', null, 'swap-2.svg'),
+          fpart('43.75% 56.25% 6.25% 15.63%', null, 'swap-3.svg'),
+          fpart('65.63% 15.63% 28.13% 19.14%', null, 'swap-4.svg')
+        ]) + 'Migration</span>' +
+      '</div>';
+
+    var hero = el('cf-hero');
+    hero.innerHTML =
+      '<div class="cf-h1">How can I help you today?</div>' +
+      '<div class="cf-chatbox">' +
+        '<div class="cf-query"></div>' +
+        '<div class="cf-ctlrow">' +
+          '<div class="cf-ctlleft">' +
+            '<span class="cf-attach">' + I_ATTACH + '</span>' +
+            '<span class="cf-repo"><span>curie-dev/osb-edi-app, curie-prod/fds</span>' + I_CHEV + '</span>' +
+          '</div>' +
+          '<button class="cf-send dis" type="button" aria-label="Send">' + I_ARROW + '</button>' +
+        '</div>' +
+      '</div>' + TABS;
+    main.appendChild(hero);
+
+    var q = hero.querySelector('.cf-query');
+    var send = hero.querySelector('.cf-send');
+    cap('Live demo \u2014 repos already connected');
     (async function () {
-      await sleep(500);
-      await typeInto(q, 'give me all the APIs');
-      run.classList.add('pulse');
-      cap('Repo connected — hit Run');
+      await sleep(600);
+      if (reduced) { q.textContent = 'give me all the APIs'; }
+      else {
+        var txt = 'give me all the APIs';
+        for (var i = 1; i <= txt.length; i++) {
+          q.innerHTML = esc(txt.slice(0, i)) + '<span class="cf-caret"></span>';
+          await sleep(28);
+        }
+        q.innerHTML = esc(txt) + '<span class="cf-caret"></span>';
+      }
+      send.classList.remove('dis');
+      send.classList.add('pulse');
+      cap('Send it \u2014 the agent has the whole repo as context');
     })();
-    run.onclick = async function () {
-      run.onclick = null;
-      run.classList.remove('pulse');
+
+    var COMPOSER =
+      '<div class="cf-composer">' +
+        '<span class="cf-attach">' + I_ATTACH + '</span>' +
+        '<span class="cf-ph">Describe your task</span>' +
+        '<button class="cf-send dis" type="button" aria-label="Send">' + I_ARROW + '</button>' +
+      '</div>';
+
+    send.onclick = async function () {
+      send.onclick = null;
+      send.classList.remove('pulse');
       hero.classList.add('off');
-      var conv = el('screen app');
-      conv.appendChild(el('conv-head', '<div class="conv-title">Conversation: List all the flow names</div><div class="conv-sub">Description</div>'));
-      var chat = el('chat');
-      conv.appendChild(chat);
-      stage.appendChild(conv);
-      var m = el('msg user');
-      m.appendChild(el('result-pill', 'prc-curie-employee-syncFlow'));
-      chat.appendChild(m);
-      await agentSay(chat, 'Perfect ✅ I found some tasks you might want to run:', 850);
-      var opts = el('optcol');
-      var tasks = ['New data sources or fields', 'Handle new or changed endpoints', 'Update DataWeave transformations', 'Change business logic or connectors', 'Update MUnit tests', 'Test edge cases', 'Documentation update'];
-      tasks.forEach(function (t, i) {
-        var b = dbtn(t);
+      var conv = el('cf-conv');
+      conv.innerHTML =
+        '<div class="cf-chead"><div class="cf-ctitle">Conversation: List all the flow names</div><div class="cf-csub">curie-dev/osb-edi-app</div></div>' +
+        '<div class="cf-chat"><div class="cf-col"></div></div>' +
+        '<div class="cf-dock">' + COMPOSER + '</div>';
+      main.appendChild(conv);
+      var chat = conv.querySelector('.cf-chat');
+      var col = conv.querySelector('.cf-col');
+      col.appendChild(el('cf-user', 'give me all the APIs'));
+      cap('Agent works through the repo\u2026');
+      await sleep(1000);
+
+      var TASKS = ['New data sources or fields', 'Handle new or changed endpoints', 'Update DataWeave transformations', 'Change business logic or connectors', 'Update MUnit tests', 'Documentation update'];
+      var ag1 = el('cf-agent');
+      ag1.innerHTML =
+        '<div class="cf-worked">Worked for 31s ' + I_CARET + '</div>' +
+        '<div class="cf-atext">Perfect \u2705. I found some tasks you might want to run:</div>' +
+        '<div class="cf-tasks"></div>' +
+        '<div class="cf-atext">Click and tell me which to start with one of these tasks, or anything about your project you\u2019d like to ask me first?</div>';
+      var list = ag1.querySelector('.cf-tasks');
+      TASKS.forEach(function (t, i) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'cf-task';
+        b.textContent = t;
         b.style.animation = 'mrise 0.3s var(--ease-enter) both';
-        b.style.animationDelay = (i * 0.045) + 's';
-        if (t === 'Handle new or changed endpoints') b.classList.add('pulse');
-        b.onclick = function () {
-          opts.querySelectorAll('.dbtn').forEach(function (x) {
-            x.classList.remove('pulse');
-            x.style.pointerEvents = 'none';
-            x.classList.toggle('chosen', x !== b);
-          });
-          b.classList.add('sel');
-          var card = el('task-card', '<svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 1.5h5.5L13 5v9.5H4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M9.5 1.5V5H13" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg><span>' + esc(t) + '</span><span class="tmeta">New task started at Coder ›</span>');
-          chat.appendChild(card);
-          scrollBottom(chat);
-          cap('Task starts with full repo context. Restart ↺');
-        };
-        opts.appendChild(b);
+        b.style.animationDelay = (i * 0.05) + 's';
+        if (t === 'Update DataWeave transformations') b.classList.add('pulse');
+        b.onclick = function () { pick(t); };
+        list.appendChild(b);
       });
-      chat.appendChild(opts);
+      col.appendChild(ag1);
       scrollBottom(chat);
-      await agentSay(chat, 'Click and tell me which to start with, or ask me anything about your project first.', 700);
-      cap('It read the codebase — pick a task');
+      cap('It read the codebase \u2014 pick a task');
+
+      async function pick(t) {
+        list.querySelectorAll('.cf-task').forEach(function (x) {
+          x.classList.remove('pulse');
+          x.style.pointerEvents = 'none';
+        });
+        col.appendChild(el('cf-div'));
+        col.appendChild(el('cf-user', esc(t)));
+        scrollBottom(chat);
+        cap('Agent drafts the game plan\u2026');
+        await sleep(1000);
+        var ag2 = el('cf-agent');
+        ag2.innerHTML =
+          '<div class="cf-worked">Worked for 31s ' + I_CARET + '</div>' +
+          '<div class="cf-atext">Here\u2019s the game plan for adding your new endpoints. I\u2019ll track progress and flag blockers automatically\u2014just tell me where to start or reply with a step number to jump straight in:</div>' +
+          '<div class="cf-plancard">' +
+            ficon(24, [fpart('9.37% 15.63% 9.38% 15.63%', null, 'task-code.svg')]) +
+            '<span class="cf-plabel">Draft an Endpoint Design Doc</span>' +
+            '<button class="cf-specs-link pulse" type="button">View Specs</button>' + I_CARET +
+          '</div>';
+        col.appendChild(ag2);
+        scrollBottom(chat);
+        cap('Everything compiles into a spec \u2014 open it');
+        ag2.querySelector('.cf-specs-link').onclick = function () {
+          this.classList.remove('pulse');
+          main.classList.add('split');
+          spec.classList.add('on');
+          setTimeout(function () { scrollBottom(chat); }, 520);
+          cap('Design spec, versioned and reviewable. Restart \u21ba');
+        };
+      }
+    };
+
+    var spec = el('cf-spec');
+    spec.innerHTML =
+      '<div class="cf-shead">' +
+        '<span class="cf-stitle">Design Spec - Mulesoft</span><span class="cf-vtag">Version 1</span>' +
+        '<button class="cf-close" type="button" aria-label="Close panel">' +
+          ficon(24, [fpart('50% 25% 50% 25%', '-0.75px -6.25%', 'close-x.svg')]) +
+        '</button>' +
+      '</div>' +
+      '<div class="cf-sbody">' +
+        '<button class="cf-dl" type="button">' + ficon(16, [
+          fpart('62.5% 12.5% 12.5% 12.5%', '-18.75% -6.25%', 'dl-1.svg'),
+          fpart('41.67% 29.17% 37.5% 29.17%', '-22.5% -11.25%', 'dl-2.svg'),
+          fpart('12.5% 50% 37.5% 50%', '-9.38% -0.75px', 'dl-3.svg')
+        ]) + 'Download</button>' +
+        '<div class="cf-doc">' +
+          '<div class="cf-sec"><h6>Summary</h6><div class="cf-body14">This document specifies the design for Smart Notifications, a feature that delivers task reminders at the most useful time and channel for each user. Instead of sending reminders strictly at task deadlines, Smart Notifications uses user behavior signals (activity patterns, typical response times, time zone, quiet hours) to recommend optimal delivery times.</div></div>' +
+          '<div class="cf-sec"><h6>Goals</h6><ul>' +
+            '<li>Increase task completion rate via better reminder timing.</li>' +
+            '<li>Reduce notification fatigue by avoiding spammy reminders.</li>' +
+            '<li>Provide users with control and transparency over how reminders are scheduled.</li>' +
+            '<li>Support both manual reminder scheduling and smart recommendations.</li></ul></div>' +
+          '<div class="cf-sec"><h6>Background / Problem</h6><ul>' +
+            '<li>fire when users are busy or asleep,</li>' +
+            '<li>are sent too late to be useful,</li>' +
+            '<li>overwhelm users with too many notifications.</li></ul></div>' +
+          '<div class="cf-sec"><h6>Product Requirements</h6>' +
+            '<div class="cf-sub"><div class="cf-subhead">6.1 Reminder Timing Modes</div>' +
+              '<p class="cf-note">Users can choose between:</p><ul>' +
+              '<li>Fixed: reminder sent at the exact time chosen by the user.</li>' +
+              '<li>Smart: reminder time suggested based on predicted availability.</li></ul>' +
+              '<p class="cf-note" style="margin-top:8px">Smart reminders must:</p><ul>' +
+              '<li>respect quiet hours,</li>' +
+              '<li>avoid sending &gt;N reminders per day (default N = 5),</li>' +
+              '<li>provide explainability (\u201cWe chose this time because\u2026\u201d).</li></ul></div>' +
+            '<div class="cf-sub"><div class="cf-subhead">6.2 Notification Channels</div>' +
+              '<p class="cf-note">Supported channels:</p><ul>' +
+              '<li>Push Notification</li><li>Email</li><li>In-app banner</li></ul>' +
+              '<p class="cf-note" style="margin-top:8px">Rules:</p><ul>' +
+              '<li>Default channel is push.</li>' +
+              '<li>If push disabled, fall back to email.</li>' +
+              '<li>In-app only used when the user is active.</li></ul></div>' +
+            '<div class="cf-sub"><div class="cf-subhead">6.3 Quiet Hours &amp; DND</div>' +
+              '<p class="cf-note">Users configure quiet hours:</p><ul>' +
+              '<li>Default quiet hours: 10pm\u20138am local time</li>' +
+              '<li>During quiet hours: reminders are delayed until the next available window</li></ul>' +
+              '<p class="cf-note" style="margin-top:8px">If reminder is delayed:</p><ul>' +
+              '<li>Reminder UI should show: \u201cDelayed due to quiet hours.\u201d</li></ul></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    fig.appendChild(spec);
+    spec.querySelector('.cf-close').onclick = function () {
+      spec.classList.remove('on');
+      main.classList.remove('split');
+      cap('Design spec, versioned and reviewable. Restart \u21ba');
     };
   }
 

@@ -286,7 +286,11 @@ nav.rail{
   color:var(--primary);margin-left:7px;text-transform:uppercase;
 }
 .pitem.edited .pedittag{display:inline}
-.pcfoot{display:flex;align-items:center;gap:12px;padding:12px 16px}
+.pcfoot{
+  display:flex;align-items:center;gap:12px;padding:12px 16px;
+  border-top:1px solid var(--border);
+  background:color-mix(in oklab, var(--card) 85%, transparent);
+}
 .startbtn{
   margin-left:auto;display:inline-flex;align-items:center;gap:7px;
   height:34px;padding:0 16px;border-radius:10px;
@@ -346,6 +350,7 @@ nav.rail{
 .pcfoot{flex-direction:column;align-items:stretch;gap:9px}
 .pcfoot-btns{display:flex;align-items:center;gap:8px}
 .pcfoot-btns .startbtn{margin-left:auto}
+.pcfoot>.startbtn{align-self:flex-end}
 .savecopy{font-size:11.5px;color:var(--faint-foreground);line-height:1.5}
 .youtag{
   font-size:10.5px;color:var(--primary);white-space:nowrap;flex:0 0 auto;
@@ -1133,7 +1138,6 @@ function workingMsg(steps){
           <svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 13l4 4L19 7"/></svg>
         </span>
         <span class="slabel">${s.label}</span>
-        <span class="smeta">${s.time}${s.ck?`<span class="ck">⌑ ${s.ck}</span>`:''}</span>
       </div>`).join('')}
     </div>`;
   return el;
@@ -1151,12 +1155,9 @@ function hubMsg(exec){
       </div>
       <div id="cards">${exec.map(c=>cardHTML(c)).join('')}</div>
       <div class="pcfoot">
-        <div class="savecopy">Saves the doc as it looks right now — including edits you make yourself.</div>
+        <div class="savecopy">Everything here is already in the doc — including your own edits. Undo anything you don't want.</div>
         <div class="pcfoot-btns">
           <button class="ghostbtn" id="undoAllBtn">Restore Version 1</button>
-          <button class="startbtn" id="approveBtn">Save as Version 2
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 13l4 4L19 7"/></svg>
-          </button>
         </div>
       </div>
     </div>`;

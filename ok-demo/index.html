@@ -249,6 +249,7 @@ nav.rail{
 .pchead{
   display:flex;align-items:center;gap:12px;padding:14px 16px 13px;
   border-bottom:1px solid var(--border);
+  background:color-mix(in oklab, var(--card) 85%, transparent);
 }
 .pceyebrow{
   font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.14em;
@@ -529,8 +530,9 @@ aside#chat{
 }
 .btn.keep{background:var(--muted);color:var(--foreground)}
 .btn.keep:hover{background:var(--card-2)}
-.btn.restore{background:var(--muted);color:var(--foreground)}
-.btn.restore:hover{background:var(--card-2)}
+.btn.restore{background:transparent;color:var(--muted-foreground);display:inline-flex;align-items:center;gap:6px}
+.btn.restore svg{width:12px;height:12px}
+.btn.restore:hover{background:var(--muted);color:var(--foreground)}
 .btn.ghost{color:var(--faint-foreground);margin-left:auto;padding:0 7px}
 .btn.ghost:hover{color:var(--foreground)}
 .state-chip{
@@ -585,7 +587,7 @@ aside#chat{
 .empty .es{font-size:12.5px;color:var(--muted-foreground);max-width:220px;margin:0 auto;line-height:1.55}
 
 /* composer */
-#composer{flex:0 0 auto;padding:10px 12px 12px;border-top:1px solid var(--border)}
+#composer{flex:0 0 auto;padding:10px 12px 12px}
 .notechip{
   display:none;align-items:center;gap:6px;margin-bottom:7px;padding:4px 10px;border-radius:999px;
   background:var(--agent-soft);border:1px solid var(--agent-ring);
@@ -918,12 +920,7 @@ const CONTENT = {
       <li>How do annual discounts apply to Starter?</li>
       <li>What's the upgrade path from the education plan?</li>
     </ul>`,
-    after: `<div class="scar" id="scar"><button class="scarhead" aria-expanded="false"><span class="chev">▶</span>2 questions removed</button>
-      <div class="scarbody"><div><ul>
-        <li>Do we sunset the legacy metered add-on?</li>
-        <li>How do annual discounts apply to Starter?</li>
-      </ul></div></div></div>
-      <ul class="qs">
+    after: `<ul class="qs">
       <li>What's the upgrade path from the education plan?</li>
       <li class="added-q">How do we announce the Starter migration to existing customers?</li>
     </ul>`
@@ -1091,6 +1088,7 @@ function planMsg(){
         <div>
           <div class="pceyebrow">Change plan</div>
           <div class="pctitle"><span id="planCount">${CHANGES.length}</span> changes to Billing &amp; Invoices</div>
+          <div class="pcsub">Split from your request. Uncheck or edit any line — nothing changes until you start.</div>
         </div>
       </div>
       <div class="pcrows">${CHANGES.map(c=>`
@@ -1203,7 +1201,10 @@ function cardHTML(c){
           <svg class="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 13l4 4L19 7"/></svg>
           Show previous version
         </button>
-        <button class="btn restore" data-act="restore" data-c="${c.id}">Undo</button>
+        <button class="btn restore" data-act="restore" data-c="${c.id}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          Undo
+        </button>
         <button class="undo-link" data-act="unresolve" data-c="${c.id}">undo</button>
       </div>
       <div class="undo-warn">Undo also discards the edit you made here.</div>
@@ -1308,7 +1309,7 @@ function renderDuring(){
   thread.appendChild(userBubble());
   const pc=document.createElement('div');
   pc.className='msg agent';
-  pc.innerHTML=`<div class="plan-collapsed"><span class="gd">✓</span> Plan confirmed — ${exec.length} edit${exec.length>1?'s':''}</div>`;
+  pc.innerHTML=`<div class="plan-collapsed">Plan confirmed — ${exec.length} edit${exec.length>1?'s':''}</div>`;
   thread.appendChild(pc);
   ['r1','r2','r3','r4'].forEach(r=>setRegion(r,'before'));
   paintRegions();

@@ -1051,7 +1051,10 @@ function paintRegions(){
     if (phase!=='after' || viewingOld) return;
     if (!confirmedIds.has(c.id)) return;   // skipped in plan — untouched
     r.classList.add('changed');            // geometry always (no layout shift on fade)
-    if (review[c.id] || seenIds.has(c.id)) r.classList.add('seen');
+    // anchored (row currently open) overrides seen — anchoring always re-lights
+    const openCard = document.querySelector('.sumcard .card.open');
+    const anchored = openCard && openCard.id===c.id;
+    if ((review[c.id] || seenIds.has(c.id)) && !anchored) r.classList.add('seen');
   });
 }
 
@@ -1569,7 +1572,8 @@ document.addEventListener('click', e=>{
     $$('.card.open').forEach(o=>{ if(o!==card) o.classList.remove('open'); });
     card.classList.toggle('open', opening);
     resetPrevPreview();
-    if (opening && c && !seenIds.has(c.id)){ seenIds.add(c.id); paintRegions(); }
+    if (opening && c) seenIds.add(c.id);
+    paintRegions();
     if (c && opening){ scrollToRegion(c.region); pulseFocus(c.region); }
   }
 });

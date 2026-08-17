@@ -304,9 +304,12 @@ nav.rail{
 
 /* summary card (after phase) — compact rows, expand on click */
 .vchip{
-  margin-left:auto;flex:0 0 auto;font-family:var(--font-mono);font-size:10.5px;font-weight:600;
-  color:var(--muted-foreground);border:1px solid var(--border-strong);border-radius:8px;padding:4px 10px;
+  margin-left:auto;flex:0 0 auto;align-self:flex-start;
+  font-family:var(--font-mono);font-size:10.5px;font-weight:600;
+  color:var(--primary);background:rgba(105,163,255,.12);
+  border-radius:8px;padding:4px 10px;
 }
+.pcsub{font-size:11.5px;color:var(--faint-foreground);margin-top:5px;line-height:1.55;max-width:46ch}
 .sumcard .card{
   border:none;border-bottom:1px solid var(--border);border-radius:0;
   padding:0;margin:0;background:transparent;cursor:pointer;
@@ -318,7 +321,8 @@ nav.rail{
   font-size:12.5px;transition:background .2s var(--ease-strong);
 }
 .sumcard .card:hover .srow{background:var(--muted)}
-.sumcard .card.open .srow{background:rgba(105,163,255,.07);box-shadow:inset 2px 0 0 var(--primary)}
+.sumcard .card.open{background:rgba(105,163,255,.05);box-shadow:inset 2px 0 0 var(--primary)}
+.sumcard .card.open .srow{background:transparent}
 .srow .ssec{font-weight:620;color:var(--foreground);white-space:nowrap}
 .srow .sdot{color:var(--faint-foreground)}
 .srow .sshort{flex:1;min-width:0;color:var(--muted-foreground);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -332,15 +336,30 @@ nav.rail{
 .sxmeta{font-family:var(--font-mono);font-size:10px;color:var(--faint-foreground);margin-bottom:6px}
 .sxmeta .sxwarn{color:var(--agent)}
 .sumcard .cdesc{cursor:default}
-.btn.prevtoggle{border:1px solid var(--border-strong);color:var(--muted-foreground);background:transparent}
+.btn.prevtoggle{
+  display:inline-flex;align-items:center;gap:6px;
+  border:1px solid var(--border-strong);color:var(--muted-foreground);background:transparent;
+}
+.btn.prevtoggle svg{width:12px;height:12px}
+.btn.prevtoggle .ic-check{display:none}
 .btn.prevtoggle:hover{color:var(--foreground);background:var(--muted)}
-.btn.prevtoggle.on{background:var(--foreground);color:var(--background);border-color:transparent}
+.btn.prevtoggle.on{
+  background:rgba(105,163,255,.12);border-color:rgba(105,163,255,.4);color:var(--primary);
+}
+.btn.prevtoggle.on .ic-eye{display:none}
+.btn.prevtoggle.on .ic-check{display:inline}
 .ghostbtn{
   height:34px;padding:0 14px;border-radius:10px;border:1px solid var(--border-strong);
   font-size:12.5px;font-weight:570;color:var(--muted-foreground);
   transition:all .25s var(--ease-strong);
 }
 .ghostbtn:hover{color:var(--foreground);background:var(--muted)}
+.ghostbtn.subtle{
+  border:none;align-self:flex-start;display:inline-flex;align-items:center;gap:7px;
+  height:30px;padding:0 10px;color:var(--muted-foreground);
+}
+.ghostbtn.subtle svg{width:13px;height:13px}
+.ghostbtn.subtle:hover{color:var(--foreground);background:var(--muted)}
 .ghostbtn:disabled,.startbtn:disabled{opacity:.4;cursor:default}
 /* resolved rows stay compact-first: hide inline chip logic reuse */
 .sumcard .card .state-chip{display:none}
@@ -1150,15 +1169,18 @@ function hubMsg(exec){
   el.innerHTML = `
     <div class="plancard sumcard">
       <div class="pchead">
-        <div class="pctitle">Summary — ${total} change${total>1?'s':''}</div>
-        <span class="vchip">v1 → v2</span>
+        <div>
+          <div class="pctitle">Summary — ${total} change${total>1?'s':''}</div>
+          <div class="pcsub">Everything here is already in the doc — including your own edits. Undo anything you don't want.</div>
+        </div>
+        <span class="vchip">Version 2</span>
       </div>
       <div id="cards">${exec.map(c=>cardHTML(c)).join('')}</div>
       <div class="pcfoot">
-        <div class="savecopy">Everything here is already in the doc — including your own edits. Undo anything you don't want.</div>
-        <div class="pcfoot-btns">
-          <button class="ghostbtn" id="undoAllBtn">Restore Version 1</button>
-        </div>
+        <button class="ghostbtn subtle" id="undoAllBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          Undo all
+        </button>
       </div>
     </div>`;
   return el;
@@ -1176,7 +1198,11 @@ function cardHTML(c){
       <div class="cdesc">${c.desc}</div>
       <div class="cdelta"><span class="add">+${c.delta.add}</span> <span class="del">−${c.delta.del}</span> <span>${c.region==='r2'?'blocks':'paragraphs'}</span></div>
       <div class="cactions">
-        <button class="btn prevtoggle" data-act="prev" data-c="${c.id}" aria-pressed="false">Show previous version</button>
+        <button class="btn prevtoggle" data-act="prev" data-c="${c.id}" aria-pressed="false">
+          <svg class="ic-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/></svg>
+          <svg class="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 13l4 4L19 7"/></svg>
+          Show previous version
+        </button>
         <button class="btn restore" data-act="restore" data-c="${c.id}">Undo</button>
         <button class="undo-link" data-act="unresolve" data-c="${c.id}">undo</button>
       </div>

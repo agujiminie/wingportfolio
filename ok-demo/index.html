@@ -669,7 +669,19 @@ header.appbar{
 #snapbanner{top:48px}
 
 /* chat panel: thread tabs header */
-aside#chat{width:408px;flex:0 0 408px}
+aside#chat{width:var(--chatw,42%);flex:0 0 var(--chatw,42%);min-width:320px}
+#split{
+  flex:0 0 7px;margin:0 -3px;cursor:col-resize;position:relative;z-index:40;
+  touch-action:none;
+}
+#split::after{
+  content:'';position:absolute;top:0;bottom:0;left:3px;width:1px;
+  background:var(--border);transition:background .2s var(--ease-strong),width .2s var(--ease-strong);
+}
+#split:hover::after,#split:focus-visible::after{width:3px;left:2px;background:var(--border-strong)}
+#split.dragging::after{width:3px;left:2px;background:var(--primary)}
+body.resizing{cursor:col-resize;user-select:none}
+body.resizing aside#chat,body.resizing #docwrap{pointer-events:none}
 #chat .chead{text-transform:none;letter-spacing:0;font-weight:500;gap:8px;height:44px;flex-basis:44px}
 .cthread{
   display:flex;align-items:center;gap:7px;height:30px;padding:0 8px 0 10px;
@@ -726,7 +738,6 @@ aside#chat{width:408px;flex:0 0 408px}
   *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
 }
 @media (max-width:1020px){
-  aside#chat{width:344px;flex-basis:344px}
   #doc{padding:32px 24px 30vh}
 }
 </style>
@@ -802,6 +813,7 @@ aside#chat{width:408px;flex:0 0 408px}
       <div class="docfoot">412 words&ensp;2,590 chars&ensp;~610 tokens</div>
     </div>
 
+    <div id="split" role="separator" aria-orientation="vertical" aria-label="Resize chat panel" tabindex="0"></div>
     <aside id="chat" aria-label="Agent panel">
       <div class="chead">
         <div class="cthread">
@@ -1649,6 +1661,52 @@ async function setPhase(p, {from} = {}){
 }
 
 $('#doc').addEventListener('input', handleDocEdit);
+
+/* ---------- resizable split (ChatGPT/Claude-style) ---------- */
+(function(){
+  const split = $('#split'), chat = $('#chat');
+  const KEY = 'ok-demo-chatw';
+  const apply = px => {
+    if (px==null){ document.documentElement.style.removeProperty('--chatw'); return; }
+    document.documentElement.style.setProperty('--chatw', px+'px');
+  };
+  const clamp = px => Math.min(Math.max(px, 320), Math.max(360, window.innerWidth*0.6));
+  const stored = parseFloat(localStorage.getItem(KEY));
+  if (!isNaN(stored)) apply(clamp(stored));
+  let raf=null;
+  split.addEventListener('pointerdown', e=>{
+    e.preventDefault();
+    split.setPointerCapture(e.pointerId);
+    split.classList.add('dragging');
+    document.body.classList.add('resizing');
+    const move = ev=>{
+      if (raf) return;
+      raf = requestAnimationFrame(()=>{
+        raf=null;
+        apply(clamp(window.innerWidth - ev.clientX));
+        autosize(ta);
+      });
+    };
+    const up = ev=>{
+      split.releasePointerCapture(e.pointerId);
+      split.classList.remove('dragging');
+      document.body.classList.remove('resizing');
+      localStorage.setItem(KEY, String(chat.getBoundingClientRect().width));
+      split.removeEventListener('pointermove', move);
+      split.removeEventListener('pointerup', up);
+    };
+    split.addEventListener('pointermove', move);
+    split.addEventListener('pointerup', up);
+  });
+  split.addEventListener('dblclick', ()=>{ apply(null); localStorage.removeItem(KEY); autosize(ta); });
+  split.addEventListener('keydown', e=>{
+    const w = chat.getBoundingClientRect().width;
+    if (e.key==='ArrowLeft'){ apply(clamp(w+24)); e.preventDefault(); }
+    if (e.key==='ArrowRight'){ apply(clamp(w-24)); e.preventDefault(); }
+    if (e.key==='Enter'){ apply(null); localStorage.removeItem(KEY); return; }
+    if (e.key==='ArrowLeft'||e.key==='ArrowRight') localStorage.setItem(KEY, String(chat.getBoundingClientRect().width));
+  });
+})();
 
 /* ---------- boot ---------- */
 renderBefore();

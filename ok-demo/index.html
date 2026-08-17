@@ -211,6 +211,8 @@ nav.rail{
 .region.kept>.rbar{background:var(--muted-foreground);opacity:.35}
 .region.restored{background:var(--restore-blue);box-shadow:inset 0 0 0 1px rgba(105,163,255,.18)}
 .region.restored>.rbar{background:var(--primary);opacity:.8}
+.region.changed.seen{background:transparent;box-shadow:none}
+.region.changed.seen>.rbar{opacity:0;transform:scaleY(.3)}
 
 /* plan pre-marks — the confirmation step before the agent starts.
    Blue (user-control color), not agent orange: nothing has been edited yet —
@@ -244,12 +246,12 @@ nav.rail{
 /* plan message — the Change Plan card */
 .plancard{
   margin-top:12px;border:1px solid var(--border);border-radius:14px;
-  background:color-mix(in oklab, var(--card) 45%, transparent);overflow:clip;
+  background:color-mix(in oklab, var(--card) 22%, transparent);overflow:clip;
 }
 .pchead{
   display:flex;align-items:center;gap:12px;padding:14px 16px 13px;
-  border-bottom:1px solid var(--border);
-  background:color-mix(in oklab, var(--card) 85%, transparent);
+  border-bottom:1px solid var(--border-strong);
+  background:var(--card-2);
 }
 .pceyebrow{
   font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.14em;
@@ -290,7 +292,7 @@ nav.rail{
 .pcfoot{
   display:flex;align-items:center;gap:12px;padding:12px 16px;
   border-top:1px solid var(--border);
-  background:color-mix(in oklab, var(--card) 85%, transparent);
+  background:color-mix(in oklab, var(--card) 78%, transparent);
 }
 .startbtn{
   margin-left:auto;display:inline-flex;align-items:center;gap:7px;
@@ -1041,7 +1043,7 @@ function wireScar(){
 function paintRegions(){
   CHANGES.forEach(c=>{
     const r = $('#'+c.region);
-    r.classList.remove('changed','kept','restored','focus','planned');
+    r.classList.remove('changed','kept','restored','focus','planned','seen');
     if (phase!=='during') r.classList.remove('flash');
     if (phase==='plan'){
       if (confirmedIds.has(c.id)) r.classList.add('planned');
@@ -1049,10 +1051,8 @@ function paintRegions(){
     }
     if (phase!=='after' || viewingOld) return;
     if (!confirmedIds.has(c.id)) return;   // skipped in plan — untouched
-    const st = review[c.id];
-    if (!st) r.classList.add('changed');
-    else r.classList.add(st==='kept' ? 'kept' : 'restored');
-    if (st) r.classList.add('changed'); // keep padding/bar geometry
+    r.classList.add('changed');            // geometry always (no layout shift on fade)
+    if (review[c.id] || seenIds.has(c.id)) r.classList.add('seen');
   });
 }
 
@@ -1344,7 +1344,7 @@ function renderDuring(){
 
 async function renderAfter(){
   ++playToken;
-  viewingOld=false; prevPreview=null;
+  viewingOld=false; prevPreview=null; seenIds=new Set();
   Object.keys(userEdits).forEach(k=>delete userEdits[k]);
   $('#doc').setAttribute('contenteditable','true');
   $('#doc').setAttribute('spellcheck','false');
@@ -1468,6 +1468,7 @@ function handleDocEdit(){
   addUserRow(sec);
 }
 
+let seenIds = new Set(); // changes the user has reviewed (row opened, or clicked in doc)
 let prevPreview = null; // region currently showing its previous version via the toggle
 async function resetPrevPreview(){
   if (!prevPreview) return;
@@ -1569,6 +1570,7 @@ document.addEventListener('click', e=>{
     $$('.card.open').forEach(o=>{ if(o!==card) o.classList.remove('open'); });
     card.classList.toggle('open', opening);
     resetPrevPreview();
+    if (opening && c && !seenIds.has(c.id)){ seenIds.add(c.id); paintRegions(); }
     if (c && opening){ scrollToRegion(c.region); pulseFocus(c.region); }
   }
 });
@@ -1689,6 +1691,12 @@ async function setPhase(p, {from} = {}){
 }
 
 $('#doc').addEventListener('input', handleDocEdit);
+$('#docwrap').addEventListener('click', e=>{
+  if (phase!=='after' || viewingOld) return;
+  const r = e.target.closest('.region'); if (!r) return;
+  const c = (lastExec||[]).find(x=>x.region===r.id);
+  if (c && !seenIds.has(c.id)){ seenIds.add(c.id); paintRegions(); }
+});
 
 /* ---------- resizable split (ChatGPT/Claude-style) ---------- */
 (function(){

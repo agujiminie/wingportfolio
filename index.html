@@ -1818,21 +1818,21 @@
                 <div class="vars" id="vars">
                   <div class="var-row" data-var="input">
                     <span class="var-name">Input Effort</span>
-                    <span class="var-l">High</span>
-                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Input effort: high to low">
-                    <span class="var-r">Low</span>
+                    <span class="var-l">Low</span>
+                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Input effort: low to high">
+                    <span class="var-r">High</span>
                   </div>
                   <div class="var-row" data-var="context">
                     <span class="var-name">Process Flexibility</span>
-                    <span class="var-l">High</span>
-                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Process flexibility: high to low">
-                    <span class="var-r">Low</span>
+                    <span class="var-l">Low</span>
+                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Process flexibility: low to high">
+                    <span class="var-r">High</span>
                   </div>
                   <div class="var-row" data-var="exec">
                     <span class="var-name">Result Predictability</span>
-                    <span class="var-l">High</span>
-                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Result predictability: high to low">
-                    <span class="var-r">Low</span>
+                    <span class="var-l">Low</span>
+                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Result predictability: low to high">
+                    <span class="var-r">High</span>
                   </div>
                 </div>
               </section>
@@ -2742,9 +2742,9 @@
   }
   /* variable sliders: re-rank demos by proximity to the setting */
   var VAR_DEF = {
-    input:   { n: 'Input effort',          l: 'High',       r: 'Low',      s: { qa: 12, wid: 38, ctx: 90 } },
-    context: { n: 'Process flexibility',   l: 'High',       r: 'Low',      s: { qa: 90, wid: 65, ctx: 8 } },
-    exec:    { n: 'Result predictability', l: 'High',       r: 'Low',      s: { qa: 15, wid: 42, ctx: 88 } }
+    input:   { n: 'Input effort',          l: 'Low', r: 'High', s: { qa: 88, wid: 62, ctx: 10 } },
+    context: { n: 'Process flexibility',   l: 'Low', r: 'High', s: { qa: 10, wid: 35, ctx: 92 } },
+    exec:    { n: 'Result predictability', l: 'Low', r: 'High', s: { qa: 85, wid: 58, ctx: 12 } }
   };
   var protosBox = document.querySelector('.protos');
   var protoByKey = {};

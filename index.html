@@ -1823,10 +1823,10 @@
                     <span class="var-r">Low</span>
                   </div>
                   <div class="var-row" data-var="context">
-                    <span class="var-name">Process</span>
-                    <span class="var-l">Structured</span>
-                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Process: structured to flexible">
-                    <span class="var-r">Flexible</span>
+                    <span class="var-name">Process Flexibility</span>
+                    <span class="var-l">High</span>
+                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Process flexibility: high to low">
+                    <span class="var-r">Low</span>
                   </div>
                   <div class="var-row" data-var="exec">
                     <span class="var-name">Result Predictability</span>
@@ -2743,7 +2743,7 @@
   /* variable sliders: re-rank demos by proximity to the setting */
   var VAR_DEF = {
     input:   { n: 'Input effort',          l: 'High',       r: 'Low',      s: { qa: 12, wid: 38, ctx: 90 } },
-    context: { n: 'Process',               l: 'Structured', r: 'Flexible', s: { qa: 10, wid: 35, ctx: 92 } },
+    context: { n: 'Process flexibility',   l: 'High',       r: 'Low',      s: { qa: 90, wid: 65, ctx: 8 } },
     exec:    { n: 'Result predictability', l: 'High',       r: 'Low',      s: { qa: 15, wid: 42, ctx: 88 } }
   };
   var protosBox = document.querySelector('.protos');

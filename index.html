@@ -473,7 +473,7 @@
   .vars { display: flex; flex-direction: column; gap: 4px; max-width: 680px; }
   .var-row {
     display: grid;
-    grid-template-columns: minmax(110px, 158px) 1fr minmax(130px, 178px);
+    grid-template-columns: minmax(130px, 172px) minmax(64px, 92px) 1fr minmax(64px, 92px);
     gap: 14px;
     align-items: center;
     min-height: 42px;
@@ -482,8 +482,17 @@
     transition: background 0.25s ease;
   }
   .var-row.active { background: #fff; box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04); }
-  .var-l, .var-r {
+  .var-name {
     font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    color: var(--black);
+    text-align: right;
+    user-select: none;
+  }
+  .var-l, .var-r {
+    font-size: 11px;
     line-height: 1.4;
     color: var(--ink-70);
     user-select: none;
@@ -1808,19 +1817,22 @@
                 </button>
                 <div class="vars" id="vars">
                   <div class="var-row" data-var="input">
-                    <span class="var-l">Structured input</span>
-                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Structured input versus open conversation">
-                    <span class="var-r">Open conversation</span>
+                    <span class="var-name">Input Effort</span>
+                    <span class="var-l">High</span>
+                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Input effort: high to low">
+                    <span class="var-r">Low</span>
                   </div>
                   <div class="var-row" data-var="context">
-                    <span class="var-l">User-provided context</span>
-                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="User-provided context versus system-identified context">
-                    <span class="var-r">System-identified context</span>
+                    <span class="var-name">Process</span>
+                    <span class="var-l">Structured</span>
+                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Process: structured to flexible">
+                    <span class="var-r">Flexible</span>
                   </div>
                   <div class="var-row" data-var="exec">
-                    <span class="var-l">Guided execution</span>
-                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Guided execution versus autonomous execution">
-                    <span class="var-r">Autonomous execution</span>
+                    <span class="var-name">Result Predictability</span>
+                    <span class="var-l">High</span>
+                    <input type="range" class="dctl var-slider" min="0" max="100" value="50" aria-label="Result predictability: high to low">
+                    <span class="var-r">Low</span>
                   </div>
                 </div>
               </section>
@@ -2730,9 +2742,9 @@
   }
   /* variable sliders: re-rank demos by proximity to the setting */
   var VAR_DEF = {
-    input:   { l: 'Structured input',      r: 'Open conversation',        s: { qa: 12, wid: 38, ctx: 90 } },
-    context: { l: 'User-provided context', r: 'System-identified context', s: { qa: 18, wid: 30, ctx: 92 } },
-    exec:    { l: 'Guided execution',      r: 'Autonomous execution',      s: { qa: 15, wid: 42, ctx: 88 } }
+    input:   { n: 'Input effort',          l: 'High',       r: 'Low',      s: { qa: 12, wid: 38, ctx: 90 } },
+    context: { n: 'Process',               l: 'Structured', r: 'Flexible', s: { qa: 10, wid: 35, ctx: 92 } },
+    exec:    { n: 'Result predictability', l: 'High',       r: 'Low',      s: { qa: 15, wid: 42, ctx: 88 } }
   };
   var protosBox = document.querySelector('.protos');
   var protoByKey = {};
@@ -2766,7 +2778,7 @@
       p.classList.toggle('lead', i === 0);
       var read = p.querySelector('.var-read');
       read.classList.add('on');
-      read.querySelector('.vr-name').textContent = def.s[k] >= 50 ? def.r : def.l;
+      read.querySelector('.vr-name').textContent = def.n + ' · ' + (def.s[k] >= 50 ? def.r : def.l).toLowerCase();
       read.querySelector('.vr-dot').style.left = def.s[k] + '%';
       read.querySelector('.vr-you').style.left = v + '%';
     });

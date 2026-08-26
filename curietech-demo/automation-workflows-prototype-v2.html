@@ -893,13 +893,7 @@
     caret-color: rgba(0, 0, 0, 0.88);
     overflow-y: auto;
   }
-  .app.entry-landing .composer-input::-webkit-scrollbar {
-    width: 6px;
-  }
-  .app.entry-landing .composer-input::-webkit-scrollbar-thumb {
-    background: #d9d9d9;
-    border-radius: 50px;
-  }
+  /* (composer scrollbar now inherits the unified global style) */
   .app.entry-landing .composer-input::placeholder {
     color: var(--neutral-text-placeholder);
     font-weight: 500;
@@ -3641,8 +3635,7 @@
     max-height: 296px;
     overflow-y: auto;
   }
-  .repo-menu-list::-webkit-scrollbar { width: 6px; }
-  .repo-menu-list::-webkit-scrollbar-thumb { background: #d9d9d9; border-radius: 50px; }
+  /* (repo menu scrollbar now inherits the unified global style) */
   .repo-menu-item {
     flex-shrink: 0;
     height: 32px;
@@ -4442,24 +4435,27 @@
   .code-preview .punct { color: var(--text-secondary); }
 
   .document-preview {
+    /* The preview itself scrolls, full-bleed: the scrollbar hugs the canvas
+       edge (4px inset via thumb border) instead of floating beside the column */
     height: 100%;
-    overflow: hidden;
+    overflow-y: auto;
     background: #fbfbfc;
-    padding: 28px;
-    display: flex;
+    padding: 0;
+    display: block;
   }
+  .document-preview::-webkit-scrollbar-track { margin: 14px 0; } /* clears the 28px rounded corners */
   .doc-page {
-    height: 100%;
+    min-height: 100%;
     max-width: 680px;
     width: 100%;
     margin: 0 auto;
-    padding: 34px 42px 48px;
+    padding: 62px 42px 76px; /* previous 28px wrapper padding folded in — content position unchanged */
     border: none;
     border-radius: 0;
     background: transparent;
     box-shadow: none;
     outline: none;
-    overflow-y: auto;
+    overflow: visible;
   }
   .doc-eyebrow {
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
@@ -5465,10 +5461,24 @@
   }
 
   /* Scrollbar */
-  ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
+  /* Unified scrollbars: 8px pill thumb inset 4px from the container edge */
+  ::-webkit-scrollbar { width: 12px; height: 12px; }
+  ::-webkit-scrollbar-track { background: transparent; margin: 4px; }
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.12);
+    border-radius: 100px;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:vertical {
+    border-right: 4px solid transparent;
+    min-height: 48px;
+  }
+  ::-webkit-scrollbar-thumb:horizontal {
+    border-bottom: 4px solid transparent;
+    min-width: 48px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.24); }
+  ::-webkit-scrollbar-corner { background: transparent; }
 
   .hidden { display: none !important; }
 
@@ -8912,10 +8922,6 @@
 
   function endWorkflowFromHandle(e) {
     if (e) e.stopPropagation();
-    if (state.isInvitee) {
-      showToast('Reviewers cannot control the workflow', 'info');
-      return;
-    }
     cancelWorkflow('Workflow ended. You can start it again from the chat using +.');
   }
 
@@ -9052,7 +9058,7 @@
     const steps = WORKFLOWS[w.name] || [];
     const current = steps[w.currentStep - 1];
     const handle = document.getElementById('workflowHandle');
-    if (handle) handle.classList.toggle('invitee-readonly', !!state.isInvitee);
+    if (handle) handle.classList.remove('invitee-readonly'); /* reviewers get the full control bar — same actions as the owner */
     document.getElementById('whFlowName').textContent = formatWorkflowHandleName(w.name);
     document.getElementById('whStepText').textContent = current ? current.name : 'Continue';
     document.getElementById('wsActionBtn').textContent = getQuickActionLabel(w.name, current, w.currentStep);
@@ -10623,10 +10629,6 @@ Assertions
     renderWorkflowCanvas();
   }
   function quickAdvanceWorkflow() {
-    if (state.isInvitee) {
-      showToast('Reviewers cannot control the workflow', 'info');
-      return;
-    }
     if (!state.workflow) return;
     const workflowName = state.workflow.name;
     const stepIdx = state.workflow.currentStep;

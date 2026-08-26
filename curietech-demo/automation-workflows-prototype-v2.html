@@ -4443,7 +4443,6 @@
     padding: 0;
     display: block;
   }
-  .document-preview::-webkit-scrollbar-track { margin: 14px 0; } /* clears the 28px rounded corners */
   .doc-page {
     min-height: 100%;
     max-width: 680px;
@@ -5461,24 +5460,10 @@
   }
 
   /* Scrollbar */
-  /* Unified scrollbars: 8px pill thumb inset 4px from the container edge */
-  ::-webkit-scrollbar { width: 12px; height: 12px; }
-  ::-webkit-scrollbar-track { background: transparent; margin: 4px; }
-  ::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.12);
-    border-radius: 100px;
-    background-clip: padding-box;
-  }
-  ::-webkit-scrollbar-thumb:vertical {
-    border-right: 4px solid transparent;
-    min-height: 48px;
-  }
-  ::-webkit-scrollbar-thumb:horizontal {
-    border-bottom: 4px solid transparent;
-    min-width: 48px;
-  }
-  ::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.24); }
-  ::-webkit-scrollbar-corner { background: transparent; }
+  /* Scrollbars: NO custom ::-webkit-scrollbar styling anywhere.
+     Styling forces classic always-visible bars; leaving them native gives
+     macOS overlay behavior — hidden at rest, rounded pill fades in while
+     scrolling, auto-inset from the edge (same as Claude's chat interface). */
 
   .hidden { display: none !important; }
 

@@ -1717,6 +1717,93 @@
   @media (prefers-reduced-motion: reduce) {
     .fg3-caret { animation: none; }
   }
+  /* card 4: Figma 40000059:52667 — plain component, click adds canvas bg + blend gradient */
+  .fg4 {
+    position: absolute;
+    left: 50%;
+    top: 57%;
+    width: 578px;
+    transform: translateX(-50%) scale(0.33);
+    transform-origin: 50% 0;
+    font-family: 'Geist', var(--font-ui);
+  }
+  .s3zoom .fg4 { top: 52%; transform: translateX(-50%) scale(0.61); }
+  .fg4-content {
+    position: absolute;
+    left: 24px;
+    width: 530px;
+    bottom: 100%;
+    margin-bottom: -14px;
+    z-index: 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 24px;
+    color: rgba(0, 0, 0, 0.45);
+  }
+  .fg4-content p { margin: 0 0 2px; }
+  .fg4-content .b { color: rgba(0, 0, 0, 0.88); }
+  .fg4-content .ind { padding-left: 21px; }
+  .fg4-back {
+    position: absolute;
+    left: -24px;
+    right: -24px;
+    top: -8px;
+    bottom: -28px;
+    z-index: 1;
+    background: #eff0f3;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+  }
+  .fg4-back::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -48px;
+    height: 48px;
+    background: linear-gradient(to bottom, rgba(239, 240, 243, 0), #eff0f3);
+  }
+  .fg4s.bg .fg4-back { opacity: 1; }
+  .fg4-bar {
+    position: relative;
+    z-index: 2;
+    margin: 0 24px;
+    width: 530px;
+    height: 38px;
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid rgba(91, 91, 213, 0.2);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+  }
+  .fg4-bar .fg3-bullet { font-size: 12px; margin: 0 4px 0 8px; }
+  .fg4-skip {
+    flex: none;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: rgba(0, 0, 0, 0.45);
+    padding: 8px 4px 8px 16px;
+    white-space: nowrap;
+  }
+  .fg4-composer {
+    position: relative;
+    z-index: 2;
+    margin: 8px 24px 0;
+    width: 530px;
+    height: 100px;
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid #d6d6d6;
+    border-radius: 24px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 1px rgba(0, 0, 0, 0.03);
+  }
+  .fg4-composer .fg3-caret { top: 16px; left: 17px; }
+  .fg4-composer .fg3-attach { background: #e2e2e2; border-color: #eaeaea; }
   /* ---------- step 3: coded-card zoom modal (interactive, not looping) ---------- */
   .s3-ex .s3-shot.s3-live, .s3-ex .s3-shot.s3-anim { cursor: zoom-in; }
   .s3zoom {
@@ -2403,7 +2490,33 @@
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
                 <article class="s3-stage">
-                  <div class="s3-shot"><div class="ph3">Post-launch 截图位 — 发我图即可替换</div></div>
+                  <div class="s3-shot s3-anim" role="img" aria-label="Compact review bar over the composer with chat content running behind; clicking adds a canvas background and a gradient fade so content dissolves instead of blending into the bar">
+                    <div class="ia-stage fg4s" aria-hidden="true">
+                      <div class="fg4">
+                        <div class="fg4-content">
+                          <p><span class="b">&bull;&ensp;Compilation: Generated flow, validation module, DataWeave mapping, and config files are structurally complete.</span></p>
+                          <p class="ind">MUnit and integration execution are queued as follow-up workflow steps.</p>
+                          <p>&bull;&ensp;Final Status: &#9888;&#65039; Code is ready for verification; tests and deploy approval remain open.</p>
+                        </div>
+                        <div class="fg4-back"></div>
+                        <div class="fg4-bar">
+                          <span class="fg3-bl">
+                            <img class="fg3-i12" src="assets/cp/fg3-dot.svg" alt="">
+                            <span class="fg3-mono">Code review cycle</span>
+                            <span class="fg3-bullet">&bull;</span>
+                            <span class="fg3-step">Provide feedback</span>
+                            <img class="fg3-i16" src="assets/cp/fg3-chev.svg" alt="">
+                          </span>
+                          <span class="fg4-skip">Skip</span>
+                        </div>
+                        <div class="fg4-composer">
+                          <span class="fg3-caret"></span>
+                          <span class="fg3-attach"><img src="assets/cp/fg3-attach.svg" alt=""></span>
+                          <span class="fg3-send"><img src="assets/cp/fg3-send.svg" alt=""></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   <div class="s3-name">Post-launch refinement</div>
                   <p class="s3-note">Reduce visual weight</p>
                 </article>
@@ -3594,6 +3707,14 @@
         if (stage.classList.contains('st-a')) setSt('st-b');
         else setSt('st-a');
       });
+    } else if (stage && stage.classList.contains('fg4s')) {
+      stage.classList.remove('bg');
+      stage.classList.add('manual');
+      clone.classList.add('zclick');
+      clone.addEventListener('click', function (e) {
+        e.stopPropagation();
+        stage.classList.toggle('bg');
+      });
     } else if (stage && stage.classList.contains('fg3s')) {
       stage.classList.remove('open');
       stage.classList.add('manual');
@@ -3619,6 +3740,10 @@
   document.getElementById('s3zprev').addEventListener('click', function (e) { e.stopPropagation(); s3zNav(-1); });
   document.getElementById('s3znext').addEventListener('click', function (e) { e.stopPropagation(); s3zNav(1); });
   /* ambient loop for the small inline-bar card: cycle the three states */
+  var fg4src = document.querySelector('.s3-ex .fg4s');
+  if (fg4src && !reduced) {
+    setInterval(function () { fg4src.classList.toggle('bg'); }, 3800);
+  }
   var fg3src = document.querySelector('.s3-ex .fg3s');
   if (fg3src && !reduced) {
     setInterval(function () { fg3src.classList.toggle('open'); }, 3600);

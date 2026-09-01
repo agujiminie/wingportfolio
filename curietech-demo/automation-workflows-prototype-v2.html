@@ -5725,19 +5725,28 @@
   }
   /* Running-state header: same header as the code view, running variant */
   .run-indicator {
+    /* "Running" status tag — replaces the file-menu icon while the task runs */
     display: none;
-    width: 28px;
-    height: 28px;
     align-items: center;
-    justify-content: center;
+    gap: 6px;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 50px;
+    background: rgba(132, 111, 225, 0.1);
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+    color: #846fe1;
     flex-shrink: 0;
+    white-space: nowrap;
   }
   .run-dot {
-    width: 10px;
-    height: 10px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: #846fe1;
     animation: aa-breathe 1.6s ease-in-out infinite;
+    flex-shrink: 0;
   }
   .panel-text-btn {
     display: none;
@@ -6501,7 +6510,7 @@
       <!-- Panel header (Code mode) -->
       <div class="panel-header" id="codeHeader">
         <div class="panel-header-left">
-          <span class="run-indicator" id="codeRunIndicator" aria-label="Task running"><span class="run-dot"></span></span>
+          <span class="run-indicator" id="codeRunIndicator" aria-label="Task running"><span class="run-dot"></span>Running</span>
           <button class="panel-icon-btn code-done-only" aria-label="File menu">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
           </button>

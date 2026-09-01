@@ -1424,6 +1424,175 @@
     color: #6b6b6b;
   }
   .crc-row.on .crc-t { color: #5b3fe4; }
+  /* live-coded animated stage shot: inline review bar -> errors -> expanded panel */
+  .s3-anim { position: relative; background: #fafafa; }
+  .ia-stage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 400px;
+    height: 300px;
+    transform-origin: 0 0;
+    font-family: var(--font-ui);
+  }
+  .ia-frame { position: absolute; inset: 0; opacity: 0; animation: iacyc 10.5s infinite; }
+  .ia-f1 { animation-delay: 0s; }
+  .ia-f2 { animation-delay: 3.5s; }
+  .ia-f3 { animation-delay: 7s; }
+  @keyframes iacyc {
+    0% { opacity: 0; }
+    4% { opacity: 1; }
+    33.3% { opacity: 1; }
+    37.3% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ia-frame { animation: none; }
+    .ia-f3 { opacity: 1; }
+  }
+  .ia-mid {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .ia-bar {
+    position: relative;
+    z-index: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid #e9e4f8;
+    border-bottom: 0;
+    border-radius: 16px 16px 0 0;
+    padding: 10px 14px 16px;
+    margin-bottom: -8px;
+  }
+  .ia-dot {
+    flex: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #6d4fe0;
+    position: relative;
+  }
+  .ia-dot::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 1.5px;
+    background: #fff;
+  }
+  .ia-bt { font-size: 12.5px; color: #6d4fe0; letter-spacing: -0.01em; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ia-chev { flex: none; display: block; }
+  .ia-err, .ia-warn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .ia-err { color: #c62f21; }
+  .ia-warn { color: #d78d00; }
+  .ia-f2 .ia-bar { gap: 12px; }
+  .ia-approve {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 600;
+    color: #1f1f1f;
+    background: #fff;
+    border: 1px solid #dcdcdc;
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    white-space: nowrap;
+  }
+  .ia-composer {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 1px solid #f0eff4;
+    border-radius: 18px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
+    padding: 14px 12px 14px 16px;
+  }
+  .ia-ph { flex: 1; font-size: 11.5px; color: #a9a9a9; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ia-regen {
+    flex: none;
+    font-size: 11px;
+    font-weight: 500;
+    color: #6d4fe0;
+    background: #ece7fb;
+    border-radius: var(--radius-full);
+    padding: 5px 12px;
+    white-space: nowrap;
+  }
+  .ia-panel {
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    top: 14px;
+    background: #fff;
+    border: 1px solid #e9e4f8;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+  }
+  .ia-p3head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: #fff;
+  }
+  .ia-p3head .ia-bt { font-size: 11px; }
+  .ia-skip { flex: none; font-size: 10.5px; color: #6e6e6e; margin-right: 2px; }
+  .ia-body { background: #f4f3f7; padding: 12px 14px 10px; }
+  .ia-row { display: flex; align-items: flex-start; gap: 9px; padding: 6px 8px; border-radius: 10px; }
+  .ia-row.on { background: #e6e0f6; }
+  .ia-check {
+    flex: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #e3e3e3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+  .ia-radio {
+    flex: none;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    border: 1.5px solid #c9c9c9;
+    background: #fff;
+    margin-top: 2px;
+  }
+  .ia-radio.on { border-color: #4f46c8; }
+  .ia-rw { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .ia-rt { font-size: 10.5px; font-weight: 600; color: #222; letter-spacing: -0.01em; }
+  .ia-rs { font-size: 8.5px; color: #7c7c7c; line-height: 1.4; }
+  .ia-row.done .ia-rt, .ia-row.done .ia-rs { color: #9a9a9a; text-decoration: line-through; }
+  .ia-drop {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    border: 1.5px dashed #b9a6f2;
+    border-radius: 14px;
+    margin: 8px;
+    padding: 10px 14px;
+  }
+  .ia-dt { font-size: 11.5px; font-weight: 600; color: #5b3fa8; }
+  .ia-ds { font-size: 9px; color: #8a8a8a; }
+  .s3-panel.zoomed .s3-shot.s3-anim { aspect-ratio: 4 / 3; }
   .s3-shot .ph3 {
     display: flex;
     align-items: center;
@@ -1966,7 +2135,65 @@
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
                 <article class="s3-stage">
-                  <div class="s3-shot"><div class="ph3">Inline panel 截图位 — 发我图即可替换</div></div>
+                  <div class="s3-shot s3-anim" role="img" aria-label="Inline review bar evolving: a collapsed Integration Testing bar over the composer, then an error summary bar with Approve All, then the expanded verification panel with a file-drop zone">
+                    <div class="ia-stage" aria-hidden="true">
+                      <div class="ia-frame ia-f1">
+                        <div class="ia-mid">
+                          <div class="ia-bar">
+                            <span class="ia-dot"></span>
+                            <span class="ia-bt">Integration Testing&hellip;</span>
+                            <svg class="ia-chev" width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 6L8 11L13 6" stroke="#8a8a8a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                          </div>
+                          <div class="ia-composer">
+                            <span class="ia-ph">Add feedback and generate the artifacts&hellip;</span>
+                            <span class="ia-regen">Regenerate</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="ia-frame ia-f2">
+                        <div class="ia-mid">
+                          <div class="ia-bar">
+                            <span class="ia-err"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.2" stroke="#c62f21" stroke-width="1.5"/><path d="M5.8 5.8L10.2 10.2M10.2 5.8L5.8 10.2" stroke="#c62f21" stroke-width="1.5" stroke-linecap="round"/></svg>4 Errors</span>
+                            <span class="ia-warn"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.2" stroke="#d78d00" stroke-width="1.5"/><path d="M8 4.6V8.8M8 11.2V11.3" stroke="#d78d00" stroke-width="1.5" stroke-linecap="round"/></svg>1 Warnings</span>
+                            <span class="ia-approve">Approve All</span>
+                            <svg class="ia-chev" width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M4 12L12 4M6 4H12V10" stroke="#8a8a8a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                          </div>
+                          <div class="ia-composer">
+                            <span class="ia-ph">Add feedback and generate the artifacts&hellip;</span>
+                            <span class="ia-regen">Regenerate</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="ia-frame ia-f3">
+                        <div class="ia-panel">
+                          <div class="ia-p3head">
+                            <span class="ia-dot"></span>
+                            <span class="ia-bt">Verification &ndash; Upload Schema for more context</span>
+                            <span class="ia-skip">Skip</span>
+                            <svg class="ia-chev" width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3 6L8 11L13 6" stroke="#8a8a8a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                          </div>
+                          <div class="ia-body">
+                            <div class="ia-row done">
+                              <span class="ia-check"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5" stroke="#8f8f8f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                              <span class="ia-rw"><span class="ia-rt">Review Code</span><span class="ia-rs">Review the flows and code here or in ide</span></span>
+                            </div>
+                            <div class="ia-row on">
+                              <span class="ia-radio on"></span>
+                              <span class="ia-rw"><span class="ia-rt">Improve the Code</span><span class="ia-rs">Upload more context or supporting documents to make the code even better</span></span>
+                            </div>
+                            <div class="ia-row">
+                              <span class="ia-radio"></span>
+                              <span class="ia-rw"><span class="ia-rt">Go to Test</span><span class="ia-rs">Start Integration test or MUnit test</span></span>
+                            </div>
+                          </div>
+                          <div class="ia-drop">
+                            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 11V3M4.5 6L8 2.5L11.5 6M3 13H13" stroke="#5a4b8a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            <span class="ia-rw"><span class="ia-dt">Drop Your Files Here</span><span class="ia-ds">XML file with maximum size of 5 MB</span></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   <div class="s3-name">Action, hierarchy, density</div>
                   <p class="s3-note">Inline expanded panel</p>
                 </article>
@@ -2853,6 +3080,10 @@
       v.style.height = Math.round(DVH * s) + 'px';
       v.firstElementChild.style.transform = 'scale(' + s + ')';
     });
+    document.querySelectorAll('.s3-anim .ia-stage').forEach(function (st) {
+      var w = st.parentElement.clientWidth;
+      if (w) st.style.transform = 'scale(' + (w / 400) + ')';
+    });
   }
   var dctl = document.getElementById('dctl');
   if (dctl) {
@@ -2874,6 +3105,7 @@
       panel.querySelectorAll('.s3-flow').forEach(function (f) {
         f.style.setProperty('--s3scale', v / 100);
       });
+      fitDemos();
     });
   }
   /* step 3: paginate between behavior-evolution examples */
@@ -2885,6 +3117,7 @@
       s3exs.forEach(function (e, j) { e.classList.toggle('on', j === s3cur); });
       document.getElementById('s3excount').textContent = (s3cur + 1) + ' / ' + s3exs.length;
       document.getElementById('s3exname').textContent = s3exs[s3cur].getAttribute('data-exname');
+      fitDemos();
     };
     document.querySelector('.s3-exprev').addEventListener('click', function () { s3show(s3cur - 1); });
     document.querySelector('.s3-exnext').addEventListener('click', function () { s3show(s3cur + 1); });

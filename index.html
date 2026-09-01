@@ -1570,164 +1570,152 @@
   .fg2-row.done .fg2-rt, .fg2-row.done .fg2-rs { color: rgba(0, 0, 0, 0.45); text-decoration: line-through; }
   .s3-panel.zoomed .s3-shot.s3-anim { aspect-ratio: 4 / 3; }
   /* live-coded animated stage shot: compact pill whose dropdown opens upward */
-  .cp-drop {
+  /* card 3: Figma workflow-automation compact pill (closed 40000059:52536 / open 53031) */
+  .fg3 {
     position: absolute;
-    left: 44px;
-    width: 246px;
-    bottom: 106px;
+    left: 50%;
+    top: 57%;
+    width: 578px;
+    transform: translateX(-50%) scale(0.33);
+    transform-origin: 50% 0;
+    font-family: 'Geist', var(--font-ui);
+  }
+  .fg3-composer {
+    position: absolute;
+    left: 24px;
+    top: 0;
+    width: 530px;
+    height: 137px;
     background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 9px 28px 8px rgba(0, 0, 0, 0.05), 0 6px 16px rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12);
-    padding: 10px 8px 8px;
-    transform-origin: 14% 100%;
-    opacity: 0;
-    animation: cpdrop 9s infinite;
+    border: 1px solid #d6d6d6;
+    border-radius: 24px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 1px rgba(0, 0, 0, 0.03);
   }
-  @keyframes cpdrop {
-    0%, 42% { opacity: 0; transform: translateY(10px) scale(0.96); }
-    48%, 88% { opacity: 1; transform: none; }
-    94%, 100% { opacity: 0; transform: translateY(10px) scale(0.96); }
+  .fg3-caret {
+    position: absolute;
+    left: 17px;
+    top: 16px;
+    width: 1.5px;
+    height: 24px;
+    background: #1f1f1f;
+    animation: fg3caret 1.1s steps(1) infinite;
   }
-  .cp-h {
-    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-    font-size: 9px;
-    font-weight: 600;
-    letter-spacing: -0.03em;
-    color: rgba(0, 0, 0, 0.45);
-    margin: 0 0 7px 8px;
-  }
-  .cp-row {
+  @keyframes fg3caret { 50% { opacity: 0; } }
+  .fg3-attach, .fg3-send {
+    position: absolute;
+    bottom: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
-    gap: 6px;
-    height: 26px;
-    padding: 0 6px;
-    border-radius: 8px;
+    justify-content: center;
   }
-  .cp-row.on { background: rgba(132, 111, 225, 0.1); }
-  img.cp-li { flex: none; width: 13px; height: 13px; display: block; }
-  .cp-t {
-    flex: 1;
-    min-width: 0;
+  .fg3-attach { left: 16px; border: 1px solid #eaeaea; background: #fff; }
+  .fg3-send { right: 16px; background: rgba(29, 27, 32, 0.12); }
+  .fg3-attach img, .fg3-send img { width: 16px; height: 16px; display: block; }
+  .fg3-bar {
+    position: absolute;
+    left: 24px;
+    top: -54px;
+    width: 530px;
+    height: 40px;
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid rgba(91, 91, 213, 0.2);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px 0 16px;
+  }
+  .fg3-bl { display: flex; align-items: center; gap: 4px; min-width: 0; }
+  img.fg3-i12 { width: 12px; height: 12px; display: block; flex: none; }
+  img.fg3-i16 { width: 16px; height: 16px; display: block; flex: none; margin: 4px; }
+  .fg3-mono {
+    font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: -0.33px;
+    color: rgba(0, 0, 0, 0.45);
+    white-space: nowrap;
+  }
+  .fg3-bullet { color: rgba(0, 0, 0, 0.65); font-size: 12px; margin: 0 2px 0 6px; }
+  .fg3-step { font-size: 12px; font-weight: 500; line-height: 16px; color: rgba(0, 0, 0, 0.65); white-space: nowrap; }
+  .fg3-good {
+    flex: none;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    background: #fff;
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
     font-size: 12px;
     font-weight: 500;
-    letter-spacing: -0.01em;
+    line-height: 16px;
+    color: rgba(0, 0, 0, 0.65);
+    white-space: nowrap;
+  }
+  .fg3-drop {
+    position: absolute;
+    left: 22px;
+    top: -300px;
+    width: 289px;
+    box-sizing: border-box;
+    background: #fff;
+    border-radius: 16px;
+    padding: 12px 8px;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.08), 0 3px 3px rgba(0, 0, 0, 0.12), 0 9px 14px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+    transform-origin: 15% 100%;
+    transition: opacity 0.3s var(--ease-enter), transform 0.3s var(--ease-enter);
+    pointer-events: none;
+  }
+  .fg3s.open .fg3-drop { opacity: 1; transform: none; pointer-events: auto; }
+  .fg3-dh {
+    font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: -0.33px;
+    color: rgba(0, 0, 0, 0.45);
+    padding: 0 8px;
+  }
+  .fg3-mi {
+    height: 32px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 4px;
+    border-radius: 8px;
+  }
+  .fg3-mi.on { background: rgba(132, 111, 225, 0.1); }
+  .fg3-mic {
+    flex: none;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .fg3-mic img { width: 16px; height: 16px; display: block; }
+  .fg3-mt {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
     color: rgba(0, 0, 0, 0.45);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .cp-row.on .cp-t { color: #5b5bd5; }
-  .cp-row.done .cp-t { color: rgba(0, 0, 0, 0.25); text-decoration: line-through; }
-  img.cp-ic { flex: none; width: 14px; height: 14px; display: block; }
-  .cp-ic.r180 { transform: rotate(180deg); }
-  .cp-bar {
-    position: absolute;
-    left: 44px;
-    right: 44px;
-    top: 192px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: #fff;
-    border: 1px solid rgba(91, 91, 213, 0.2);
-    border-radius: 16px;
-    padding: 0 10px 0 14px;
-  }
-  img.cp-pdot { flex: none; width: 11px; height: 11px; display: block; }
-  .cp-cycle {
-    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-    font-size: 9.5px;
-    font-weight: 600;
-    letter-spacing: -0.03em;
-    color: rgba(0, 0, 0, 0.45);
-    white-space: nowrap;
-  }
-  .cp-sep { color: rgba(0, 0, 0, 0.45); font-size: 10px; }
-  .cp-steps { position: relative; display: flex; align-items: center; min-width: 0; }
-  .cp-stepA, .cp-stepB { display: flex; align-items: center; gap: 4px; min-width: 0; }
-  .cp-stepA { animation: cpbarA 9s infinite; }
-  .cp-stepB {
-    animation: cpbarB 9s infinite;
-    opacity: 0;
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  @keyframes cpbarA {
-    0%, 44% { opacity: 1; }
-    50%, 90% { opacity: 0; }
-    96%, 100% { opacity: 1; }
-  }
-  @keyframes cpbarB {
-    0%, 44% { opacity: 0; }
-    50%, 90% { opacity: 1; }
-    96%, 100% { opacity: 0; }
-  }
-  .cp-step { font-size: 11px; font-weight: 500; color: rgba(0, 0, 0, 0.65); letter-spacing: -0.01em; white-space: nowrap; }
-  img.cp-chev { flex: none; width: 13px; height: 13px; display: block; }
-  .cp-steppill {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 10.5px;
-    font-weight: 500;
-    color: rgba(0, 0, 0, 0.65);
-    background: rgba(0, 0, 0, 0.06);
-    border-radius: 8px;
-    padding: 3px 8px;
-    white-space: nowrap;
-  }
-  .cp-good {
-    margin-left: auto;
-    flex: none;
-    font-size: 10.5px;
-    font-weight: 500;
-    color: rgba(0, 0, 0, 0.45);
-    padding: 4px 6px;
-    white-space: nowrap;
-  }
-  .cp-composer {
-    position: absolute;
-    left: 40px;
-    right: 40px;
-    top: 224px;
-    height: 62px;
-    background: #fff;
-    border: 1px solid #d6d6d6;
-    border-radius: 18px;
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 1px rgba(0, 0, 0, 0.03);
-  }
-  .cp-caret {
-    position: absolute;
-    left: 13px;
-    top: 10px;
-    width: 1.5px;
-    height: 13px;
-    background: #1f1f1f;
-    animation: cpcaret 1.1s steps(1) infinite;
-  }
-  @keyframes cpcaret { 50% { opacity: 0; } }
-  .cp-plus, .cp-send {
-    position: absolute;
-    bottom: 8px;
-    width: 22px;
-    height: 22px;
-    border-radius: 9px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .cp-plus { left: 9px; border: 1px solid #eaeaea; background: #fff; }
-  .cp-send { right: 9px; background: rgba(29, 27, 32, 0.12); }
-  .cp-plus img, .cp-send img { width: 12px; height: 12px; display: block; }
+  .fg3-mi.on .fg3-mt { color: #5b5bd5; }
+  .fg3-mi.done .fg3-mt { color: rgba(0, 0, 0, 0.25); text-decoration: line-through; }
   @media (prefers-reduced-motion: reduce) {
-    .cp-drop, .cp-stepA, .cp-stepB, .cp-caret { animation: none; }
-    .cp-drop { opacity: 1; transform: none; }
-    .cp-stepA { opacity: 0; }
-    .cp-stepB { opacity: 1; }
+    .fg3-caret { animation: none; }
   }
   /* ---------- step 3: coded-card zoom modal (interactive, not looping) ---------- */
   .s3-ex .s3-shot.s3-live, .s3-ex .s3-shot.s3-anim { cursor: zoom-in; }
@@ -1789,17 +1777,7 @@
   /* manual mode: looping animations off, states driven by clicks */
   .s3zoom .fg2-banner, .s3zoom .fg2-ohead { cursor: pointer; }
   .s3zoom .fg2 { transform: translateX(-50%) scale(0.44); }
-  .ia-stage.manual .cp-drop {
-    animation: none;
-    opacity: 0;
-    transform: translateY(10px) scale(0.96);
-    transition: opacity 0.3s var(--ease-enter), transform 0.3s var(--ease-enter);
-  }
-  .ia-stage.manual.open .cp-drop { opacity: 1; transform: none; }
-  .ia-stage.manual .cp-stepA { animation: none; opacity: 1; transition: opacity 0.25s ease; }
-  .ia-stage.manual .cp-stepB { animation: none; opacity: 0; transition: opacity 0.25s ease; }
-  .ia-stage.manual.open .cp-stepA { opacity: 0; }
-  .ia-stage.manual.open .cp-stepB { opacity: 1; }
+  .s3zoom .fg3 { top: 62%; transform: translateX(-50%) scale(0.61); }
   .s3-shot .ph3 {
     display: flex;
     align-items: center;
@@ -2389,57 +2367,32 @@
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
                 <article class="s3-stage">
-                  <div class="s3-shot s3-anim" role="img" aria-label="Compact code review pill over the composer; its dropdown opens upward listing the cycle steps, and the pill's step label swaps to the active Provide Dataweave">
-                    <div class="ia-stage" aria-hidden="true">
-                      <div class="ia2-fit">
-                      <div class="cp-drop">
-                        <div class="cp-h">CODE REVIEW CYCLE</div>
-                        <div class="cp-row done">
-                          <img class="cp-li" src="assets/cp/check-done.svg" alt="">
-                          <span class="cp-t">Provide feedback</span>
-                          <img class="cp-ic r180" src="assets/cp/ret-gray.svg" alt="">
+                  <div class="s3-shot s3-anim" role="img" aria-label="Compact code review pill over the composer; clicking opens the CODE REVIEW CYCLE menu upward with Provide Dataweave active">
+                    <div class="ia-stage fg3s" aria-hidden="true">
+                      <div class="fg3">
+                        <div class="fg3-drop">
+                          <div class="fg3-dh">CODE REVIEW CYCLE</div>
+                          <div class="fg3-mi done"><span class="fg3-mic"><img src="assets/cp/fg3-check.svg" alt=""></span><span class="fg3-mt">Provide feedback</span></div>
+                          <div class="fg3-mi on"><span class="fg3-mic"><img src="assets/cp/fg3-radio-on.svg" alt=""></span><span class="fg3-mt">Provide Dataweave</span></div>
+                          <div class="fg3-mi"><span class="fg3-mic"><img src="assets/cp/fg3-radio-off.svg" alt=""></span><span class="fg3-mt">Run Code &amp; Fix</span></div>
+                          <div class="fg3-mi"><span class="fg3-mic"><img src="assets/cp/fg3-radio-off.svg" alt=""></span><span class="fg3-mt">Run Unit Test</span></div>
+                          <div class="fg3-mi"><span class="fg3-mic"><img src="assets/cp/fg3-radio-off.svg" alt=""></span><span class="fg3-mt">Deploy checklist</span></div>
                         </div>
-                        <div class="cp-row on">
-                          <img class="cp-li" src="assets/cp/radio-active.svg" alt="">
-                          <span class="cp-t">Provide Dataweave</span>
-                          <img class="cp-ic r180" src="assets/cp/ret-purple.svg" alt="">
-                        </div>
-                        <div class="cp-row">
-                          <img class="cp-li" src="assets/cp/radio-empty.svg" alt="">
-                          <span class="cp-t">Run Code &amp; Fix</span>
-                          <img class="cp-ic r180" src="assets/cp/ret-gray2.svg" alt="">
-                        </div>
-                        <div class="cp-row">
-                          <img class="cp-li" src="assets/cp/radio-empty.svg" alt="">
-                          <span class="cp-t">Run Unit Test</span>
-                          <img class="cp-ic r180" src="assets/cp/ret-gray2.svg" alt="">
-                        </div>
-                        <div class="cp-row">
-                          <img class="cp-li" src="assets/cp/radio-empty.svg" alt="">
-                          <span class="cp-t">Deploy checklist</span>
-                          <img class="cp-ic" src="assets/cp/info.svg" alt="">
-                        </div>
-                      </div>
-                      <div class="cp-bar">
-                        <img class="cp-pdot" src="assets/cp/dot.svg" alt="">
-                        <span class="cp-cycle">Code review cycle</span>
-                        <span class="cp-sep">&middot;</span>
-                        <span class="cp-steps">
-                          <span class="cp-stepA">
-                            <span class="cp-step">Provide feedback</span>
-                            <img class="cp-chev" src="assets/cp/chev-down.svg" alt="">
+                        <div class="fg3-bar">
+                          <span class="fg3-bl">
+                            <img class="fg3-i12" src="assets/cp/fg3-dot.svg" alt="">
+                            <span class="fg3-mono">Code review cycle</span>
+                            <span class="fg3-bullet">&middot;</span>
+                            <span class="fg3-step">Provide feedback</span>
+                            <img class="fg3-i16" src="assets/cp/fg3-chev.svg" alt="">
                           </span>
-                          <span class="cp-stepB">
-                            <span class="cp-steppill">Provide Dataweave <img class="cp-chev" src="assets/cp/chev-up.svg" alt=""></span>
-                          </span>
-                        </span>
-                        <span class="cp-good">Skip</span>
-                      </div>
-                      <div class="cp-composer">
-                        <span class="cp-caret"></span>
-                        <span class="cp-plus"><img src="assets/cp/attach.svg" alt=""></span>
-                        <span class="cp-send"><img src="assets/cp/send.svg" alt=""></span>
-                      </div>
+                          <span class="fg3-good">All looks good</span>
+                        </div>
+                        <div class="fg3-composer">
+                          <span class="fg3-caret"></span>
+                          <span class="fg3-attach"><img src="assets/cp/fg3-attach.svg" alt=""></span>
+                          <span class="fg3-send"><img src="assets/cp/fg3-send.svg" alt=""></span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -3641,10 +3594,14 @@
         if (stage.classList.contains('st-a')) setSt('st-b');
         else setSt('st-a');
       });
-    } else if (stage && clone.querySelector('.cp-drop')) {
+    } else if (stage && stage.classList.contains('fg3s')) {
+      stage.classList.remove('open');
       stage.classList.add('manual');
       clone.classList.add('zclick');
-      clone.addEventListener('click', function (e) { e.stopPropagation(); stage.classList.toggle('open'); });
+      clone.addEventListener('click', function (e) {
+        e.stopPropagation();
+        stage.classList.toggle('open');
+      });
     } else {
       clone.addEventListener('click', function (e) { e.stopPropagation(); });
     }
@@ -3662,6 +3619,10 @@
   document.getElementById('s3zprev').addEventListener('click', function (e) { e.stopPropagation(); s3zNav(-1); });
   document.getElementById('s3znext').addEventListener('click', function (e) { e.stopPropagation(); s3zNav(1); });
   /* ambient loop for the small inline-bar card: cycle the three states */
+  var fg3src = document.querySelector('.s3-ex .fg3s');
+  if (fg3src && !reduced) {
+    setInterval(function () { fg3src.classList.toggle('open'); }, 3600);
+  }
   var ia2src = document.querySelector('.s3-ex .ia2');
   if (ia2src && !reduced) {
     var IA2S = ['st-a', 'st-b', 'st-c'];

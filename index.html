@@ -1778,6 +1778,68 @@
     .cp-stepA { opacity: 0; }
     .cp-stepB { opacity: 1; }
   }
+  /* ---------- step 3: coded-card zoom modal (interactive, not looping) ---------- */
+  .s3-ex .s3-shot.s3-live, .s3-ex .s3-shot.s3-anim { cursor: zoom-in; }
+  .s3zoom {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: clamp(20px, 4vh, 56px);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(8px);
+    cursor: zoom-out;
+  }
+  body.s3zoomed .s3zoom { display: flex; }
+  .s3zoom-wrap { display: contents; }
+  .s3zoom .s3-shot {
+    width: min(74vw, 880px, calc((100vh - 200px) * 4 / 3));
+    margin: 0;
+    border-radius: 16px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.16);
+    cursor: default;
+    animation: zoomin 0.32s var(--ease-enter) both;
+    flex: none;
+  }
+  .s3zoom .s3-shot.zclick { cursor: pointer; }
+  .s3zoom .crc-card { min-width: 0; transform: scale(1.9); }
+  .s3zoom-cap {
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--black);
+  }
+  .s3zoom-cap span { color: var(--muted); font-weight: 400; margin-left: 8px; }
+  .s3z-dots { display: flex; gap: 7px; }
+  .s3z-dots:empty { display: none; }
+  .s3z-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #dcdcdc;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .s3z-dot.cur { background: #6d4fe0; transform: scale(1.2); }
+  .s3zoom-hint { font-size: 11px; color: var(--muted); letter-spacing: 0.02em; }
+  /* manual mode: looping animations off, states driven by clicks */
+  .ia-stage.manual .ia-frame { animation: none; opacity: 0; transition: opacity 0.3s ease; }
+  .ia-stage.manual .ia-frame.cur { opacity: 1; }
+  .ia-stage.manual .cp-drop {
+    animation: none;
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+    transition: opacity 0.3s var(--ease-enter), transform 0.3s var(--ease-enter);
+  }
+  .ia-stage.manual.open .cp-drop { opacity: 1; transform: none; }
+  .ia-stage.manual .cp-stepA { animation: none; opacity: 1; transition: opacity 0.25s ease; }
+  .ia-stage.manual .cp-stepB { animation: none; opacity: 0; transition: opacity 0.25s ease; }
+  .ia-stage.manual.open .cp-stepA { opacity: 0; }
+  .ia-stage.manual.open .cp-stepB { opacity: 1; }
   .s3-shot .ph3 {
     display: flex;
     align-items: center;
@@ -2628,6 +2690,13 @@
 <div class="zoom" id="zoom" role="dialog" aria-modal="true" aria-label="Enlarged image">
   <img id="zoomimg" src="" alt="">
   <span class="zoom-hint">Click anywhere or press Esc to close</span>
+</div>
+
+<div class="s3zoom" id="s3zoom" role="dialog" aria-modal="true" aria-label="Enlarged interactive card">
+  <div class="s3zoom-wrap" id="s3zwrap"></div>
+  <div class="s3zoom-cap" id="s3zcap"></div>
+  <div class="s3z-dots" id="s3zdots"></div>
+  <span class="s3zoom-hint" id="s3zhint"></span>
 </div>
 
 <script>
@@ -3564,7 +3633,76 @@
   });
   zoom.addEventListener('click', closeZoom);
 
+  /* step-3 coded cards: enlarge into an interactive modal (clicks, not loops) */
+  var s3zoomEl = document.getElementById('s3zoom');
+  var s3zwrap = document.getElementById('s3zwrap');
+  var s3zcap = document.getElementById('s3zcap');
+  var s3zdots = document.getElementById('s3zdots');
+  var s3zhint = document.getElementById('s3zhint');
+  function closeS3Zoom() {
+    document.body.classList.remove('s3zoomed');
+    s3zwrap.innerHTML = '';
+    s3zdots.innerHTML = '';
+  }
+  function openS3Zoom(shot) {
+    var art = shot.closest('.s3-stage');
+    var clone = shot.cloneNode(true);
+    clone.removeAttribute('role');
+    clone.removeAttribute('aria-label');
+    s3zwrap.innerHTML = '';
+    s3zdots.innerHTML = '';
+    s3zwrap.appendChild(clone);
+    s3zcap.textContent = art ? art.querySelector('.s3-name').textContent : '';
+    var note = art && art.querySelector('.s3-note');
+    if (note) {
+      var sp = document.createElement('span');
+      sp.textContent = note.textContent;
+      s3zcap.appendChild(sp);
+    }
+    var stage = clone.querySelector('.ia-stage');
+    var frames = clone.querySelectorAll('.ia-frame');
+    if (stage && frames.length) {
+      stage.classList.add('manual');
+      clone.classList.add('zclick');
+      var cur = 0;
+      var setF = function (i) {
+        cur = (i + frames.length) % frames.length;
+        frames.forEach(function (f, j) { f.classList.toggle('cur', j === cur); });
+        s3zdots.querySelectorAll('.s3z-dot').forEach(function (d, j) { d.classList.toggle('cur', j === cur); });
+      };
+      frames.forEach(function (_, j) {
+        var d = document.createElement('span');
+        d.className = 's3z-dot';
+        d.setAttribute('role', 'button');
+        d.setAttribute('aria-label', 'Show state ' + (j + 1));
+        d.addEventListener('click', function (e) { e.stopPropagation(); setF(j); });
+        s3zdots.appendChild(d);
+      });
+      clone.addEventListener('click', function (e) { e.stopPropagation(); setF(cur + 1); });
+      setF(0);
+      s3zhint.textContent = 'Click the card to step through the states · Esc to close';
+    } else if (stage && clone.querySelector('.cp-drop')) {
+      stage.classList.add('manual');
+      clone.classList.add('zclick');
+      clone.addEventListener('click', function (e) { e.stopPropagation(); stage.classList.toggle('open'); });
+      s3zhint.textContent = 'Click the card to open and close the dropdown · Esc to close';
+    } else {
+      clone.addEventListener('click', function (e) { e.stopPropagation(); });
+      s3zhint.textContent = 'Click anywhere or press Esc to close';
+    }
+    document.body.classList.add('s3zoomed');
+    fitDemos();
+  }
+  document.querySelectorAll('.s3-ex .s3-shot.s3-live, .s3-ex .s3-shot.s3-anim').forEach(function (shot) {
+    shot.addEventListener('click', function () { openS3Zoom(shot); });
+  });
+  s3zoomEl.addEventListener('click', closeS3Zoom);
+
   document.addEventListener('keydown', function (e) {
+    if (document.body.classList.contains('s3zoomed')) {
+      if (e.key === 'Escape' || e.key === 'Enter') { e.preventDefault(); closeS3Zoom(); }
+      return;
+    }
     if (document.body.classList.contains('zoomed')) {
       if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); closeZoom(); }
       return;

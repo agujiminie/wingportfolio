@@ -1494,8 +1494,9 @@
     opacity: 0;
     transition: opacity 0.25s ease;
   }
-  .st-a .fg2-ba, .st-c .fg2-ba { opacity: 1; }
-  .st-b .fg2-bb { opacity: 1; }
+  .fg2-ba, .fg2-bb { pointer-events: none; }
+  .st-a .fg2-ba, .st-c .fg2-ba { opacity: 1; pointer-events: auto; }
+  .st-b .fg2-bb { opacity: 1; pointer-events: auto; }
   .fg2-otitle { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; line-height: 22px; color: #5b5bd5; white-space: nowrap; }
   .fg2-oright { display: flex; align-items: center; gap: 8px; }
   .fg2-skip { font-size: 14px; font-weight: 500; line-height: 22px; color: rgba(0, 0, 0, 0.45); padding: 0 8px; }

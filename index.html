@@ -1378,6 +1378,7 @@
     background: #fafafa;
   }
   .crc-card {
+    transform: scale(0.44);
     background: #fff;
     border-radius: 14px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), 0 10px 30px rgba(0, 0, 0, 0.08);
@@ -1434,6 +1435,12 @@
     height: 300px;
     transform-origin: 0 0;
     font-family: var(--font-ui);
+  }
+  .ia2-fit {
+    position: absolute;
+    inset: 0;
+    transform: scale(0.62);
+    transform-origin: 50% 55%;
   }
   /* one bar, three states: st-a testing, st-b errors, st-c expanded upward */
   .ia2-bar {
@@ -1784,7 +1791,7 @@
     flex: none;
   }
   .s3zoom .s3-shot.zclick { cursor: pointer; }
-  .s3zoom .crc-card { min-width: 0; transform: scale(1.9); }
+  .s3zoom .crc-card { min-width: 0; transform: scale(1.55); }
   .s3zoom-cap {
     font-size: 12.5px;
     font-weight: 500;
@@ -2400,8 +2407,8 @@
                       <div class="crc-row"><span class="crc-dot"></span><span class="crc-t">Deploy checklist</span></div>
                     </div>
                   </div>
-                  <div class="s3-name">Status, location</div>
-                  <p class="s3-note">Sidebar checklist</p>
+                  <div class="s3-name">Internal feedback</div>
+                  <p class="s3-note">Anchor status and actions</p>
                 </article>
                 <div class="s3-arrow" aria-hidden="true">
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -2409,6 +2416,7 @@
                 <article class="s3-stage">
                   <div class="s3-shot s3-anim" role="img" aria-label="Inline review bar over the composer: the same bar switches between Integration Testing and an error summary, and its chevron expands a verification panel upward with a file-drop zone">
                     <div class="ia-stage ia2 st-a" aria-hidden="true">
+                      <div class="ia2-fit">
                       <div class="ia2-open">
                         <div class="ia-body">
                           <div class="ia-row done">
@@ -2450,10 +2458,11 @@
                         <span class="ia-ph">Add feedback and generate the artifacts&hellip;</span>
                         <span class="ia-regen">Regenerate</span>
                       </div>
+                      </div>
                     </div>
                   </div>
-                  <div class="s3-name">Action, hierarchy, density</div>
-                  <p class="s3-note">Inline expanded panel</p>
+                  <div class="s3-name">Pilot testing</div>
+                  <p class="s3-note">Reduce density</p>
                 </article>
                 <div class="s3-arrow" aria-hidden="true">
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -2461,6 +2470,7 @@
                 <article class="s3-stage">
                   <div class="s3-shot s3-anim" role="img" aria-label="Compact code review pill over the composer; its dropdown opens upward listing the cycle steps, and the pill's step label swaps to the active Provide Dataweave">
                     <div class="ia-stage" aria-hidden="true">
+                      <div class="ia2-fit">
                       <div class="cp-drop">
                         <div class="cp-h">CODE REVIEW CYCLE</div>
                         <div class="cp-row done">
@@ -2509,10 +2519,19 @@
                         <span class="cp-plus"><img src="assets/cp/attach.svg" alt=""></span>
                         <span class="cp-send"><img src="assets/cp/send.svg" alt=""></span>
                       </div>
+                      </div>
                     </div>
                   </div>
-                  <div class="s3-name">State change, visual treatment</div>
-                  <p class="s3-note">Compact, blended into the composer</p>
+                  <div class="s3-name">Launch</div>
+                  <p class="s3-note">Separate and simplify</p>
+                </article>
+                <div class="s3-arrow" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <article class="s3-stage">
+                  <div class="s3-shot"><div class="ph3">Post-launch 截图位 — 发我图即可替换</div></div>
+                  <div class="s3-name">Post-launch refinement</div>
+                  <p class="s3-note">Reduce visual weight</p>
                 </article>
               </div>
             </div>

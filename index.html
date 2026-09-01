@@ -1436,172 +1436,138 @@
     transform-origin: 0 0;
     font-family: var(--font-ui);
   }
-  .ia2-fit {
+  /* card 2: Figma workflow-automation states (default / risks / expanded) */
+  .fg2 {
     position: absolute;
-    inset: 0;
-    transform: scale(0.62);
-    transform-origin: 50% 55%;
+    left: 50%;
+    top: 57%;
+    width: 800px;
+    transform: translateX(-50%) scale(0.24);
+    transform-origin: 50% 0;
+    font-family: 'Geist', var(--font-ui);
   }
-  /* one bar, three states: st-a testing, st-b errors, st-c expanded upward */
-  .ia2-bar {
-    position: absolute;
-    left: 44px;
-    right: 44px;
-    top: 192px;
-    height: 40px;
+  .fg2-composer {
+    position: relative;
     z-index: 1;
+    width: 800px;
+    height: 64px;
     background: #fff;
-    border: 1px solid #e9e4f8;
-    border-bottom: 0;
-    border-radius: 14px 14px 0 0;
-  }
-  .ia2-h {
-    position: absolute;
-    left: 14px;
-    right: 36px;
-    top: 0;
-    height: 100%;
+    border: 1px solid #d6d6d6;
+    border-radius: 24px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 1px rgba(0, 0, 0, 0.03);
     display: flex;
     align-items: center;
-    gap: 8px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
+    padding: 16px;
   }
-  .st-a .ia2-h1, .st-b .ia2-h2, .st-c .ia2-h3 { opacity: 1; }
-  .ia2-h2 { gap: 12px; }
-  .ia2-h3 .ia-bt { font-size: 10.5px; }
-  .ia2-chev {
+  .fg2-ph { font-size: 14px; font-weight: 500; line-height: 22px; color: rgba(0, 0, 0, 0.25); }
+  .fg2-banner {
     position: absolute;
-    right: 12px;
-    top: 50%;
-    margin-top: -6px;
-    transition: transform 0.3s var(--ease-enter);
-  }
-  .st-c .ia2-chev { transform: rotate(180deg); }
-  .ia2-open {
-    position: absolute;
-    left: 44px;
-    right: 44px;
-    bottom: 106px;
+    left: 8px;
+    bottom: 42px;
+    width: 784px;
+    height: 66px;
     z-index: 0;
     background: #fff;
-    border: 1px solid #e9e4f8;
-    border-radius: 14px 14px 0 0;
-    overflow: hidden;
-    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.06);
-    opacity: 0;
-    transform: translateY(12px) scale(0.98);
-    transform-origin: 50% 100%;
-    transition: opacity 0.32s var(--ease-enter), transform 0.32s var(--ease-enter);
-    pointer-events: none;
+    border: 1px solid rgba(91, 91, 213, 0.2);
+    border-bottom: 0;
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.08), 0 3px 3px rgba(0, 0, 0, 0.12), 0 9px 14px rgba(0, 0, 0, 0.05);
+    transition: opacity 0.25s ease;
   }
-  .st-c .ia2-open { opacity: 1; transform: none; }
-  .ia-dot {
-    flex: none;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #6d4fe0;
-    position: relative;
-  }
-  .ia-dot::after {
-    content: '';
+  .st-c .fg2-banner { opacity: 0; pointer-events: none; }
+  .fg2-ba, .fg2-bb {
     position: absolute;
-    inset: 4px;
-    border-radius: 1.5px;
-    background: #fff;
-  }
-  .ia-bt { font-size: 12.5px; color: #6d4fe0; letter-spacing: -0.01em; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .ia-chev { flex: none; display: block; }
-  .ia-err, .ia-warn {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11.5px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-  .ia-err { color: #c62f21; }
-  .ia-warn { color: #d78d00; }
-  .ia-approve {
-    margin-left: auto;
-    font-size: 11px;
-    font-weight: 600;
-    color: #1f1f1f;
-    background: #fff;
-    border: 1px solid #dcdcdc;
-    border-radius: var(--radius-full);
-    padding: 4px 12px;
-    white-space: nowrap;
-  }
-  .ia-composer {
-    position: absolute;
-    left: 40px;
-    right: 40px;
-    top: 224px;
-    z-index: 2;
+    left: 24px;
+    right: 24px;
+    top: 4px;
+    height: 44px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    background: #fff;
-    border: 1px solid #f0eff4;
-    border-radius: 18px;
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
-    padding: 12px 12px 12px 16px;
+    justify-content: space-between;
+    opacity: 0;
+    transition: opacity 0.25s ease;
   }
-  .ia-ph { flex: 1; font-size: 11.5px; color: #a9a9a9; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .ia-regen {
-    flex: none;
-    font-size: 11px;
+  .st-a .fg2-ba, .st-c .fg2-ba { opacity: 1; }
+  .st-b .fg2-bb { opacity: 1; }
+  .fg2-otitle { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; line-height: 22px; color: #5b5bd5; white-space: nowrap; }
+  .fg2-oright { display: flex; align-items: center; gap: 8px; }
+  .fg2-skip { font-size: 14px; font-weight: 500; line-height: 22px; color: rgba(0, 0, 0, 0.45); padding: 0 8px; }
+  img.fg2-i16 { width: 16px; height: 16px; display: block; flex: none; }
+  img.fg2-chev { width: 24px; height: 24px; display: block; flex: none; transform: scaleY(-1); }
+  .fg2-risks { display: flex; align-items: center; gap: 8px; }
+  .fg2-chip { display: flex; align-items: center; gap: 8px; padding: 8px; font-size: 14px; font-weight: 500; line-height: 22px; color: rgba(0, 0, 0, 0.65); white-space: nowrap; }
+  .fg2-approve {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 16px;
+    border: 1px solid #d6d6d6;
+    border-radius: 12px;
+    font-size: 14px;
     font-weight: 500;
-    color: #6d4fe0;
-    background: #ece7fb;
-    border-radius: var(--radius-full);
-    padding: 5px 12px;
+    color: #262626;
     white-space: nowrap;
   }
-  .ia-skip { flex: none; font-size: 10.5px; color: #6e6e6e; margin-right: 2px; margin-left: auto; }
-  .ia-body { background: #f4f3f7; padding: 9px 12px 7px; }
-  .ia-row { display: flex; align-items: flex-start; gap: 9px; padding: 4px 8px; border-radius: 10px; }
-  .ia-row.on { background: #e6e0f6; }
-  .ia-check {
+  .fg2-open {
+    position: absolute;
+    left: 8px;
+    bottom: 35px;
+    width: 784px;
+    z-index: 2;
+    background: #fff;
+    border: 1px solid rgba(91, 91, 213, 0.2);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 9px 28px 8px rgba(0, 0, 0, 0.05), 0 6px 16px rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12);
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+    transform-origin: 50% 100%;
+    transition: opacity 0.3s var(--ease-enter), transform 0.3s var(--ease-enter);
+    pointer-events: none;
+  }
+  .st-c .fg2-open { opacity: 1; transform: none; pointer-events: auto; }
+  .fg2-ohead {
+    height: 51px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #eaeaea;
+    background: #fff;
+  }
+  .fg2-body {
+    background: rgba(0, 0, 0, 0.06);
+    padding: 24px 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .fg2-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 4px 12px 16px;
+    border-radius: 16px;
+  }
+  .fg2-row.on { background: rgba(132, 111, 225, 0.1); border-bottom: 1px solid #f7f7ff; }
+  .fg2-row.last { border-radius: 0; border-bottom: 1px solid #eaeaea; }
+  .fg2-av {
     flex: none;
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    background: #e3e3e3;
+    width: 24px;
+    height: 24px;
+    border-radius: 96px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 1px;
   }
-  .ia-radio {
-    flex: none;
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    border: 1.5px solid #c9c9c9;
-    background: #fff;
-    margin-top: 2px;
-  }
-  .ia-radio.on { border-color: #4f46c8; }
-  .ia-rw { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-  .ia-rt { font-size: 10.5px; font-weight: 600; color: #222; letter-spacing: -0.01em; }
-  .ia-rs { font-size: 8.5px; color: #7c7c7c; line-height: 1.4; }
-  .ia-row.done .ia-rt, .ia-row.done .ia-rs { color: #9a9a9a; text-decoration: line-through; }
-  .ia-drop {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: #fff;
-    border: 1.5px dashed #b9a6f2;
-    border-radius: 14px;
-    margin: 6px;
-    padding: 8px 13px;
-  }
-  .ia-dt { font-size: 11.5px; font-weight: 600; color: #5b3fa8; }
-  .ia-ds { font-size: 9px; color: #8a8a8a; }
+  .fg2-av img { width: 14px; height: 14px; display: block; }
+  .fg2-av.av-done { background: rgba(0, 0, 0, 0.06); border: 1px solid rgba(0, 0, 0, 0.04); }
+  .fg2-av.av-on { border: 1px solid #5b5bd5; }
+  .fg2-av.av-idle { border: 1px solid #d6d6d6; }
+  .fg2-rw { display: flex; flex-direction: column; min-width: 0; }
+  .fg2-rt { font-size: 14px; font-weight: 500; line-height: 22px; color: rgba(0, 0, 0, 0.88); white-space: nowrap; }
+  .fg2-rs { font-size: 12px; font-weight: 500; line-height: 22px; color: rgba(0, 0, 0, 0.45); white-space: nowrap; }
+  .fg2-row.done .fg2-rt, .fg2-row.done .fg2-rs { color: rgba(0, 0, 0, 0.45); text-decoration: line-through; }
   .s3-panel.zoomed .s3-shot.s3-anim { aspect-ratio: 4 / 3; }
   /* live-coded animated stage shot: compact pill whose dropdown opens upward */
   .cp-drop {
@@ -1821,7 +1787,8 @@
   .s3z-dot.cur { background: #6d4fe0; transform: scale(1.2); }
   .s3zoom-hint { font-size: 11px; color: var(--muted); letter-spacing: 0.02em; }
   /* manual mode: looping animations off, states driven by clicks */
-  .s3zoom .ia2-chev { cursor: pointer; pointer-events: auto; padding: 8px; margin: -8px; margin-top: -14px; box-sizing: content-box; }
+  .s3zoom .fg2-banner, .s3zoom .fg2-ohead { cursor: pointer; }
+  .s3zoom .fg2 { transform: translateX(-50%) scale(0.44); }
   .ia-stage.manual .cp-drop {
     animation: none;
     opacity: 0;
@@ -2375,50 +2342,43 @@
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
                 <article class="s3-stage">
-                  <div class="s3-shot s3-anim" role="img" aria-label="Inline review bar over the composer: the same bar switches between Integration Testing and an error summary, and its chevron expands a verification panel upward with a file-drop zone">
+                  <div class="s3-shot s3-anim" role="img" aria-label="Verification banner over the composer: default state, a 4 Risks / 2 Changes state with Approve, and an expanded task panel opened from the banner">
                     <div class="ia-stage ia2 st-a" aria-hidden="true">
-                      <div class="ia2-fit">
-                      <div class="ia2-open">
-                        <div class="ia-body">
-                          <div class="ia-row done">
-                            <span class="ia-check"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5" stroke="#8f8f8f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                            <span class="ia-rw"><span class="ia-rt">Review Code</span><span class="ia-rs">Review the flows and code here or in ide</span></span>
+                      <div class="fg2">
+                        <div class="fg2-open">
+                          <div class="fg2-ohead">
+                            <span class="fg2-otitle"><img class="fg2-i16" src="assets/cp/fg-stop.svg" alt=""><span>Verification - Improve Code Quality</span></span>
+                            <span class="fg2-oright"><span class="fg2-skip">Skip</span><img class="fg2-chev" src="assets/cp/fg-chev2.svg" alt=""></span>
                           </div>
-                          <div class="ia-row on">
-                            <span class="ia-radio on"></span>
-                            <span class="ia-rw"><span class="ia-rt">Improve the Code</span><span class="ia-rs">Upload more context or supporting documents to make the code even better</span></span>
-                          </div>
-                          <div class="ia-row">
-                            <span class="ia-radio"></span>
-                            <span class="ia-rw"><span class="ia-rt">Go to Test</span><span class="ia-rs">Start Integration test or MUnit test</span></span>
+                          <div class="fg2-body">
+                            <div class="fg2-row done">
+                              <span class="fg2-av av-done"><img src="assets/cp/fg-check1.svg" alt=""></span>
+                              <span class="fg2-rw"><span class="fg2-rt">Provide Data Weave</span><span class="fg2-rs">Review the flows and code here or in ide</span></span>
+                            </div>
+                            <div class="fg2-row on">
+                              <span class="fg2-av av-on"></span>
+                              <span class="fg2-rw"><span class="fg2-rt">Improve Code Quality</span><span class="fg2-rs">Upload more context or supporting documents to make the code even better</span></span>
+                            </div>
+                            <div class="fg2-row last">
+                              <span class="fg2-av av-idle"><img src="assets/cp/fg-check2.svg" alt=""></span>
+                              <span class="fg2-rw"><span class="fg2-rt">Run Unit Test</span><span class="fg2-rs">Start Integration test or Unit test</span></span>
+                            </div>
                           </div>
                         </div>
-                        <div class="ia-drop">
-                          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 11V3M4.5 6L8 2.5L11.5 6M3 13H13" stroke="#5a4b8a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                          <span class="ia-rw"><span class="ia-dt">Drop Your Files Here</span><span class="ia-ds">XML file with maximum size of 5 MB</span></span>
+                        <div class="fg2-banner">
+                          <span class="fg2-ba">
+                            <span class="fg2-otitle"><img class="fg2-i16" src="assets/cp/fg-dot.svg" alt=""><span>Verification - Improve Code Quality</span></span>
+                            <span class="fg2-oright"><span class="fg2-skip">Skip</span><img class="fg2-chev" src="assets/cp/fg-chev.svg" alt=""></span>
+                          </span>
+                          <span class="fg2-bb">
+                            <span class="fg2-risks">
+                              <span class="fg2-chip"><img class="fg2-i16" src="assets/cp/fg-warn.svg" alt="">4 Risks</span>
+                              <span class="fg2-chip"><img class="fg2-i16" src="assets/cp/fg-override.svg" alt="">2 Changes</span>
+                            </span>
+                            <span class="fg2-approve">Approve</span>
+                          </span>
                         </div>
-                      </div>
-                      <div class="ia2-bar">
-                        <span class="ia2-h ia2-h1">
-                          <span class="ia-dot"></span>
-                          <span class="ia-bt">Integration Testing&hellip;</span>
-                        </span>
-                        <span class="ia2-h ia2-h2">
-                          <span class="ia-err"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.2" stroke="#c62f21" stroke-width="1.5"/><path d="M5.8 5.8L10.2 10.2M10.2 5.8L5.8 10.2" stroke="#c62f21" stroke-width="1.5" stroke-linecap="round"/></svg>4 Errors</span>
-                          <span class="ia-warn"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.2" stroke="#d78d00" stroke-width="1.5"/><path d="M8 4.6V8.8M8 11.2V11.3" stroke="#d78d00" stroke-width="1.5" stroke-linecap="round"/></svg>1 Warnings</span>
-                          <span class="ia-approve">Approve All</span>
-                        </span>
-                        <span class="ia2-h ia2-h3">
-                          <span class="ia-dot"></span>
-                          <span class="ia-bt">Verification &ndash; Upload Schema for more context</span>
-                          <span class="ia-skip">Skip</span>
-                        </span>
-                        <svg class="ia-chev ia2-chev" width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 6L8 11L13 6" stroke="#8a8a8a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                      </div>
-                      <div class="ia-composer">
-                        <span class="ia-ph">Add feedback and generate the artifacts&hellip;</span>
-                        <span class="ia-regen">Regenerate</span>
-                      </div>
+                        <div class="fg2-composer"><span class="fg2-ph">Add feedback and generate the artifacts...</span></div>
                       </div>
                     </div>
                   </div>
@@ -3664,30 +3624,23 @@
       stage.classList.remove('st-b', 'st-c');
       stage.classList.add('st-a', 'manual');
       clone.classList.add('zclick');
-      var bar = clone.querySelector('.ia2-bar');
-      var chev = clone.querySelector('.ia2-chev');
-      chev.addEventListener('click', function (e) {
+      var setSt = function (st) {
+        stage.classList.remove('st-a', 'st-b', 'st-c');
+        stage.classList.add(st);
+      };
+      clone.querySelector('.fg2-banner').addEventListener('click', function (e) {
         e.stopPropagation();
-        if (stage.classList.contains('st-c')) {
-          stage.classList.remove('st-c');
-          stage.classList.add('st-a');
-        } else {
-          stage.classList.remove('st-a', 'st-b');
-          stage.classList.add('st-c');
-        }
+        setSt('st-c');
       });
-      bar.addEventListener('click', function (e) {
+      clone.querySelector('.fg2-ohead').addEventListener('click', function (e) {
         e.stopPropagation();
-        if (stage.classList.contains('st-c')) {
-          stage.classList.remove('st-c');
-          stage.classList.add('st-a');
-          return;
-        }
-        var isA = stage.classList.contains('st-a');
-        stage.classList.toggle('st-a', !isA);
-        stage.classList.toggle('st-b', isA);
+        setSt('st-a');
       });
-      clone.addEventListener('click', function (e) { e.stopPropagation(); });
+      clone.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (stage.classList.contains('st-a')) setSt('st-b');
+        else setSt('st-a');
+      });
     } else if (stage && clone.querySelector('.cp-drop')) {
       stage.classList.add('manual');
       clone.classList.add('zclick');

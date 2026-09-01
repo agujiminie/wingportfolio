@@ -5655,6 +5655,132 @@
     0% { background-position: 100% 0; }
     100% { background-position: 0 0; }
   }
+  /* ── Agent activity stream (Figma 289:19050 / 289:18768 / 289:16801) ── */
+  .pc-skeleton.agent-activity {
+    padding: 24px 36px;
+    gap: 24px;
+    overflow-y: auto;
+    background: #fff;
+  }
+  .aa-tabs {
+    display: flex;
+    gap: 4px;
+    background: #f5f5f5;
+    border-radius: 12px;
+    padding: 4px;
+    width: max-content;
+    flex-shrink: 0;
+  }
+  .aa-tab {
+    height: 36px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    line-height: 22px;
+    font-weight: 500;
+    border-radius: 12px;
+    color: rgba(0, 0, 0, 0.25);
+  }
+  .aa-tab.active {
+    background: #fff;
+    color: rgba(0, 0, 0, 0.88);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.03),
+      0 1px 6px -1px rgba(0, 0, 0, 0.02),
+      0 2px 4px rgba(0, 0, 0, 0.02);
+  }
+  .aa-timeline {
+    position: relative;
+    padding: 0 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .aa-timeline::before {
+    content: "";
+    position: absolute;
+    left: 23px;
+    top: 18px;
+    bottom: 18px;
+    width: 1px;
+    background: rgba(0, 0, 0, 0.08);
+  }
+  .aa-item { display: flex; gap: 8px; align-items: flex-start; position: relative; }
+  .aa-icon {
+    width: 24px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff; /* masks the timeline rule behind the icon */
+    color: #846fe1;
+    flex-shrink: 0;
+  }
+  .aa-icon svg.spin { animation: aa-spin 1.1s linear infinite; }
+  @keyframes aa-spin { to { transform: rotate(360deg); } }
+  .aa-main { flex: 1; min-width: 0; }
+  .aa-title-row { min-height: 36px; display: flex; align-items: center; gap: 8px; padding: 0 16px; }
+  .aa-title { font-size: 14px; line-height: 22px; font-weight: 500; color: #846fe1; white-space: nowrap; }
+  .aa-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border: 1px solid #d6d6d6;
+    border-radius: 50px;
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.45);
+  }
+  .aa-time { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; color: rgba(0, 0, 0, 0.25); }
+  .aa-time svg { color: rgba(0, 0, 0, 0.3); }
+  .aa-body { padding: 0 16px; }
+  .aa-block { padding: 0 0 8px; margin-top: 8px; }
+  .aa-block-title { font-size: 12px; line-height: 16px; font-weight: 500; color: rgba(0, 0, 0, 0.45); }
+  .aa-block-detail { font-size: 10px; line-height: 1.45; font-weight: 700; color: rgba(0, 0, 0, 0.25); }
+  .aa-todo {
+    margin: 8px 0 4px;
+    background: #fff;
+    border: 1px solid rgba(132, 111, 225, 0.18);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .aa-todo-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 16px;
+    background: rgba(132, 111, 225, 0.08);
+  }
+  .aa-todo-title { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: #5b5bd5; }
+  .aa-todo-count { font-size: 12px; font-weight: 500; color: rgba(0, 0, 0, 0.45); flex: 1; }
+  .aa-todo-head svg { color: rgba(0, 0, 0, 0.45); flex-shrink: 0; }
+  .aa-todo-items { padding: 10px 16px 12px; display: flex; flex-direction: column; }
+  .aa-todo-item { display: flex; align-items: center; gap: 8px; min-height: 32px; font-size: 12px; font-weight: 500; color: rgba(0, 0, 0, 0.65); }
+  .aa-todo-item .aa-radio { width: 16px; height: 16px; display: inline-flex; color: rgba(0, 0, 0, 0.25); flex-shrink: 0; }
+  .aa-todo-item.done .aa-radio { color: #846fe1; }
+  .aa-doclink {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.65);
+    cursor: pointer;
+    margin-top: 4px;
+    background: transparent;
+    border: 0;
+  }
+  .aa-doclink:hover { background: rgba(0, 0, 0, 0.04); }
+  .aa-reveal { animation: aa-in 0.28s ease both; }
+  @keyframes aa-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
   .pc-skel-line.w-40 { width: 40%; height: 16px; margin-bottom: 6px; }
   .pc-skel-line.w-90 { width: 90%; }
   .pc-skel-line.w-75 { width: 75%; }
@@ -6325,17 +6451,13 @@
     <div class="right-body" id="sideCanvasFrame">
 
       <!-- Skeleton loading state (prompt chat: tasks running) -->
-      <div class="pc-skeleton hidden" id="pcSkeletonCanvas" aria-hidden="true">
-        <div class="pc-skel-line w-40"></div>
-        <div class="pc-skel-line w-90"></div>
-        <div class="pc-skel-line w-75"></div>
-        <div class="pc-skel-line w-85"></div>
-        <div class="pc-skel-line w-60"></div>
-        <div class="pc-skel-line w-90"></div>
-        <div class="pc-skel-line w-75"></div>
-        <div class="pc-skel-line w-30"></div>
-        <div class="pc-skel-line w-85"></div>
-        <div class="pc-skel-line w-60"></div>
+      <!-- Live agent activity stream while tasks run (Figma 289:19050 / 289:18768 / 289:16801) -->
+      <div class="pc-skeleton agent-activity hidden" id="pcSkeletonCanvas" aria-hidden="true">
+        <div class="aa-tabs">
+          <div class="aa-tab active">Agent Activities</div>
+          <div class="aa-tab disabled">Review Code</div>
+        </div>
+        <div class="aa-timeline" id="aaTimeline"></div>
       </div>
 
       <!-- Panel header (Code mode) -->
@@ -8627,22 +8749,145 @@
       });
     }
   }
+
+  /* ── Live agent activity stream (Figma 289:19050 / 289:18768 / 289:16801) ── */
+  const AA_SVG = {
+    check: '<svg width="20" height="20" viewBox="0 0 20 20" fill="#846FE1" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm3.707-9.293a1 1 0 0 0-1.414-1.414L9 10.586 7.707 9.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4z" clip-rule="evenodd"/></svg>',
+    loader: '<svg class="spin" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>',
+    clock: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+    user: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+    radio: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/></svg>',
+    radioDone: '<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm3.707-9.293a1 1 0 0 0-1.414-1.414L9 10.586 7.707 9.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4z" clip-rule="evenodd"/></svg>',
+    chevron: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>',
+    doc: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="10" y1="13" x2="16" y2="13"/><line x1="10" y1="17" x2="14" y2="17"/></svg>'
+  };
+  function aaNow() {
+    const d = new Date();
+    let h = d.getHours();
+    const ampm = h >= 12 ? 'pm' : 'am';
+    h = h % 12 || 12;
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${h}:${mm}${ampm}, ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  }
+  function aaScroll() {
+    const skel = document.getElementById('pcSkeletonCanvas');
+    if (skel) skel.scrollTop = skel.scrollHeight;
+  }
+  function aaMilestone(id, title, opts = {}) {
+    const tl = document.getElementById('aaTimeline');
+    const item = document.createElement('div');
+    item.className = 'aa-item aa-reveal';
+    item.id = id;
+    item.innerHTML =
+      `<div class="aa-icon" data-role="icon">${opts.done ? AA_SVG.check : AA_SVG.loader}</div>` +
+      `<div class="aa-main">` +
+        `<div class="aa-title-row">` +
+          `<span class="aa-title">${title}</span>` +
+          (opts.tag ? `<span class="aa-tag">${AA_SVG.user}${opts.tag}</span>` : '') +
+          `<span class="aa-time">${AA_SVG.clock}${aaNow()}</span>` +
+        `</div>` +
+        `<div class="aa-body" data-role="body"></div>` +
+      `</div>`;
+    tl.appendChild(item);
+    aaScroll();
+    return item;
+  }
+  function aaComplete(id) {
+    const item = document.getElementById(id);
+    if (item) item.querySelector('[data-role="icon"]').innerHTML = AA_SVG.check;
+  }
+  function aaBlock(id, heading, details = []) {
+    const item = document.getElementById(id);
+    if (!item) return;
+    const block = document.createElement('div');
+    block.className = 'aa-block aa-reveal';
+    block.innerHTML = `<div class="aa-block-title">${heading}</div>` +
+      details.map(d => `<div class="aa-block-detail">${d}</div>`).join('');
+    item.querySelector('[data-role="body"]').appendChild(block);
+    aaScroll();
+  }
+  function aaHtml(id, html) {
+    const item = document.getElementById(id);
+    if (!item) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'aa-reveal';
+    wrap.innerHTML = html;
+    item.querySelector('[data-role="body"]').appendChild(wrap);
+    aaScroll();
+    return wrap;
+  }
+  function aaTodoCheck(i, total) {
+    const item = document.querySelector(`.aa-todo-item[data-i="${i}"]`);
+    if (item) {
+      item.classList.add('done');
+      item.querySelector('.aa-radio').innerHTML = AA_SVG.radioDone;
+    }
+    const count = document.getElementById('aaTodoCount');
+    if (count) count.textContent = `· ${i + 1} of ${total} complete`;
+  }
+  function pcAaViewDocument() {
+    pcShowSkeleton(false);
+    setCanvas('document');
+  }
+  function pcRunAgentActivities(onDone) {
+    const tl = document.getElementById('aaTimeline');
+    if (tl) tl.innerHTML = '';
+    const at = (ms, fn) => pcState.timers.push(window.setTimeout(fn, ms));
+    const TODO = ['Consulted knowledge base.', 'Generated document from knowledge base.', 'Refer to knowledge base.', 'Check my knowledge base.'];
+    // Milestone 1 — Submitted Task
+    at(150, () => aaMilestone('aaM1', 'Submitted Task', { done: true, tag: 'wzeng' }));
+    at(450, () => aaBlock('aaM1', 'Command added', [
+      'Add debug logs in the progress orders flow to log if an oder is placed or a canceld order.',
+      'Print the value of variable in such cases.'
+    ]));
+    at(1050, () => aaBlock('aaM1', 'Will run verification'));
+    at(1600, () => aaBlock('aaM1', 'Runtime versions', ['Java: 8.0', 'Maven: 3.8', 'Mule Runtime: 4.8']));
+    // Milestone 2 — Task in progress
+    at(2300, () => aaMilestone('aaM2', 'Task in progress'));
+    at(2900, () => aaBlock('aaM2', 'Analyzing process-orders-flows structure', [
+      'Reading process-orders-flows structure',
+      'Identifying order placed vs canceled logic'
+    ]));
+    at(4600, () => aaComplete('aaM2'));
+    // Milestone 3 — Draft Generation
+    at(5000, () => aaMilestone('aaM3', 'Draft Generation'));
+    at(5600, () => aaHtml('aaM3',
+      `<div class="aa-todo">` +
+        `<div class="aa-todo-head"><span class="aa-todo-title">TO-DO LIST</span><span class="aa-todo-count" id="aaTodoCount">· 0 of 4 complete</span>${AA_SVG.chevron}</div>` +
+        `<div class="aa-todo-items">` +
+          TODO.map((t, i) => `<div class="aa-todo-item" data-i="${i}"><span class="aa-radio">${AA_SVG.radio}</span><span>${t}</span></div>`).join('') +
+        `</div>` +
+      `</div>`));
+    at(6300, () => aaTodoCheck(0, 4));
+    at(7000, () => aaTodoCheck(1, 4));
+    at(7700, () => aaTodoCheck(2, 4));
+    at(8400, () => aaTodoCheck(3, 4));
+    at(9000, () => aaBlock('aaM3', 'Tested connection to Anypoint Exchange.', [
+      'Retrieving DataWeave math functions',
+      'Checking Salesforce connector latest version'
+    ]));
+    at(9800, () => aaHtml('aaM3', `<button class="aa-doclink" type="button" onclick="pcAaViewDocument()">${AA_SVG.doc}<span>View Document</span></button>`));
+    at(10600, () => aaComplete('aaM3'));
+    at(11300, onDone);
+  }
+
   function pcApprove(byName) {
     if (pcState.approved) return;
     pcState.approved = true;
     pcState.approvedBy = byName || null;
     renderPromptChat();
-    // Tasks start running: split canvas stays and shows a loading skeleton
+    // Tasks start running: split canvas stays and shows the live agent activity stream
     pcShowSkeleton(true);
     if (!state.isInvitee) appendDemoEvent('pc_tasks_started', {});
-    pcState.timers.push(window.setTimeout(() => {
+    pcRunAgentActivities(() => {
       pcState.tasksDone = true;
       renderPromptChat();
       // Tasks completed: show the generated code in the canvas
       pcShowSkeleton(false);
       setCanvas('code');
       if (!state.isInvitee) appendDemoEvent('pc_tasks_completed', {});
-    }, 5200));
+    });
   }
   // Reviewer side: mirror the task cards' progress in the invitee chat flow
   function renderInviteeTaskProgress(done) {

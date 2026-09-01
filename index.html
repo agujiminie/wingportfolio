@@ -1633,7 +1633,7 @@
   .fg3-mono {
     font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 400;
     letter-spacing: -0.33px;
     color: rgba(0, 0, 0, 0.45);
     white-space: nowrap;
@@ -1818,7 +1818,11 @@
     cursor: zoom-out;
   }
   body.s3zoomed .s3zoom { display: flex; }
-  .s3zoom-wrap { display: contents; }
+  .s3zoom-wrap { display: grid; }
+  .s3zoom-wrap > .s3-shot { grid-area: 1 / 1; }
+  .s3zoom .s3-shot.dissolve { animation: s3zdissolve 0.32s ease both; }
+  @keyframes s3zdissolve { from { opacity: 0.3; } to { opacity: 1; } }
+  .s3zoom .s3-shot.fadeout { opacity: 0; transition: opacity 0.32s ease; pointer-events: none; }
   .s3zoom .s3-shot {
     width: min(74vw, 880px, calc((100vh - 200px) * 4 / 3));
     margin: 0;
@@ -3673,10 +3677,16 @@
     var clone = shot.cloneNode(true);
     clone.removeAttribute('role');
     clone.removeAttribute('aria-label');
-    if (skipAnim) clone.classList.add('noanim');
-    s3zwrap.innerHTML = '';
+    s3zwrap.querySelectorAll('.fadeout').forEach(function (f) { f.remove(); });
+    var oldClone = skipAnim ? s3zwrap.firstElementChild : null;
+    if (!skipAnim) s3zwrap.innerHTML = '';
     s3zdots.innerHTML = '';
+    if (skipAnim) clone.classList.add('dissolve');
     s3zwrap.appendChild(clone);
+    if (oldClone) {
+      oldClone.classList.add('fadeout');
+      setTimeout(function () { oldClone.remove(); }, 380);
+    }
     s3zcap.textContent = art ? art.querySelector('.s3-name').textContent : '';
     var note = art && art.querySelector('.s3-note');
     if (note) {

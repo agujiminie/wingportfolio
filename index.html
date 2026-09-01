@@ -1854,10 +1854,10 @@
   .s3z-nav {
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
     z-index: 2;
     cursor: pointer;
   }
+  .s3zoom .s3z-nav, .s3zoom .s3z-nav:hover, .s3zoom .s3z-nav:active { transform: translateY(-50%); }
   .s3z-prev { left: clamp(16px, 3.5vw, 48px); }
   .s3z-next { right: clamp(16px, 3.5vw, 48px); }
   .s3z-dots { display: flex; gap: 7px; }

@@ -1593,6 +1593,191 @@
   .ia-dt { font-size: 11.5px; font-weight: 600; color: #5b3fa8; }
   .ia-ds { font-size: 9px; color: #8a8a8a; }
   .s3-panel.zoomed .s3-shot.s3-anim { aspect-ratio: 4 / 3; }
+  /* live-coded animated stage shot: compact pill whose dropdown opens upward */
+  .cp-drop {
+    position: absolute;
+    left: 26px;
+    right: 96px;
+    bottom: 136px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05), 0 14px 38px rgba(0, 0, 0, 0.12);
+    padding: 12px 12px 8px 14px;
+    transform-origin: 14% 100%;
+    opacity: 0;
+    animation: cpdrop 9s infinite;
+  }
+  @keyframes cpdrop {
+    0%, 42% { opacity: 0; transform: translateY(10px) scale(0.96); }
+    48%, 88% { opacity: 1; transform: none; }
+    94%, 100% { opacity: 0; transform: translateY(10px) scale(0.96); }
+  }
+  .cp-h {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 8.5px;
+    letter-spacing: 0.1em;
+    color: #6e6e6e;
+    margin: 0 0 6px 4px;
+  }
+  .cp-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 5px 8px 5px 4px;
+    border-radius: 9px;
+  }
+  .cp-row.on { background: #ece7fb; }
+  .cp-lead { flex: none; }
+  .cp-done {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #8f8f8f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cp-radio {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1.5px solid #b9b9b9;
+    background: #fff;
+    box-sizing: border-box;
+  }
+  .cp-radio.on {
+    border-color: #6d4fe0;
+    background: radial-gradient(circle, #6d4fe0 0 3.2px, #fff 3.6px);
+  }
+  .cp-t {
+    flex: 1;
+    min-width: 0;
+    font-size: 10.5px;
+    letter-spacing: -0.01em;
+    color: #4c4c4c;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cp-row.on .cp-t { color: #5b3fe4; font-weight: 500; }
+  .cp-row.done .cp-t { color: #a3a3a3; text-decoration: line-through; }
+  .cp-ic { flex: none; display: block; }
+  .cp-bar {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 96px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    border: 1px solid #e5e0f6;
+    border-radius: 13px;
+    padding: 8px 8px 8px 12px;
+  }
+  .cp-pdot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: #7a5cf0; }
+  .cp-cycle {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 9.5px;
+    color: #6e6e6e;
+    white-space: nowrap;
+  }
+  .cp-sep { color: #9a9a9a; font-size: 10px; }
+  .cp-steps { position: relative; display: flex; align-items: center; min-width: 0; }
+  .cp-stepA, .cp-stepB { display: flex; align-items: center; gap: 5px; min-width: 0; }
+  .cp-stepA { animation: cpbarA 9s infinite; }
+  .cp-stepB {
+    animation: cpbarB 9s infinite;
+    opacity: 0;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  @keyframes cpbarA {
+    0%, 44% { opacity: 1; }
+    50%, 90% { opacity: 0; }
+    96%, 100% { opacity: 1; }
+  }
+  @keyframes cpbarB {
+    0%, 44% { opacity: 0; }
+    50%, 90% { opacity: 1; }
+    96%, 100% { opacity: 0; }
+  }
+  .cp-step { font-size: 10.5px; color: #1f1f1f; letter-spacing: -0.01em; white-space: nowrap; }
+  .cp-steppill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    color: #1f1f1f;
+    background: #efeef2;
+    border-radius: var(--radius-full);
+    padding: 3px 9px;
+    white-space: nowrap;
+  }
+  .cp-good {
+    margin-left: auto;
+    flex: none;
+    font-size: 10px;
+    color: #1f1f1f;
+    background: #fff;
+    border: 1px solid #dcdcdc;
+    border-radius: 10px;
+    padding: 5px 11px;
+    white-space: nowrap;
+  }
+  .cp-composer {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 14px;
+    height: 72px;
+    background: #fff;
+    border: 1px solid #dfdfdf;
+    border-radius: 16px;
+  }
+  .cp-caret {
+    position: absolute;
+    left: 14px;
+    top: 12px;
+    width: 1.5px;
+    height: 14px;
+    background: #1f1f1f;
+    animation: cpcaret 1.1s steps(1) infinite;
+  }
+  @keyframes cpcaret { 50% { opacity: 0; } }
+  .cp-plus {
+    position: absolute;
+    left: 10px;
+    bottom: 9px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid #d4d4d4;
+    color: #7a7a7a;
+    font-size: 13px;
+    line-height: 18px;
+    text-align: center;
+  }
+  .cp-send {
+    position: absolute;
+    right: 10px;
+    bottom: 9px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #cfc6ee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cp-drop, .cp-stepA, .cp-stepB, .cp-caret { animation: none; }
+    .cp-drop { opacity: 1; transform: none; }
+    .cp-stepA { opacity: 0; }
+    .cp-stepB { opacity: 1; }
+  }
   .s3-shot .ph3 {
     display: flex;
     align-items: center;
@@ -2201,7 +2386,60 @@
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
                 <article class="s3-stage">
-                  <div class="s3-shot"><div class="ph3">Compact pill 截图位 — 发我图即可替换</div></div>
+                  <div class="s3-shot s3-anim" role="img" aria-label="Compact review pill above the composer; its dropdown opens upward listing the cycle steps, each with an icon matching its meaning, while the pill's step label switches to the active step">
+                    <div class="ia-stage" aria-hidden="true">
+                      <div class="cp-drop">
+                        <div class="cp-h">CODE REVIEW CYCLE</div>
+                        <div class="cp-row done">
+                          <span class="cp-lead cp-done"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                          <span class="cp-t">Provide feedback</span>
+                          <svg class="cp-ic" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        </div>
+                        <div class="cp-row on">
+                          <span class="cp-lead cp-radio on"></span>
+                          <span class="cp-t">Provide date weave</span>
+                          <svg class="cp-ic" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6d4fe0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+                        </div>
+                        <div class="cp-row">
+                          <span class="cp-lead cp-radio"></span>
+                          <span class="cp-t">Run Code &amp; Fix</span>
+                          <svg class="cp-ic" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                        </div>
+                        <div class="cp-row">
+                          <span class="cp-lead cp-radio"></span>
+                          <span class="cp-t">Run Unit Test</span>
+                          <svg class="cp-ic" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.5L4.5 20a1 1 0 0 0 .9 1.5h13.2a1 1 0 0 0 .9-1.5L14 9.5V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg>
+                        </div>
+                        <div class="cp-row">
+                          <span class="cp-lead cp-radio"></span>
+                          <span class="cp-t">Deploy checklist</span>
+                          <svg class="cp-ic" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+                        </div>
+                      </div>
+                      <div class="cp-bar">
+                        <span class="cp-pdot"></span>
+                        <span class="cp-cycle">Code review cycle</span>
+                        <span class="cp-sep">&middot;</span>
+                        <span class="cp-steps">
+                          <span class="cp-stepA">
+                            <span class="cp-step">Provide feedback</span>
+                            <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M3 6L8 11L13 6" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                          </span>
+                          <span class="cp-stepB">
+                            <span class="cp-steppill">Provide date weave
+                              <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M3 10L8 5L13 10" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                          </span>
+                        </span>
+                        <span class="cp-good">All looks good</span>
+                      </div>
+                      <div class="cp-composer">
+                        <span class="cp-caret"></span>
+                        <span class="cp-plus">+</span>
+                        <span class="cp-send"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M8 13V3M4 7L8 3L12 7" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                      </div>
+                    </div>
+                  </div>
                   <div class="s3-name">State change, visual treatment</div>
                   <p class="s3-note">Compact, blended into the composer</p>
                 </article>

@@ -1435,41 +1435,61 @@
     transform-origin: 0 0;
     font-family: var(--font-ui);
   }
-  .ia-frame { position: absolute; inset: 0; opacity: 0; animation: iacyc 10.5s infinite; }
-  .ia-f1 { animation-delay: 0s; }
-  .ia-f2 { animation-delay: 3.5s; }
-  .ia-f3 { animation-delay: 7s; }
-  @keyframes iacyc {
-    0% { opacity: 0; }
-    4% { opacity: 1; }
-    33.3% { opacity: 1; }
-    37.3% { opacity: 0; }
-    100% { opacity: 0; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .ia-frame { animation: none; }
-    .ia-f3 { opacity: 1; }
-  }
-  .ia-mid {
+  /* one bar, three states: st-a testing, st-b errors, st-c expanded upward */
+  .ia2-bar {
     position: absolute;
-    left: 24px;
-    right: 24px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  .ia-bar {
-    position: relative;
-    z-index: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    left: 44px;
+    right: 44px;
+    top: 192px;
+    height: 40px;
+    z-index: 1;
     background: #fff;
     border: 1px solid #e9e4f8;
     border-bottom: 0;
-    border-radius: 16px 16px 0 0;
-    padding: 10px 14px 16px;
-    margin-bottom: -8px;
+    border-radius: 14px 14px 0 0;
   }
+  .ia2-h {
+    position: absolute;
+    left: 14px;
+    right: 36px;
+    top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .st-a .ia2-h1, .st-b .ia2-h2, .st-c .ia2-h3 { opacity: 1; }
+  .ia2-h2 { gap: 12px; }
+  .ia2-h3 .ia-bt { font-size: 10.5px; }
+  .ia2-chev {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    margin-top: -6px;
+    transition: transform 0.3s var(--ease-enter);
+  }
+  .st-c .ia2-chev { transform: rotate(180deg); }
+  .ia2-open {
+    position: absolute;
+    left: 44px;
+    right: 44px;
+    bottom: 106px;
+    z-index: 0;
+    background: #fff;
+    border: 1px solid #e9e4f8;
+    border-radius: 14px 14px 0 0;
+    overflow: hidden;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.06);
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+    transform-origin: 50% 100%;
+    transition: opacity 0.32s var(--ease-enter), transform 0.32s var(--ease-enter);
+    pointer-events: none;
+  }
+  .st-c .ia2-open { opacity: 1; transform: none; }
   .ia-dot {
     flex: none;
     width: 12px;
@@ -1497,7 +1517,6 @@
   }
   .ia-err { color: #c62f21; }
   .ia-warn { color: #d78d00; }
-  .ia-f2 .ia-bar { gap: 12px; }
   .ia-approve {
     margin-left: auto;
     font-size: 11px;
@@ -1510,8 +1529,11 @@
     white-space: nowrap;
   }
   .ia-composer {
-    position: relative;
-    z-index: 1;
+    position: absolute;
+    left: 40px;
+    right: 40px;
+    top: 224px;
+    z-index: 2;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -1519,7 +1541,7 @@
     border: 1px solid #f0eff4;
     border-radius: 18px;
     box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
-    padding: 14px 12px 14px 16px;
+    padding: 12px 12px 12px 16px;
   }
   .ia-ph { flex: 1; font-size: 11.5px; color: #a9a9a9; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .ia-regen {
@@ -1532,28 +1554,9 @@
     padding: 5px 12px;
     white-space: nowrap;
   }
-  .ia-panel {
-    position: absolute;
-    left: 18px;
-    right: 18px;
-    top: 14px;
-    background: #fff;
-    border: 1px solid #e9e4f8;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
-  }
-  .ia-p3head {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 14px;
-    background: #fff;
-  }
-  .ia-p3head .ia-bt { font-size: 11px; }
-  .ia-skip { flex: none; font-size: 10.5px; color: #6e6e6e; margin-right: 2px; }
-  .ia-body { background: #f4f3f7; padding: 12px 14px 10px; }
-  .ia-row { display: flex; align-items: flex-start; gap: 9px; padding: 6px 8px; border-radius: 10px; }
+  .ia-skip { flex: none; font-size: 10.5px; color: #6e6e6e; margin-right: 2px; margin-left: auto; }
+  .ia-body { background: #f4f3f7; padding: 9px 12px 7px; }
+  .ia-row { display: flex; align-items: flex-start; gap: 9px; padding: 4px 8px; border-radius: 10px; }
   .ia-row.on { background: #e6e0f6; }
   .ia-check {
     flex: none;
@@ -1587,8 +1590,8 @@
     background: #fff;
     border: 1.5px dashed #b9a6f2;
     border-radius: 14px;
-    margin: 8px;
-    padding: 10px 14px;
+    margin: 6px;
+    padding: 8px 13px;
   }
   .ia-dt { font-size: 11.5px; font-weight: 600; color: #5b3fa8; }
   .ia-ds { font-size: 9px; color: #8a8a8a; }
@@ -1596,13 +1599,13 @@
   /* live-coded animated stage shot: compact pill whose dropdown opens upward */
   .cp-drop {
     position: absolute;
-    left: 26px;
-    right: 96px;
-    bottom: 136px;
+    left: 44px;
+    width: 246px;
+    bottom: 106px;
     background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05), 0 14px 38px rgba(0, 0, 0, 0.12);
-    padding: 12px 12px 8px 14px;
+    border-radius: 16px;
+    box-shadow: 0 9px 28px 8px rgba(0, 0, 0, 0.05), 0 6px 16px rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12);
+    padding: 10px 8px 8px;
     transform-origin: 14% 100%;
     opacity: 0;
     animation: cpdrop 9s infinite;
@@ -1614,77 +1617,63 @@
   }
   .cp-h {
     font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-    font-size: 8.5px;
-    letter-spacing: 0.1em;
-    color: #6e6e6e;
-    margin: 0 0 6px 4px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: rgba(0, 0, 0, 0.45);
+    margin: 0 0 7px 8px;
   }
   .cp-row {
     display: flex;
     align-items: center;
-    gap: 9px;
-    padding: 5px 8px 5px 4px;
-    border-radius: 9px;
+    gap: 6px;
+    height: 26px;
+    padding: 0 6px;
+    border-radius: 8px;
   }
-  .cp-row.on { background: #ece7fb; }
-  .cp-lead { flex: none; }
-  .cp-done {
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    background: #8f8f8f;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .cp-radio {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 1.5px solid #b9b9b9;
-    background: #fff;
-    box-sizing: border-box;
-  }
-  .cp-radio.on {
-    border-color: #6d4fe0;
-    background: radial-gradient(circle, #6d4fe0 0 3.2px, #fff 3.6px);
-  }
+  .cp-row.on { background: rgba(132, 111, 225, 0.1); }
+  img.cp-li { flex: none; width: 13px; height: 13px; display: block; }
   .cp-t {
     flex: 1;
     min-width: 0;
-    font-size: 10.5px;
+    font-size: 12px;
+    font-weight: 500;
     letter-spacing: -0.01em;
-    color: #4c4c4c;
+    color: rgba(0, 0, 0, 0.45);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .cp-row.on .cp-t { color: #5b3fe4; font-weight: 500; }
-  .cp-row.done .cp-t { color: #a3a3a3; text-decoration: line-through; }
-  .cp-ic { flex: none; display: block; }
+  .cp-row.on .cp-t { color: #5b5bd5; }
+  .cp-row.done .cp-t { color: rgba(0, 0, 0, 0.25); text-decoration: line-through; }
+  img.cp-ic { flex: none; width: 14px; height: 14px; display: block; }
+  .cp-ic.r180 { transform: rotate(180deg); }
   .cp-bar {
     position: absolute;
-    left: 20px;
-    right: 20px;
-    bottom: 96px;
+    left: 44px;
+    right: 44px;
+    top: 192px;
+    height: 40px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     background: #fff;
-    border: 1px solid #e5e0f6;
-    border-radius: 13px;
-    padding: 8px 8px 8px 12px;
+    border: 1px solid rgba(91, 91, 213, 0.2);
+    border-radius: 16px;
+    padding: 0 10px 0 14px;
   }
-  .cp-pdot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: #7a5cf0; }
+  img.cp-pdot { flex: none; width: 11px; height: 11px; display: block; }
   .cp-cycle {
     font-family: ui-monospace, 'SF Mono', Menlo, monospace;
     font-size: 9.5px;
-    color: #6e6e6e;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: rgba(0, 0, 0, 0.45);
     white-space: nowrap;
   }
-  .cp-sep { color: #9a9a9a; font-size: 10px; }
+  .cp-sep { color: rgba(0, 0, 0, 0.45); font-size: 10px; }
   .cp-steps { position: relative; display: flex; align-items: center; min-width: 0; }
-  .cp-stepA, .cp-stepB { display: flex; align-items: center; gap: 5px; min-width: 0; }
+  .cp-stepA, .cp-stepB { display: flex; align-items: center; gap: 4px; min-width: 0; }
   .cp-stepA { animation: cpbarA 9s infinite; }
   .cp-stepB {
     animation: cpbarB 9s infinite;
@@ -1704,74 +1693,63 @@
     50%, 90% { opacity: 1; }
     96%, 100% { opacity: 0; }
   }
-  .cp-step { font-size: 10.5px; color: #1f1f1f; letter-spacing: -0.01em; white-space: nowrap; }
+  .cp-step { font-size: 11px; font-weight: 500; color: rgba(0, 0, 0, 0.65); letter-spacing: -0.01em; white-space: nowrap; }
+  img.cp-chev { flex: none; width: 13px; height: 13px; display: block; }
   .cp-steppill {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    font-size: 10px;
-    color: #1f1f1f;
-    background: #efeef2;
-    border-radius: var(--radius-full);
-    padding: 3px 9px;
+    gap: 4px;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.65);
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 8px;
+    padding: 3px 8px;
     white-space: nowrap;
   }
   .cp-good {
     margin-left: auto;
     flex: none;
-    font-size: 10px;
-    color: #1f1f1f;
-    background: #fff;
-    border: 1px solid #dcdcdc;
-    border-radius: 10px;
-    padding: 5px 11px;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.45);
+    padding: 4px 6px;
     white-space: nowrap;
   }
   .cp-composer {
     position: absolute;
-    left: 20px;
-    right: 20px;
-    bottom: 14px;
-    height: 72px;
+    left: 40px;
+    right: 40px;
+    top: 224px;
+    height: 62px;
     background: #fff;
-    border: 1px solid #dfdfdf;
-    border-radius: 16px;
+    border: 1px solid #d6d6d6;
+    border-radius: 18px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 1px rgba(0, 0, 0, 0.03);
   }
   .cp-caret {
     position: absolute;
-    left: 14px;
-    top: 12px;
+    left: 13px;
+    top: 10px;
     width: 1.5px;
-    height: 14px;
+    height: 13px;
     background: #1f1f1f;
     animation: cpcaret 1.1s steps(1) infinite;
   }
   @keyframes cpcaret { 50% { opacity: 0; } }
-  .cp-plus {
+  .cp-plus, .cp-send {
     position: absolute;
-    left: 10px;
-    bottom: 9px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 1px solid #d4d4d4;
-    color: #7a7a7a;
-    font-size: 13px;
-    line-height: 18px;
-    text-align: center;
-  }
-  .cp-send {
-    position: absolute;
-    right: 10px;
-    bottom: 9px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #cfc6ee;
+    bottom: 8px;
+    width: 22px;
+    height: 22px;
+    border-radius: 9px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
+  .cp-plus { left: 9px; border: 1px solid #eaeaea; background: #fff; }
+  .cp-send { right: 9px; background: rgba(29, 27, 32, 0.12); }
+  .cp-plus img, .cp-send img { width: 12px; height: 12px; display: block; }
   @media (prefers-reduced-motion: reduce) {
     .cp-drop, .cp-stepA, .cp-stepB, .cp-caret { animation: none; }
     .cp-drop { opacity: 1; transform: none; }
@@ -1827,8 +1805,7 @@
   .s3z-dot.cur { background: #6d4fe0; transform: scale(1.2); }
   .s3zoom-hint { font-size: 11px; color: var(--muted); letter-spacing: 0.02em; }
   /* manual mode: looping animations off, states driven by clicks */
-  .ia-stage.manual .ia-frame { animation: none; opacity: 0; transition: opacity 0.3s ease; }
-  .ia-stage.manual .ia-frame.cur { opacity: 1; }
+  .s3zoom .ia2-chev { cursor: pointer; pointer-events: auto; padding: 8px; margin: -8px; margin-top: -14px; box-sizing: content-box; }
   .ia-stage.manual .cp-drop {
     animation: none;
     opacity: 0;
@@ -1851,7 +1828,7 @@
     margin: 8px;
     height: calc(100% - 16px);
   }
-  .s3-shot img { width: 100%; height: 100%; object-fit: cover; object-position: left top; display: block; }
+  .s3-shot > img { width: 100%; height: 100%; object-fit: cover; object-position: left top; display: block; }
   .s3-name {
     font-size: 12px;
     font-weight: 500;
@@ -1919,7 +1896,7 @@
     width: calc(var(--s3scale, 0.25) * (100% + 6px) - 6px);
   }
   .s3-panel.zoomed .s3-shot { flex: none; aspect-ratio: auto; }
-  .s3-panel.zoomed .s3-shot img { height: auto; max-height: 74vh; object-fit: contain; object-position: left top; }
+  .s3-panel.zoomed .s3-shot > img { height: auto; max-height: 74vh; object-fit: contain; object-position: left top; }
   @media (max-width: 1180px) {
     .s3-flow { flex-wrap: wrap; }
     .s3-stage { flex: 1 1 42%; }
@@ -2382,62 +2359,48 @@
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
                 <article class="s3-stage">
-                  <div class="s3-shot s3-anim" role="img" aria-label="Inline review bar evolving: a collapsed Integration Testing bar over the composer, then an error summary bar with Approve All, then the expanded verification panel with a file-drop zone">
-                    <div class="ia-stage" aria-hidden="true">
-                      <div class="ia-frame ia-f1">
-                        <div class="ia-mid">
-                          <div class="ia-bar">
-                            <span class="ia-dot"></span>
-                            <span class="ia-bt">Integration Testing&hellip;</span>
-                            <svg class="ia-chev" width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 6L8 11L13 6" stroke="#8a8a8a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <div class="s3-shot s3-anim" role="img" aria-label="Inline review bar over the composer: the same bar switches between Integration Testing and an error summary, and its chevron expands a verification panel upward with a file-drop zone">
+                    <div class="ia-stage ia2 st-a" aria-hidden="true">
+                      <div class="ia2-open">
+                        <div class="ia-body">
+                          <div class="ia-row done">
+                            <span class="ia-check"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5" stroke="#8f8f8f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                            <span class="ia-rw"><span class="ia-rt">Review Code</span><span class="ia-rs">Review the flows and code here or in ide</span></span>
                           </div>
-                          <div class="ia-composer">
-                            <span class="ia-ph">Add feedback and generate the artifacts&hellip;</span>
-                            <span class="ia-regen">Regenerate</span>
+                          <div class="ia-row on">
+                            <span class="ia-radio on"></span>
+                            <span class="ia-rw"><span class="ia-rt">Improve the Code</span><span class="ia-rs">Upload more context or supporting documents to make the code even better</span></span>
                           </div>
+                          <div class="ia-row">
+                            <span class="ia-radio"></span>
+                            <span class="ia-rw"><span class="ia-rt">Go to Test</span><span class="ia-rs">Start Integration test or MUnit test</span></span>
+                          </div>
+                        </div>
+                        <div class="ia-drop">
+                          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 11V3M4.5 6L8 2.5L11.5 6M3 13H13" stroke="#5a4b8a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                          <span class="ia-rw"><span class="ia-dt">Drop Your Files Here</span><span class="ia-ds">XML file with maximum size of 5 MB</span></span>
                         </div>
                       </div>
-                      <div class="ia-frame ia-f2">
-                        <div class="ia-mid">
-                          <div class="ia-bar">
-                            <span class="ia-err"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.2" stroke="#c62f21" stroke-width="1.5"/><path d="M5.8 5.8L10.2 10.2M10.2 5.8L5.8 10.2" stroke="#c62f21" stroke-width="1.5" stroke-linecap="round"/></svg>4 Errors</span>
-                            <span class="ia-warn"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.2" stroke="#d78d00" stroke-width="1.5"/><path d="M8 4.6V8.8M8 11.2V11.3" stroke="#d78d00" stroke-width="1.5" stroke-linecap="round"/></svg>1 Warnings</span>
-                            <span class="ia-approve">Approve All</span>
-                            <svg class="ia-chev" width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M4 12L12 4M6 4H12V10" stroke="#8a8a8a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                          </div>
-                          <div class="ia-composer">
-                            <span class="ia-ph">Add feedback and generate the artifacts&hellip;</span>
-                            <span class="ia-regen">Regenerate</span>
-                          </div>
-                        </div>
+                      <div class="ia2-bar">
+                        <span class="ia2-h ia2-h1">
+                          <span class="ia-dot"></span>
+                          <span class="ia-bt">Integration Testing&hellip;</span>
+                        </span>
+                        <span class="ia2-h ia2-h2">
+                          <span class="ia-err"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.2" stroke="#c62f21" stroke-width="1.5"/><path d="M5.8 5.8L10.2 10.2M10.2 5.8L5.8 10.2" stroke="#c62f21" stroke-width="1.5" stroke-linecap="round"/></svg>4 Errors</span>
+                          <span class="ia-warn"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.2" stroke="#d78d00" stroke-width="1.5"/><path d="M8 4.6V8.8M8 11.2V11.3" stroke="#d78d00" stroke-width="1.5" stroke-linecap="round"/></svg>1 Warnings</span>
+                          <span class="ia-approve">Approve All</span>
+                        </span>
+                        <span class="ia2-h ia2-h3">
+                          <span class="ia-dot"></span>
+                          <span class="ia-bt">Verification &ndash; Upload Schema for more context</span>
+                          <span class="ia-skip">Skip</span>
+                        </span>
+                        <svg class="ia-chev ia2-chev" width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 6L8 11L13 6" stroke="#8a8a8a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                       </div>
-                      <div class="ia-frame ia-f3">
-                        <div class="ia-panel">
-                          <div class="ia-p3head">
-                            <span class="ia-dot"></span>
-                            <span class="ia-bt">Verification &ndash; Upload Schema for more context</span>
-                            <span class="ia-skip">Skip</span>
-                            <svg class="ia-chev" width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3 6L8 11L13 6" stroke="#8a8a8a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                          </div>
-                          <div class="ia-body">
-                            <div class="ia-row done">
-                              <span class="ia-check"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5" stroke="#8f8f8f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                              <span class="ia-rw"><span class="ia-rt">Review Code</span><span class="ia-rs">Review the flows and code here or in ide</span></span>
-                            </div>
-                            <div class="ia-row on">
-                              <span class="ia-radio on"></span>
-                              <span class="ia-rw"><span class="ia-rt">Improve the Code</span><span class="ia-rs">Upload more context or supporting documents to make the code even better</span></span>
-                            </div>
-                            <div class="ia-row">
-                              <span class="ia-radio"></span>
-                              <span class="ia-rw"><span class="ia-rt">Go to Test</span><span class="ia-rs">Start Integration test or MUnit test</span></span>
-                            </div>
-                          </div>
-                          <div class="ia-drop">
-                            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 11V3M4.5 6L8 2.5L11.5 6M3 13H13" stroke="#5a4b8a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            <span class="ia-rw"><span class="ia-dt">Drop Your Files Here</span><span class="ia-ds">XML file with maximum size of 5 MB</span></span>
-                          </div>
-                        </div>
+                      <div class="ia-composer">
+                        <span class="ia-ph">Add feedback and generate the artifacts&hellip;</span>
+                        <span class="ia-regen">Regenerate</span>
                       </div>
                     </div>
                   </div>
@@ -2448,57 +2411,55 @@
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
                 <article class="s3-stage">
-                  <div class="s3-shot s3-anim" role="img" aria-label="Compact review pill above the composer; its dropdown opens upward listing the cycle steps, each with an icon matching its meaning, while the pill's step label switches to the active step">
+                  <div class="s3-shot s3-anim" role="img" aria-label="Compact code review pill over the composer; its dropdown opens upward listing the cycle steps, and the pill's step label swaps to the active Provide Dataweave">
                     <div class="ia-stage" aria-hidden="true">
                       <div class="cp-drop">
                         <div class="cp-h">CODE REVIEW CYCLE</div>
                         <div class="cp-row done">
-                          <span class="cp-lead cp-done"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                          <img class="cp-li" src="assets/cp/check-done.svg" alt="">
                           <span class="cp-t">Provide feedback</span>
-                          <svg class="cp-ic" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                          <img class="cp-ic r180" src="assets/cp/ret-gray.svg" alt="">
                         </div>
                         <div class="cp-row on">
-                          <span class="cp-lead cp-radio on"></span>
-                          <span class="cp-t">Provide date weave</span>
-                          <svg class="cp-ic" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6d4fe0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+                          <img class="cp-li" src="assets/cp/radio-active.svg" alt="">
+                          <span class="cp-t">Provide Dataweave</span>
+                          <img class="cp-ic r180" src="assets/cp/ret-purple.svg" alt="">
                         </div>
                         <div class="cp-row">
-                          <span class="cp-lead cp-radio"></span>
+                          <img class="cp-li" src="assets/cp/radio-empty.svg" alt="">
                           <span class="cp-t">Run Code &amp; Fix</span>
-                          <svg class="cp-ic" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                          <img class="cp-ic r180" src="assets/cp/ret-gray2.svg" alt="">
                         </div>
                         <div class="cp-row">
-                          <span class="cp-lead cp-radio"></span>
+                          <img class="cp-li" src="assets/cp/radio-empty.svg" alt="">
                           <span class="cp-t">Run Unit Test</span>
-                          <svg class="cp-ic" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.5L4.5 20a1 1 0 0 0 .9 1.5h13.2a1 1 0 0 0 .9-1.5L14 9.5V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg>
+                          <img class="cp-ic r180" src="assets/cp/ret-gray2.svg" alt="">
                         </div>
                         <div class="cp-row">
-                          <span class="cp-lead cp-radio"></span>
+                          <img class="cp-li" src="assets/cp/radio-empty.svg" alt="">
                           <span class="cp-t">Deploy checklist</span>
-                          <svg class="cp-ic" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+                          <img class="cp-ic" src="assets/cp/info.svg" alt="">
                         </div>
                       </div>
                       <div class="cp-bar">
-                        <span class="cp-pdot"></span>
+                        <img class="cp-pdot" src="assets/cp/dot.svg" alt="">
                         <span class="cp-cycle">Code review cycle</span>
                         <span class="cp-sep">&middot;</span>
                         <span class="cp-steps">
                           <span class="cp-stepA">
                             <span class="cp-step">Provide feedback</span>
-                            <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M3 6L8 11L13 6" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            <img class="cp-chev" src="assets/cp/chev-down.svg" alt="">
                           </span>
                           <span class="cp-stepB">
-                            <span class="cp-steppill">Provide date weave
-                              <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M3 10L8 5L13 10" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            </span>
+                            <span class="cp-steppill">Provide Dataweave <img class="cp-chev" src="assets/cp/chev-up.svg" alt=""></span>
                           </span>
                         </span>
-                        <span class="cp-good">All looks good</span>
+                        <span class="cp-good">Skip</span>
                       </div>
                       <div class="cp-composer">
                         <span class="cp-caret"></span>
-                        <span class="cp-plus">+</span>
-                        <span class="cp-send"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M8 13V3M4 7L8 3L12 7" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                        <span class="cp-plus"><img src="assets/cp/attach.svg" alt=""></span>
+                        <span class="cp-send"><img src="assets/cp/send.svg" alt=""></span>
                       </div>
                     </div>
                   </div>
@@ -3660,27 +3621,35 @@
       s3zcap.appendChild(sp);
     }
     var stage = clone.querySelector('.ia-stage');
-    var frames = clone.querySelectorAll('.ia-frame');
-    if (stage && frames.length) {
-      stage.classList.add('manual');
+    if (stage && stage.classList.contains('ia2')) {
+      stage.classList.remove('st-b', 'st-c');
+      stage.classList.add('st-a', 'manual');
       clone.classList.add('zclick');
-      var cur = 0;
-      var setF = function (i) {
-        cur = (i + frames.length) % frames.length;
-        frames.forEach(function (f, j) { f.classList.toggle('cur', j === cur); });
-        s3zdots.querySelectorAll('.s3z-dot').forEach(function (d, j) { d.classList.toggle('cur', j === cur); });
-      };
-      frames.forEach(function (_, j) {
-        var d = document.createElement('span');
-        d.className = 's3z-dot';
-        d.setAttribute('role', 'button');
-        d.setAttribute('aria-label', 'Show state ' + (j + 1));
-        d.addEventListener('click', function (e) { e.stopPropagation(); setF(j); });
-        s3zdots.appendChild(d);
+      var bar = clone.querySelector('.ia2-bar');
+      var chev = clone.querySelector('.ia2-chev');
+      chev.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (stage.classList.contains('st-c')) {
+          stage.classList.remove('st-c');
+          stage.classList.add('st-a');
+        } else {
+          stage.classList.remove('st-a', 'st-b');
+          stage.classList.add('st-c');
+        }
       });
-      clone.addEventListener('click', function (e) { e.stopPropagation(); setF(cur + 1); });
-      setF(0);
-      s3zhint.textContent = 'Click the card to step through the states · Esc to close';
+      bar.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (stage.classList.contains('st-c')) {
+          stage.classList.remove('st-c');
+          stage.classList.add('st-a');
+          return;
+        }
+        var isA = stage.classList.contains('st-a');
+        stage.classList.toggle('st-a', !isA);
+        stage.classList.toggle('st-b', isA);
+      });
+      clone.addEventListener('click', function (e) { e.stopPropagation(); });
+      s3zhint.textContent = 'Click the bar to switch its state · click the chevron to expand · Esc to close';
     } else if (stage && clone.querySelector('.cp-drop')) {
       stage.classList.add('manual');
       clone.classList.add('zclick');
@@ -3697,6 +3666,16 @@
     shot.addEventListener('click', function () { openS3Zoom(shot); });
   });
   s3zoomEl.addEventListener('click', closeS3Zoom);
+  /* ambient loop for the small inline-bar card: cycle the three states */
+  var ia2src = document.querySelector('.s3-ex .ia2');
+  if (ia2src && !reduced) {
+    var IA2S = ['st-a', 'st-b', 'st-c'];
+    var ia2i = 0;
+    setInterval(function () {
+      ia2i = (ia2i + 1) % IA2S.length;
+      IA2S.forEach(function (c, j) { ia2src.classList.toggle(c, j === ia2i); });
+    }, 3200);
+  }
 
   document.addEventListener('keydown', function (e) {
     if (document.body.classList.contains('s3zoomed')) {

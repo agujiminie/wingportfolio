@@ -1339,6 +1339,26 @@
   }
   /* focus follows hover: the table lifts, the cards settle */
   .s3-panel:has(.s3-table:hover) .s3-stage { box-shadow: none; }
+  /* example pager: chevrons at the right end of the section title row */
+  .s3-evohead { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; }
+  .s3-evohead .s2-h { margin: 0; }
+  .s3-pager { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .s3-exname {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 4px;
+    user-select: none;
+  }
+  .s3-pager .arrow { width: 26px; height: 26px; }
+  .s3-pager .gcount { font-size: 10px; }
+  .s3-ex { display: none; }
+  .s3-ex.on { display: block; animation: s3exin 0.35s var(--ease-enter); }
+  @keyframes s3exin {
+    from { opacity: 0; transform: translateX(10px); }
+    to { opacity: 1; transform: none; }
+  }
   .s3-shot {
     aspect-ratio: 4 / 3;
     min-height: 0;
@@ -1349,6 +1369,17 @@
     line-height: 1.5;
     letter-spacing: -0.01em;
     margin-bottom: 10px;
+  }
+  .s3-shot .ph3 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 12px;
+    border: 1px dashed var(--chip-border);
+    border-radius: 6px;
+    margin: 8px;
+    height: calc(100% - 16px);
   }
   .s3-shot img { width: 100%; height: 100%; object-fit: cover; object-position: left top; display: block; }
   .s3-name {
@@ -1847,7 +1878,46 @@
       <div class="media-item" data-step="3">
         <div class="s3-panel" data-real>
           <section class="s3-evo">
-            <h3 class="s2-h">User behavior shaped how verification evolved.</h3>
+            <div class="s3-evohead">
+              <h3 class="s2-h">User behavior shaped how verification evolved.</h3>
+              <div class="s3-pager">
+                <span class="s3-exname" id="s3exname">Progress bar</span>
+                <button class="arrow s3-exprev" aria-label="Previous example">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <span class="gcount" id="s3excount">1 / 2</span>
+                <button class="arrow s3-exnext" aria-label="Next example">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="s3-ex on" data-exname="Progress bar">
+              <div class="s3-flow">
+                <!-- To drop in a real asset: inside .s3-shot, replace the .ph3 div with <img src="assets/step3/....png" alt="..."> -->
+                <article class="s3-stage">
+                  <div class="s3-shot"><div class="ph3">Sidebar checklist 截图位 — 发我图即可替换</div></div>
+                  <div class="s3-name">Status, location</div>
+                  <p class="s3-note">Sidebar checklist</p>
+                </article>
+                <div class="s3-arrow" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <article class="s3-stage">
+                  <div class="s3-shot"><div class="ph3">Inline panel 截图位 — 发我图即可替换</div></div>
+                  <div class="s3-name">Action, hierarchy, density</div>
+                  <p class="s3-note">Inline expanded panel</p>
+                </article>
+                <div class="s3-arrow" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9.5 4.5L13 8L9.5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <article class="s3-stage">
+                  <div class="s3-shot"><div class="ph3">Compact pill 截图位 — 发我图即可替换</div></div>
+                  <div class="s3-name">State change, visual treatment</div>
+                  <p class="s3-note">Compact, blended into the composer</p>
+                </article>
+              </div>
+            </div>
+            <div class="s3-ex" data-exname="Verification">
             <div class="s3-flow">
               <article class="s3-stage">
                 <div class="s3-shot"><img src="assets/step3/plugin.png" alt="CurieTech AI IDE plugin panel listing agent tasks with Apply Changes and View Task actions"></div>
@@ -1878,6 +1948,7 @@
                 <div class="s3-name">&ldquo;Enterprise verification required handoffs&rdquo;</div>
                 <p class="s3-note">Shared review</p>
               </article>
+            </div>
             </div>
           </section>
           <section class="s3-risk">
@@ -2737,8 +2808,23 @@
       var panel = document.querySelector('.s3-panel');
       if (!panel) return;
       panel.classList.toggle('zoomed', v > 27);
-      panel.querySelector('.s3-flow').style.setProperty('--s3scale', v / 100);
+      panel.querySelectorAll('.s3-flow').forEach(function (f) {
+        f.style.setProperty('--s3scale', v / 100);
+      });
     });
+  }
+  /* step 3: paginate between behavior-evolution examples */
+  var s3exs = document.querySelectorAll('.s3-ex');
+  if (s3exs.length) {
+    var s3cur = 0;
+    var s3show = function (i) {
+      s3cur = (i + s3exs.length) % s3exs.length;
+      s3exs.forEach(function (e, j) { e.classList.toggle('on', j === s3cur); });
+      document.getElementById('s3excount').textContent = (s3cur + 1) + ' / ' + s3exs.length;
+      document.getElementById('s3exname').textContent = s3exs[s3cur].getAttribute('data-exname');
+    };
+    document.querySelector('.s3-exprev').addEventListener('click', function () { s3show(s3cur - 1); });
+    document.querySelector('.s3-exnext').addEventListener('click', function () { s3show(s3cur + 1); });
   }
   /* variable sliders: re-rank demos by proximity to the setting */
   var VAR_DEF = {

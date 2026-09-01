@@ -1321,7 +1321,7 @@
     flex: 1;
     min-height: 0;
     display: flex;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 6px;
   }
   .s3-stage {
@@ -1339,6 +1339,22 @@
   }
   /* focus follows hover: the table lifts, the cards settle */
   .s3-panel:has(.s3-table:hover) .s3-stage { box-shadow: none; }
+  /* strip thumbnails: static first-state crops — quarter margin top/left, overflow bottom-right */
+  .s3-ex .s3-shot.s3-live { position: relative; display: block; }
+  .s3-ex .crc-card {
+    position: absolute;
+    left: 25%;
+    top: 25%;
+    margin: 0;
+    transform: scale(0.85);
+    transform-origin: 0 0;
+  }
+  .s3-ex .fg2 { left: 100px; top: 156px; transform: scale(0.75); transform-origin: 0 0; }
+  .s3-ex .fg3 { left: 78px; top: 124px; transform: scale(0.9); transform-origin: 0 0; }
+  .s3-ex .fg4 { left: 80px; top: 128px; transform: scale(0.85); transform-origin: 0 0; }
+  .s3-ex .fg2-banner, .s3-ex .fg2-open, .s3-ex .fg3-drop, .s3-ex .fg4-back { transition: none; }
+  .s3-ex .fg3-caret, .s3-ex .fg4 .fg3-caret { animation: none; }
+
   /* example pager: chevrons at the right end of the section title row */
   .s3-evohead { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; }
   .s3-evohead .s2-h { margin: 0; }
@@ -1729,6 +1745,8 @@
   }
   .s3zoom .fg4 { top: 52%; transform: translateX(-50%) scale(0.61); }
   .fg4-content {
+    opacity: 0;
+    transition: opacity 0.35s ease;
     position: absolute;
     left: 24px;
     width: 530px;
@@ -1765,6 +1783,7 @@
     background: linear-gradient(to bottom, rgba(239, 240, 243, 0), #eff0f3);
   }
   .fg4s.bg .fg4-back { opacity: 1; }
+  .fg4s.bg .fg4-content { opacity: 1; }
   .fg4-bar {
     position: relative;
     z-index: 2;
@@ -3740,23 +3759,6 @@
   document.getElementById('s3zprev').addEventListener('click', function (e) { e.stopPropagation(); s3zNav(-1); });
   document.getElementById('s3znext').addEventListener('click', function (e) { e.stopPropagation(); s3zNav(1); });
   /* ambient loop for the small inline-bar card: cycle the three states */
-  var fg4src = document.querySelector('.s3-ex .fg4s');
-  if (fg4src && !reduced) {
-    setInterval(function () { fg4src.classList.toggle('bg'); }, 3800);
-  }
-  var fg3src = document.querySelector('.s3-ex .fg3s');
-  if (fg3src && !reduced) {
-    setInterval(function () { fg3src.classList.toggle('open'); }, 3600);
-  }
-  var ia2src = document.querySelector('.s3-ex .ia2');
-  if (ia2src && !reduced) {
-    var IA2S = ['st-a', 'st-b', 'st-c'];
-    var ia2i = 0;
-    setInterval(function () {
-      ia2i = (ia2i + 1) % IA2S.length;
-      IA2S.forEach(function (c, j) { ia2src.classList.toggle(c, j === ia2i); });
-    }, 3200);
-  }
 
   document.addEventListener('keydown', function (e) {
     if (document.body.classList.contains('s3zoomed')) {

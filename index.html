@@ -2705,7 +2705,7 @@
     current = idx;
     body.setAttribute('data-state', STATES[idx]);
     applyRoles(idx);
-    history.replaceState(null, '', location.pathname);
+    try { history.replaceState(null, '', location.pathname); } catch (e) { /* file:// may refuse */ }
     if (!animate) return;
 
     titles.forEach(function (t, i) {

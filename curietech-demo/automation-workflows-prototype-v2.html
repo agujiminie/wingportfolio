@@ -5717,8 +5717,46 @@
     color: #846fe1;
     flex-shrink: 0;
   }
-  .aa-icon svg.spin { animation: aa-spin 1.1s linear infinite; }
-  @keyframes aa-spin { to { transform: rotate(360deg); } }
+  /* Loading indicator: breathing opacity, not rotation */
+  .aa-icon svg.spin { animation: aa-breathe 1.6s ease-in-out infinite; }
+  @keyframes aa-breathe {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+  /* Running-state header: same header as the code view, running variant */
+  .run-indicator {
+    display: none;
+    width: 28px;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .run-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #846fe1;
+    animation: aa-breathe 1.6s ease-in-out infinite;
+  }
+  .panel-text-btn {
+    display: none;
+    align-items: center;
+    height: 32px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.65);
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+  }
+  .panel-text-btn:hover { background: rgba(0, 0, 0, 0.04); color: rgba(0, 0, 0, 0.88); }
+  .panel-header.running .code-done-only { display: none; }
+  .panel-header.running .run-indicator { display: inline-flex; }
+  .panel-header.running .panel-text-btn { display: inline-flex; }
   .aa-main { flex: 1; min-width: 0; }
   .aa-title-row { min-height: 36px; display: flex; align-items: center; gap: 8px; padding: 0 16px; }
   .aa-title { font-size: 14px; line-height: 22px; font-weight: 500; color: #846fe1; white-space: nowrap; }
@@ -6463,16 +6501,18 @@
       <!-- Panel header (Code mode) -->
       <div class="panel-header" id="codeHeader">
         <div class="panel-header-left">
-          <button class="panel-icon-btn" aria-label="File menu">
+          <span class="run-indicator" id="codeRunIndicator" aria-label="Task running"><span class="run-dot"></span></span>
+          <button class="panel-icon-btn code-done-only" aria-label="File menu">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
           </button>
-          <span class="panel-title">v2_src/main/mule/member-enrollment-impl.md</span>
+          <span class="panel-title" id="codeHeaderTitle">v2_src/main/mule/member-enrollment-impl.md</span>
         </div>
         <div class="panel-header-right">
-          <button class="panel-icon-btn" title="Download">
+          <button class="panel-icon-btn code-done-only" title="Download">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           </button>
-          <button class="panel-outline-btn">View in AnyPoint Studio</button>
+          <button class="panel-outline-btn code-done-only">View in AnyPoint Studio</button>
+          <button class="panel-text-btn" id="stopTaskBtn" type="button" onclick="pcStopTask()">Stop Task</button>
           <button class="panel-icon-btn" title="Close">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
@@ -8742,12 +8782,30 @@
   function pcShowSkeleton(show) {
     const skel = document.getElementById('pcSkeletonCanvas');
     if (skel) skel.classList.toggle('hidden', !show);
+    const codeHeader = document.getElementById('codeHeader');
     if (show) {
-      ['codeCanvas', 'codeHeader', 'documentCanvas', 'documentHeader', 'integrationCanvas', 'integrationHeader', 'workflowCanvas', 'workflowHeader'].forEach(id => {
+      ['codeCanvas', 'documentCanvas', 'documentHeader', 'integrationCanvas', 'integrationHeader', 'workflowCanvas', 'workflowHeader'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
       });
+      // Same header as the code view, in its running variant: task name as
+      // title (kept after completion), Stop Task instead of download/Studio
+      if (codeHeader) {
+        codeHeader.classList.remove('hidden');
+        codeHeader.classList.add('running');
+        const t = document.getElementById('codeHeaderTitle');
+        if (t) t.textContent = PC_TASKS[0].title;
+      }
+    } else if (codeHeader) {
+      codeHeader.classList.remove('running');
     }
+  }
+  function pcStopTask() {
+    pcState.timers.forEach(t => window.clearTimeout(t));
+    pcState.timers = [];
+    pcShowSkeleton(false);
+    setCanvas('document');
+    showToast('Coder task stopped', 'info');
   }
 
   /* ── Live agent activity stream (Figma 289:19050 / 289:18768 / 289:16801) ── */

@@ -8779,7 +8779,7 @@
       window.setTimeout(() => appRoot.classList.remove('split-entering'), 430);
     }
   }
-  function pcShowSkeleton(show) {
+  function pcShowSkeleton(show, taskTitle) {
     const skel = document.getElementById('pcSkeletonCanvas');
     if (skel) skel.classList.toggle('hidden', !show);
     const codeHeader = document.getElementById('codeHeader');
@@ -8794,7 +8794,7 @@
         codeHeader.classList.remove('hidden');
         codeHeader.classList.add('running');
         const t = document.getElementById('codeHeaderTitle');
-        if (t) t.textContent = PC_TASKS[0].title;
+        if (t) t.textContent = taskTitle || PC_TASKS[0].title;
       }
     } else if (codeHeader) {
       codeHeader.classList.remove('running');
@@ -9779,7 +9779,14 @@
     focusSideCanvas('code');
     card.scrollIntoView({ behavior: 'smooth', block: 'center' });
     showToast('Coder task started', 'play');
-    window.setTimeout(completeCoderTask, 900);
+    // Same live agent-activity stream as the prompt-chat flow (identical
+    // content, timing, and running header), then the task completes.
+    pcShowSkeleton(true, 'Build member enrollment Mule 4 app');
+    pcRunAgentActivities(() => {
+      pcShowSkeleton(false);
+      setCanvas('code');
+      completeCoderTask();
+    });
   }
 
   function completeCoderTask(options = {}) {

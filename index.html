@@ -1370,6 +1370,60 @@
     letter-spacing: -0.01em;
     margin-bottom: 10px;
   }
+  /* live-coded stage shot: the code review cycle sidebar checklist */
+  .s3-shot.s3-live {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fafafa;
+  }
+  .crc-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), 0 10px 30px rgba(0, 0, 0, 0.08);
+    padding: 16px 22px 14px 18px;
+    min-width: 58%;
+  }
+  .crc-h {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: #7d7d7d;
+    margin-bottom: 10px;
+  }
+  .crc-row {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 7px 0;
+  }
+  .crc-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #8e8e8e;
+    flex: none;
+    position: relative;
+  }
+  .crc-row:not(:last-child) .crc-dot::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 11px;
+    width: 1.5px;
+    height: 13px;
+    background: #e6e6e6;
+    transform: translateX(-50%);
+  }
+  .crc-row.on .crc-dot { background: #9f83ef; }
+  .crc-row.on .crc-dot::after { background: #8b6fe8; height: 15px; }
+  .crc-t {
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    color: #6b6b6b;
+  }
+  .crc-row.on .crc-t { color: #5b3fe4; }
   .s3-shot .ph3 {
     display: flex;
     align-items: center;
@@ -1895,7 +1949,16 @@
               <div class="s3-flow">
                 <!-- To drop in a real asset: inside .s3-shot, replace the .ph3 div with <img src="assets/step3/....png" alt="..."> -->
                 <article class="s3-stage">
-                  <div class="s3-shot"><div class="ph3">Sidebar checklist 截图位 — 发我图即可替换</div></div>
+                  <div class="s3-shot s3-live" role="img" aria-label="Code review cycle sidebar checklist: Provide Feedback active, followed by Provide date weave, Improve Code Quality, Run Unit Test, Deploy checklist">
+                    <div class="crc-card" aria-hidden="true">
+                      <div class="crc-h">CODE REVIEW CYCLE</div>
+                      <div class="crc-row on"><span class="crc-dot"></span><span class="crc-t">Provide Feedback</span></div>
+                      <div class="crc-row"><span class="crc-dot"></span><span class="crc-t">Provide date weave</span></div>
+                      <div class="crc-row"><span class="crc-dot"></span><span class="crc-t">Improve Code Quality</span></div>
+                      <div class="crc-row"><span class="crc-dot"></span><span class="crc-t">Run Unit Test</span></div>
+                      <div class="crc-row"><span class="crc-dot"></span><span class="crc-t">Deploy checklist</span></div>
+                    </div>
+                  </div>
                   <div class="s3-name">Status, location</div>
                   <p class="s3-note">Sidebar checklist</p>
                 </article>

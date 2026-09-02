@@ -5,20 +5,8 @@ import FrameOverlay from './FrameOverlay'
 import SecondScreen from './SecondScreen'
 import { STATE_BY_ID, TRANSITION_IMAGES } from './content'
 import { smoothScrollToTop } from './lib/smoothScroll'
-
-function getInitialStateId() {
-  if (typeof window === 'undefined') {
-    return 'work'
-  }
-
-  const candidate = new URLSearchParams(window.location.search).get('state')
-
-  if (candidate && STATE_BY_ID[candidate]) {
-    return candidate
-  }
-
-  return 'work'
-}
+import { normalizeTabPath, pushTabPath, tabFromLocation } from './lib/tabRoutes'
+import { BRAND } from './frameContent'
 
 // The hero (morph canvas + headline) fades to 0 by the time the second screen's
 // top edge has risen to this fraction of the viewport height — i.e. once the
@@ -37,8 +25,11 @@ const TITLE_FADE_AT = 8
 // can morph immediately instead of first snapping to the top.
 const TOP_EPSILON = 2
 
+// index.html's <title>, captured once so tab switches can restore it.
+const SITE_TITLE = typeof document !== 'undefined' ? document.title : BRAND.name
+
 export default function App() {
-  const [activeId, setActiveId] = useState(() => getInitialStateId())
+  const [activeId, setActiveId] = useState(() => tabFromLocation())
   const [scrolled, setScrolled] = useState(false)
   const panelRef = useRef(null)
   // In-flight "snap to top" cancel fn + the tab to switch to once it lands.
@@ -91,6 +82,46 @@ export default function App() {
     }
   }, [])
 
+  // Each tab owns a URL (/work, /ai-playground, /analog). Keep the tab in sync
+  // with Back/Forward: popstate re-reads the path and switches tabs without
+  // pushing a new entry. (Hash changes also fire popstate; the path is
+  // unchanged then, so this is a no-op and the hash router handles it.)
+  useEffect(() => {
+    const onPopState = () => {
+      const id = tabFromLocation()
+      if (id === activeId) return
+      pendingTargetRef.current = id
+      if (scrollCancelRef.current) return
+      if (window.scrollY <= TOP_EPSILON) {
+        startTransition(() => setActiveId(id))
+        return
+      }
+      scrollCancelRef.current = smoothScrollToTop({
+        onDone: () => {
+          scrollCancelRef.current = null
+          const target = pendingTargetRef.current
+          if (target != null) startTransition(() => setActiveId(target))
+        },
+      })
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [activeId])
+
+  // Tab title in the browser tab / share sheet; the Work tab keeps the site title.
+  useEffect(() => {
+    const label = STATE_BY_ID[activeId]?.label
+    document.title = activeId === 'work' || !label ? SITE_TITLE : `${label} · ${BRAND.name}`
+    return () => {
+      document.title = SITE_TITLE
+    }
+  }, [activeId])
+
+  // Clean up legacy "?state=" / alias URLs to the canonical tab path once.
+  useEffect(() => {
+    normalizeTabPath(tabFromLocation())
+  }, [])
+
   // Cancel any in-flight snap-to-top if the component unmounts mid-animation.
   useEffect(() => () => scrollCancelRef.current?.(), [])
 
@@ -102,6 +133,7 @@ export default function App() {
     (id) => {
       if (id === activeId) return
       pendingTargetRef.current = id
+      pushTabPath(id)
 
       if (scrollCancelRef.current) return // snap already running → just retarget
 

@@ -7,6 +7,7 @@ import {
   NAV_ITEMS,
 } from './frameContent'
 import { STATE_BY_ID } from './content'
+import { tabPath } from './lib/tabRoutes'
 
 const CTA_ICONS = { linkedin: Linkedin, mail: Mail }
 
@@ -18,7 +19,11 @@ const CTA_ICONS = { linkedin: Linkedin, mail: Mail }
 export default function FrameOverlay({ activeId, onSelect, onGoHome, scrolled = false }) {
   const activeState = STATE_BY_ID[activeId]
 
-  const handleSelect = (id) => {
+  const handleSelect = (event, id) => {
+    // Plain click: stay in-app (App writes the URL + drives the morph).
+    // Modifier/middle clicks fall through so "open in new tab" works.
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return
+    event.preventDefault()
     if (id === activeId) return
     // App decides whether to snap-to-top first, then drives the morph.
     onSelect(id)
@@ -83,11 +88,11 @@ export default function FrameOverlay({ activeId, onSelect, onGoHome, scrolled = 
           {NAV_ITEMS.map((item) => {
             const isActive = item.id === activeId
             return (
-              <button
+              <a
                 key={item.id}
-                type="button"
+                href={tabPath(item.id)}
                 className={`frame__nav-item${isActive ? ' is-active' : ''}`}
-                aria-pressed={isActive}
+                aria-current={isActive ? 'page' : undefined}
                 style={
                   isActive
                     ? {
@@ -97,10 +102,10 @@ export default function FrameOverlay({ activeId, onSelect, onGoHome, scrolled = 
                       }
                     : undefined
                 }
-                onClick={() => handleSelect(item.id)}
+                onClick={(event) => handleSelect(event, item.id)}
               >
                 {item.label}
-              </button>
+              </a>
             )
           })}
         </nav>

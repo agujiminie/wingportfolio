@@ -145,7 +145,8 @@
   .step[data-role="upcoming"] { margin-top: 4px; }
 
   /* ---------- right column ---------- */
-  .desc {
+  .desc { display: none !important; }
+  .desc-unused {
     position: absolute;
     left: var(--split);
     top: var(--my);
@@ -3466,7 +3467,7 @@
   var VAR_DEF = {
     input:   { n: 'Input effort',          l: 'Low', r: 'High', s: { qa: 88, wid: 62, ctx: 10 } },
     context: { n: 'Process flexibility',   l: 'Low', r: 'High', s: { qa: 10, wid: 35, ctx: 92 } },
-    exec:    { n: 'Result predictability', l: 'Low', r: 'High', s: { qa: 85, wid: 58, ctx: 12 } }
+    exec:    { n: 'Result predictability', l: 'Low', r: 'High', s: { qa: 15, wid: 42, ctx: 88 } }
   };
   var protosBox = document.querySelector('.protos');
   var protoByKey = {};

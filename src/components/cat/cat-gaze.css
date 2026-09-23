@@ -1,0 +1,32 @@
+/* CatGaze — stacked frames, one visible at a time. No transitions on purpose:
+   the reference video swaps poses as a hard cut. */
+
+.cat-gaze {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  /* Finger drags on the stage steer the cat instead of scrolling the page. */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  cursor: default;
+}
+
+.cat-gaze__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  visibility: hidden;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.cat-gaze__frame[data-active='true'] {
+  visibility: visible;
+}

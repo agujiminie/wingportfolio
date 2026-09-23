@@ -129,6 +129,35 @@ Webflow /gallery 的重设计版：scatter hero（Claude startups 风格，作�
 
 无 Figma 稿——动效为用户口头需求（"delightful、滑到才动"），方案经用户确认。
 
+## Cat gaze page（#/cat，2026-09-23 新增）
+
+用户提供的参考视频：白底、正中一只猫，猫的头/视线跟着 cursor 转。分析视频帧确认的
+机制是 **同一只猫、多张不同注视方向的静态照片，按 cursor 相对猫脸的方向硬切**
+（不是 3D、不是视频拖动、无淡入淡出）。最终要并进作品集，现在先做独立路由。
+
+- 路由：`#/cat`（`main.jsx` 的 `isCatHash`）→ `src/CatPage.jsx`（纯白全屏、左上角
+  极简 "← Home"，其余只有猫；`html.cat-page-active` 把站内灰/薄荷底色盖成白）。
+- 核心组件 `src/components/cat/`（可复用，以后 `<CatGaze frames={CAT_FRAMES} />`
+  直接放进落地页任意 section，它按自身容器 `object-fit: contain` 计算）：
+  - `CatGaze.jsx`：25 张 `<img>` 叠放、全部预加载 + `decode()`，只切 `visibility`，
+    **故意不加 transition**（= 视频里的硬切）。加载完前只显示正中帧。
+  - `useGazeCell.js`：指针 → 5×5 cell。向量 = 指针 − 猫脸锚点（`faceAnchor`，默认
+    `{x:0.5,y:0.42}`，相对**实际画出来的图**而非 letterbox 容器），按 `reach`
+    （默认到最远视口边缘的 85%）归一化；cell 边界有 0.08 格滞回防闪。
+    触屏：手指在 stage 上 pointerdown 后跟随（`touch-action:none`），松手停止。
+    空闲：2.5s 无输入或 cursor 离开窗口 → 每 1.2–3s 随机走到相邻格、35% 概率回正中；
+    任何输入立即退出。`prefers-reduced-motion` → 不东张西望，只回正中。
+  - `catFrames.js`：`import.meta.glob('src/assets/cat/r*-c*.{webp,jpg,png}')` 组成
+    `[row][col]` 表，缺格自动借最近邻；**没有照片时导出程序画的 SVG 占位猫**
+    （`PLACEHOLDER_FRAMES`，右下角有 "placeholder rX cY" 小字），照片一放进去就自动换真图。
+- 素材约定与拍摄指南：`src/assets/cat/README.md`（`r{row}-c{col}.webp`，row 0 往上看、
+  col 0 往观众左边看、`r2-c2` 直视镜头）。**用户决定自己拍 25 张真照片**，交图后
+  由 Claude 统一裁切对齐、长边 1400px、WebP q80 后放入该目录。
+- 无 Figma 稿——参考是用户的视频；布局/比例对照视频帧做过走查。
+- 验证脚本思路（Playwright）：鼠标移到视口 9 个代表点断言 `.cat-gaze[data-cell]`；
+  在 cell 边界 ±2px 抖动断言不闪；静止 2.5s 后 `data-mode="idle"` 且 cell 会变；
+  合成 `PointerEvent(pointerType:'touch')` 在 stage 上 down+move 断言跟随且页面不滚。
+
 ## 明确的下一步（用户原话规划）
 
 1. **Screen 3：full automation loop** —— 用户切到另一个 chat 看完整自动化流程。

@@ -3,9 +3,41 @@ import assert from 'node:assert/strict'
 import { setImmediate } from 'node:timers/promises'
 import { createGazeFrameCache, nearbyFrames } from '../../src/components/cat/gazeFrameCache.js'
 import { advanceGaze, atlasIndex } from '../../src/components/cat/gazeMotion.js'
+import { headNeckScale, drawAlignedHeadNeck } from '../../src/components/cat/headNeckAlignment.js'
 
 const flush = () => setImmediate()
 const frames = Array.from({ length: 841 }, (_, index) => String(index))
+
+test('down-left size correction eases through adjacent poses and leaves center/right unchanged', () => {
+  assert.equal(headNeckScale(28 * 29, 29), 1.075)
+  assert.equal(headNeckScale(0, 1), 1)
+  for (let r = 0; r < 29; r++) for (let c = 0; c < 29; c++) {
+    const scale = headNeckScale(r * 29 + c, 29)
+    assert.ok(scale >= 1 && scale <= 1.075)
+    if (c >= 14 || r <= 9) assert.equal(scale, 1)
+    if (r < 28) {
+      const next = headNeckScale((r + 1) * 29 + c, 29)
+      assert.ok(next >= scale && next - scale < 0.01)
+    }
+    if (c < 28) {
+      const next = headNeckScale(r * 29 + c + 1, 29)
+      assert.ok(next <= scale && scale - next < 0.01)
+    }
+  }
+})
+
+test('head and neck receive one uniform transform without stretching facial proportions', () => {
+  const calls = []
+  const context = Object.fromEntries(['save', 'translate', 'scale', 'drawImage', 'restore']
+    .map(name => [name, (...args) => calls.push([name, ...args])]))
+  const image = {}, neck = {}
+  const scale = drawAlignedHeadNeck(context, image, neck, 812, 29, 768, () => calls.push(['neck']))
+  assert.equal(scale, 1.075)
+  assert.deepEqual(calls.find(call => call[0] === 'scale'), ['scale', scale, scale])
+  assert.ok(calls.findIndex(call => call[0] === 'drawImage') < calls.findIndex(call => call[0] === 'neck'))
+  assert.equal(calls.at(-1)[0], 'restore')
+  assert.equal(drawAlignedHeadNeck(context, image, null, 812, 29, 768, () => {}), 1)
+})
 
 test('dense grid reaches every direction and preserves the 25 anchor coordinates', () => {
   const visited = new Set()

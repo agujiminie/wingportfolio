@@ -4,7 +4,8 @@ import useGazeCell from './useGazeCell'
 import { CAT_FRAMES, PLACEHOLDER_FRAMES } from './catFrames'
 import { createGazeFrameCache, loadGazeBitmap } from './gazeFrameCache'
 import { STABLE_GAZE_ATLAS, STABLE_ATLAS_SIDE, STABLE_ATLAS_RESOLUTION, STABLE_TORSO } from './stableGazeAtlas'
-import { createNeckLockLayer, drawNeckLockLayer } from './neckLock'
+import { createNeckLockLayer, createChestLockLayer, drawNeckLockLayer } from './neckLock'
+import { drawAlignedHeadNeck } from './headNeckAlignment'
 import './cat-gaze.css'
 
 const DEFAULT_ANCHOR = { x: 0.5, y: 0.42 }
@@ -36,6 +37,7 @@ export default function CatGazeAtlas({
     canvas.style.visibility = 'hidden'
     let torsoBitmap = null
     let neckLayer = null
+    let chestLayer = null
     let disposed = false
     let compositorReady = !fixedNeck
     let pendingTarget = center
@@ -57,13 +59,14 @@ export default function CatGazeAtlas({
     const cache = createGazeFrameCache({
       frames, side: gridSize,
       onFrame(index, bitmap) {
-        context.drawImage(bitmap, 0, 0, resolution, resolution)
-        if (neckLayer) drawNeckLockLayer(context, neckLayer)
+        const scale = drawAlignedHeadNeck(context, bitmap, neckLayer, index, gridSize, resolution, drawNeckLockLayer)
+        if (chestLayer) context.drawImage(chestLayer, 0, 0)
         // A single shared patch also removes lossy-codec shimmer in static fur.
         drawTorso()
         canvas.style.visibility = 'visible'
         stage.dataset.displayedFrame = String(index)
         stage.dataset.cachedFrames = String(cache.size)
+        stage.dataset.headScale = scale.toFixed(5)
         setLoadedSource(frames)
       },
       onError(index) {
@@ -97,9 +100,12 @@ export default function CatGazeAtlas({
           reference = await loadGazeBitmap(CAT_FRAMES[2][2], neckController.signal)
         }
         if (disposed) { reference.close?.(); return }
-        try { neckLayer = createNeckLockLayer(reference, resolution) }
+        try {
+          neckLayer = createNeckLockLayer(reference, resolution)
+          chestLayer = createChestLockLayer(reference, resolution)
+        }
         finally { reference.close?.() }
-        if (!neckLayer) return
+        if (!neckLayer || !chestLayer) return
         stage.dataset.fixedNeck = 'true'
         start()
       }
@@ -116,6 +122,7 @@ export default function CatGazeAtlas({
       neckController.abort()
       torsoBitmap?.close?.()
       if (neckLayer) neckLayer.width = neckLayer.height = 0
+      if (chestLayer) chestLayer.width = chestLayer.height = 0
       cache.dispose()
       cacheRef.current = null
       document.removeEventListener('visibilitychange', onVisibility)

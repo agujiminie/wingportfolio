@@ -12,7 +12,7 @@ export function neckLockAlpha(x, y) {
   return Math.max(neck, chest)
 }
 
-export function createNeckLockLayer(reference, resolution) {
+function createReferenceLayer(reference, resolution, alphaAt) {
   const layer = document.createElement('canvas')
   layer.width = layer.height = resolution
   const context = layer.getContext('2d')
@@ -21,10 +21,19 @@ export function createNeckLockLayer(reference, resolution) {
   const pixels = context.getImageData(0, 0, resolution, resolution)
   const scale = 768 / resolution
   for (let y = 0; y < resolution; y++) for (let x = 0; x < resolution; x++) {
-    pixels.data[(y * resolution + x) * 4 + 3] = Math.round(255 * neckLockAlpha(x * scale, y * scale))
+    pixels.data[(y * resolution + x) * 4 + 3] = Math.round(255 * alphaAt(x * scale, y * scale))
   }
   context.putImageData(pixels, 0, 0)
   return layer
+}
+
+export function createNeckLockLayer(reference, resolution) {
+  return createReferenceLayer(reference, resolution, neckLockAlpha)
+}
+
+export function createChestLockLayer(reference, resolution) {
+  // Join the aligned upper neck to the stationary shoulders without a crop edge.
+  return createReferenceLayer(reference, resolution, (_x, y) => smoothstep(560, 624, y))
 }
 
 export function drawNeckLockLayer(context, layer) {

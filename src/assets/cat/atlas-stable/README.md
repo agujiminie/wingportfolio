@@ -87,3 +87,24 @@ and occludes the upper neck naturally; this is not a claim that every visible
 fur strand, whisker, or jaw shape is invariant. The existing source interpolation
 can still soften fur in the moving/transition areas. Full records are in
 `output/cat-neck/frame-audit.json` (ignored local verification output).
+
+## Down-left head/neck alignment — supersedes the silhouette-only fix
+
+The user rejected the prior silhouette-only correction: its sampled width numbers
+did not capture the perceived small head and pinched upper neck. The current
+renderer therefore **enlarges the head and upper neck together**, rather than
+keeping every upper-neck pixel fixed.
+
+- `headNeckAlignment.js` uses a uniform scale of 1–1.075, strongest down-left.
+  Horizontal and vertical correction weights are smooth functions of direction;
+  no isolated frame receives a sudden size change. Center/right and upward poses
+  retain scale 1. The reference pivot is (384,512) in the 768px image.
+- The existing neck reference layer receives exactly the same transform as the
+  face image. No facial mesh or independent-axis stretching is used.
+- A second shared reference layer joins y=560–624 to the stationary chest; the
+  bottom torso is still unchanged. Both layers are prepared once and released on
+  unmount, adding ~4.5 MiB total RGBA storage instead of the prior ~2.25 MiB.
+- The earlier 0px upper-neck width result describes the previous version only.
+  It is not an acceptance criterion for this new, intentionally enlarged pose.
+- Original photos, atlas frames and hashes remain unchanged. Local comparison,
+  interaction checks and build output are in `output/cat-alignment/`.

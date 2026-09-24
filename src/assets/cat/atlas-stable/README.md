@@ -58,3 +58,32 @@ without waiting for a React commit. No opacity animation or dissolve is used.
 References: [RIFE authors](https://github.com/hzwer/ECCV2022-RIFE),
 [OpenCV transforms](https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html),
 [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame).
+
+## Runtime neck lock — 2026-09-23
+
+The default refined renderer now also fixes the **outer neck silhouette**, not
+just the bottom torso. In the previous composite the y=480–540 neck band could
+still change width by 37–38px between poses, most apparent when looking down-left.
+
+`neckLock.js` creates one shared, spatially masked canvas from the existing center
+atlas frame before enabling playback. The sides join over y=416–480, are fully
+fixed outside x=204–572 from y=480 onward, and blend inward over 44px. The moving
+central muzzle remains exposed. The chest joins over y=584–624; below 624 the
+entire torso is fixed. Coordinates describe the 768px atlas and scale with the
+render resolution. This does not stretch faces, regenerate photos, or add a
+crossfade between poses. The source WebPs and their manifest hashes are unchanged.
+
+The shared layer is prepared once per mount (~2.25 MiB RGBA), drawn only in neck
+regions, and released on unmount. The atlas center request shares the HTTP cache;
+if that source fails, the approved original center photo supplies the neck. If
+both references fail, the center poster stays visible rather than following with
+an uncorrected neck. A late torso load only draws its opaque bottom patch, so it
+cannot apply the partially transparent neck join twice.
+
+All 841 composited poses were measured in the browser at eight scanlines from
+480 to 624. Width range is **0px at every sampled height**; the locked side bands
+and lower torso have **zero RGB difference** between poses. The face still turns
+and occludes the upper neck naturally; this is not a claim that every visible
+fur strand, whisker, or jaw shape is invariant. The existing source interpolation
+can still soften fur in the moving/transition areas. Full records are in
+`output/cat-neck/frame-audit.json` (ignored local verification output).

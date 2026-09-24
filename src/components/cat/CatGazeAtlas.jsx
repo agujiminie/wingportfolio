@@ -4,7 +4,6 @@ import useGazeCell from './useGazeCell'
 import { CAT_FRAMES, PLACEHOLDER_FRAMES } from './catFrames'
 import { createGazeFrameCache, loadGazeBitmap } from './gazeFrameCache'
 import { STABLE_GAZE_ATLAS, STABLE_ATLAS_SIDE, STABLE_ATLAS_RESOLUTION, STABLE_TORSO } from './stableGazeAtlas'
-import { createNeckLockLayer, createChestLockLayer, drawNeckLockLayer } from './neckLock'
 import { drawAlignedHeadNeck } from './headNeckAlignment'
 import './cat-gaze.css'
 
@@ -36,20 +35,16 @@ export default function CatGazeAtlas({
     const center = Math.floor(gridSize / 2) * gridSize + Math.floor(gridSize / 2)
     canvas.style.visibility = 'hidden'
     let torsoBitmap = null
-    let neckLayer = null
-    let chestLayer = null
     let disposed = false
-    let compositorReady = !fixedNeck
-    let pendingTarget = center
     const torsoController = new AbortController()
-    const neckController = new AbortController()
     const drawTorso = () => {
       if (!torsoBitmap) return
       const top = fixedTorso.top * resolution
       context.drawImage(torsoBitmap, 0, top, resolution, resolution - top)
     }
     stage.dataset.fixedBody = 'false'
-    stage.dataset.fixedNeck = 'false'
+    stage.dataset.fixedNeck = String(fixedNeck)
+    stage.dataset.neckJoin = fixedNeck ? 'continuous' : 'source'
     if (fixedTorso) loadGazeBitmap(fixedTorso.url, torsoController.signal).then(bitmap => {
       if (disposed) { bitmap.close?.(); return }
       torsoBitmap = bitmap
@@ -59,8 +54,7 @@ export default function CatGazeAtlas({
     const cache = createGazeFrameCache({
       frames, side: gridSize,
       onFrame(index, bitmap) {
-        const scale = drawAlignedHeadNeck(context, bitmap, neckLayer, index, gridSize, resolution, drawNeckLockLayer)
-        if (chestLayer) context.drawImage(chestLayer, 0, 0)
+        const scale = drawAlignedHeadNeck(context, bitmap, fixedNeck, index, gridSize, resolution)
         // A single shared patch also removes lossy-codec shimmer in static fur.
         drawTorso()
         canvas.style.visibility = 'visible'
@@ -75,54 +69,15 @@ export default function CatGazeAtlas({
         if (index === center) setLoadedSource(frames)
       },
     })
-    cacheRef.current = {
-      aim(index) {
-        pendingTarget = index
-        if (compositorReady) cache.aim(index)
-      },
-    }
+    cacheRef.current = cache
     const onVisibility = () => cache.setPaused(document.hidden)
-    const start = () => {
-      if (disposed) return
-      compositorReady = true
-      cache.aim(pendingTarget)
-    }
-    if (fixedNeck) {
-      // Prepare the shared neck before enabling pointer input. A fast neighbor
-      // decode must never show an uncorrected pose during the initial load.
-      const prepareNeck = async () => {
-        let reference
-        try {
-          reference = await loadGazeBitmap(frames[center], neckController.signal)
-        } catch {
-          if (disposed) return
-          // The approved center photo is also the atlas's neck reference.
-          reference = await loadGazeBitmap(CAT_FRAMES[2][2], neckController.signal)
-        }
-        if (disposed) { reference.close?.(); return }
-        try {
-          neckLayer = createNeckLockLayer(reference, resolution)
-          chestLayer = createChestLockLayer(reference, resolution)
-        }
-        finally { reference.close?.() }
-        if (!neckLayer || !chestLayer) return
-        stage.dataset.fixedNeck = 'true'
-        start()
-      }
-      prepareNeck().catch(() => {
-        // Keep the center poster if both references fail; never expose a
-        // changing neck just because its shared layer has not loaded.
-      })
-    } else start()
+    cache.aim(center)
     onVisibility()
     document.addEventListener('visibilitychange', onVisibility)
     return () => {
       disposed = true
       torsoController.abort()
-      neckController.abort()
       torsoBitmap?.close?.()
-      if (neckLayer) neckLayer.width = neckLayer.height = 0
-      if (chestLayer) chestLayer.width = chestLayer.height = 0
       cache.dispose()
       cacheRef.current = null
       document.removeEventListener('visibilitychange', onVisibility)

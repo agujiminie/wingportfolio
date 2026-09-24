@@ -1,119 +1,64 @@
-# Margo stabilized atlas — v2
+# Margo stabilized atlas
 
-The user reported head-size pumping, body deformation, delayed following and
-occasional holds, especially while looking down. This revision keeps the same cat
-and 29×29 output grid, but changes the source trajectory and playback response.
+The 29×29 atlas contains 841 WebPs at 768², q82, totaling 32,359,184 bytes.
+`torso.webp` adds 83,302 bytes. Original photos and all atlas hashes remain
+unchanged by the runtime alignment revisions below.
 
-## Image treatment
+## Source generation
 
-- Nine original poses from the approved 25: rows/columns 0, 2, 4. The other 16
-  originals remain intact but are no longer mandatory stops during this morph.
-  This avoids forcing the animation through their inconsistent shape/position.
-- At each yaw, match the head's framing to the neutral-pitch reference using
-  **uniform scale and translation only**. No independent x/y stretch or face mesh.
-  The manifest records the source hashes, measured widths and exact transforms.
-- Spatially join the moving head to a common torso over y=520–624 of the 768px
-  image. The lower body is shared. This is an offline spatial composite, not a
-  crossfade between animation frames.
-- RIFE v4.6 fills horizontal and vertical directions from this 3×3 source grid,
-  with 13 intermediate poses per interval. Original source indices 0/2/4 map to
-  dense indices 0/14/28. Intermediate directions are inferred, not calibrated angles.
-- 841 WebPs, 768², q82, **32,359,184 bytes**. `torso.webp` adds 83,302 bytes and is
-  drawn over the bottom 144px of every displayed pose to remove codec shimmer.
-  The original 25 photos and prior `atlas/` remain unchanged for comparison.
+- Nine approved original poses: rows/columns 0, 2, 4 from the original 25 images.
+  The other 16 originals remain available in the comparison modes.
+- At each yaw, uniform scale and translation match head framing to its neutral
+  pitch. The manifest records source hashes, measured widths and transforms.
+- The source frames already contain a spatial torso join over y=520–624. RIFE
+  v4.6 interpolates horizontally, then vertically, from the 3×3 anchors to 29×29.
+  Source indices 0/2/4 map to dense indices 0/14/28.
+- Rebuild using `scripts/cat/refine_gaze_atlas.py --engine /path/to/rife` with
+  Pillow, NumPy and OpenCV. Review outputs in `output/cat-refinement/` before
+  copying exports here. Changed source/settings require a fresh work folder.
 
-Rebuild with `python scripts/cat/refine_gaze_atlas.py --engine /path/to/rife` in an
-environment containing Pillow, NumPy and OpenCV. Outputs are in the ignored
-`output/cat-refinement/` folder. Source/settings changes invalidate resume; use a
-fresh work folder in that case. Review before copying exports here.
+## Current runtime: one continuous neck surface
 
-## Measurements and remaining limits
+The former runtime neck/chest reference overlays were removed on 2026-09-24.
+Scaling a second neck silhouette over the pose, then covering it with a fixed
+chest, created the block-shaped protrusion reported by the user. Matching a few
+outline widths did not validate the perceived anatomy or the join.
 
-Both versions were measured frame by frame (841 each), with enlarged visual
-comparison of flagged frames and vertical sweeps. On the center downward sweep,
-measured head-width range decreased from **7px to 2px**; the full up/down sweep
-decreased from 11px to 2px. These are silhouette-band measurements at 768px,
-not anatomical landmarks or a claim that all deformation is eliminated.
+`headNeckAlignment.js` now renders directly from **one pose image**:
 
-Lower-torso canvas pixels are identical across poses after the shared patch loads.
-The neck join, fur, whiskers and internal facial features can still soften or
-change because the original generated poses are not fully consistent. No new
-3D reconstruction or identity generation was performed.
+- Keep the approved direction-dependent face correction: up to 7.5% uniform
+  enlargement down-left; up to (-10,-8) pixels of upper-left translation.
+- Above source y=512, retain that full rigid transform. Through y=512–624,
+  smoothly reduce scale/translation to the unchanged body geometry. The mapping
+  and its first derivative match at both endpoints; it stays monotonic, so
+  no source rows fold or overlap as a second silhouette.
+- Render the join into integer destination scanlines, then copy the untransformed
+  lower body. This is spatial coordinate interpolation, not a dissolve between
+  poses or a superimposed neck photo. Each row samples the same source bitmap.
+- Retain the single opaque bottom torso patch at y=624 to remove codec shimmer.
+  The two extra reference canvases, their ~4.5 MiB storage, and their startup
+  reference requests are gone. `fixedNeck` remains the compatibility flag for
+  enabling this continuous attachment; `data-neck-join="continuous"` identifies it.
 
-## Playback
+All coordinates describe the 768px atlas and scale with canvas resolution.
+The exact face corrections fade smoothly across neighboring directions. Center,
+right and upper poses retain their previously specified scale/offset behavior.
+Pointer motion, reduced-motion behavior, cache bounds and idle=false are unchanged.
 
-`CatGazeAtlas` defaults to this atlas. User tracking uses a 30ms damping constant
-and 0.018 units/ms speed cap; idle keeps the slower 65ms / 0.006 profile. Pointer
-sensitivity defaults to 1.25, while an explicit pixel `reach` remains authoritative.
-The cache is still bounded to 36 decoded frames plus four concurrent loads. The
-fixed torso adds ~0.42 MiB decoded pixels. Images remain on-demand, so very slow
-first downloads can still hold a pose.
+## Verification and limits
 
-Upcoming poses are prefetched first; useful nearby requests survive small
-retargets. While the exact pose decodes, a ready immediate neighbor may stand in.
-Late completions are compared to the current target and cannot pull the head
-back toward an obsolete one. Drawing happens directly inside the pointer rAF,
-without waiting for a React commit. No opacity animation or dissolve is used.
+Local before/after comparisons for the user's r28-c00 crop, upper-left, and nearby
+poses are in `output/cat-continuous/`. Automated geometry checks cover all 841
+indices, endpoint continuity, monotonic sampling, no scanline gaps, and unchanged
+lower-body geometry. Browser checks cover actual rendering, pointer response,
+stationary input, cache bounds, mode switching and missing center-frame fallback.
 
-References: [RIFE authors](https://github.com/hzwer/ECCV2022-RIFE),
-[OpenCV transforms](https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html),
-[requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame).
+This does not promise invariant neck width or flawless anatomy in every generated
+source image. Source interpolation can still soften fur and whiskers; the neck
+join now uses mild spatial deformation, while the face above it keeps a uniform
+transform. The original photos and former atlases remain available for comparison.
 
-## Runtime neck lock — 2026-09-23
-
-The default refined renderer now also fixes the **outer neck silhouette**, not
-just the bottom torso. In the previous composite the y=480–540 neck band could
-still change width by 37–38px between poses, most apparent when looking down-left.
-
-`neckLock.js` creates one shared, spatially masked canvas from the existing center
-atlas frame before enabling playback. The sides join over y=416–480, are fully
-fixed outside x=204–572 from y=480 onward, and blend inward over 44px. The moving
-central muzzle remains exposed. The chest joins over y=584–624; below 624 the
-entire torso is fixed. Coordinates describe the 768px atlas and scale with the
-render resolution. This does not stretch faces, regenerate photos, or add a
-crossfade between poses. The source WebPs and their manifest hashes are unchanged.
-
-The shared layer is prepared once per mount (~2.25 MiB RGBA), drawn only in neck
-regions, and released on unmount. The atlas center request shares the HTTP cache;
-if that source fails, the approved original center photo supplies the neck. If
-both references fail, the center poster stays visible rather than following with
-an uncorrected neck. A late torso load only draws its opaque bottom patch, so it
-cannot apply the partially transparent neck join twice.
-
-All 841 composited poses were measured in the browser at eight scanlines from
-480 to 624. Width range is **0px at every sampled height**; the locked side bands
-and lower torso have **zero RGB difference** between poses. The face still turns
-and occludes the upper neck naturally; this is not a claim that every visible
-fur strand, whisker, or jaw shape is invariant. The existing source interpolation
-can still soften fur in the moving/transition areas. Full records are in
-`output/cat-neck/frame-audit.json` (ignored local verification output).
-
-## Down-left head/neck alignment — supersedes the silhouette-only fix
-
-The user rejected the prior silhouette-only correction: its sampled width numbers
-did not capture the perceived small head and pinched upper neck. The current
-renderer therefore **enlarges the head and upper neck together**, rather than
-keeping every upper-neck pixel fixed.
-
-- `headNeckAlignment.js` uses a uniform scale of 1–1.075, strongest down-left.
-  Horizontal and vertical correction weights are smooth functions of direction;
-  no isolated frame receives a sudden size change. Center/right and upward poses
-  retain scale 1. The reference pivot is (384,512) in the 768px image.
-- The existing neck reference layer receives exactly the same transform as the
-  face image. No facial mesh or independent-axis stretching is used.
-- A second shared reference layer joins y=560–624 to the stationary chest; the
-  bottom torso is still unchanged. Both layers are prepared once and released on
-  unmount, adding ~4.5 MiB total RGBA storage instead of the prior ~2.25 MiB.
-- The earlier 0px upper-neck width result describes the previous version only.
-  It is not an acceptance criterion for this new, intentionally enlarged pose.
-- Original photos, atlas frames and hashes remain unchanged. Local comparison,
-  interaction checks and build output are in `output/cat-alignment/`.
-
-## Upper-left edge alignment
-
-The upper-left moving head/neck group is shifted by up to (-10,-8) atlas pixels
-at 768px, correcting its join with the fixed shoulders. `headNeckOffset` tapers
-this translation smoothly through nearby directions; center/right/down remain
-unshifted and the down-left enlargement is retained. The fixed chest/torso stay
-in place. The canvas is cleared before translated drawing so exposed strips
-cannot retain pixels from a prior frame.
+Playback keeps at most 36 decoded frames and four concurrent requests. It paints
+in the pointer rAF, keeps the last complete image on missing downloads, and
+ignores stale completions. User input uses the existing 30ms / 0.018 response
+profile and sensitivity 1.25. Very slow first downloads can still hold a pose.

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { setImmediate } from 'node:timers/promises'
 import { createGazeFrameCache, nearbyFrames } from '../../src/components/cat/gazeFrameCache.js'
 import { advanceGaze, atlasIndex } from '../../src/components/cat/gazeMotion.js'
-import { headNeckScale, headNeckOffset, drawAlignedHeadNeck } from '../../src/components/cat/headNeckAlignment.js'
+import { headNeckScale, headNeckOffset, neckGeometry, drawAlignedHeadNeck } from '../../src/components/cat/headNeckAlignment.js'
 
 const flush = () => setImmediate()
 const frames = Array.from({ length: 841 }, (_, index) => String(index))
@@ -42,21 +42,50 @@ test('upper-left alignment moves only the intended directions with no translatio
   }
 })
 
-test('head and neck receive one uniform transform without stretching facial proportions', () => {
+test('every neck join meets the head and stationary body smoothly without folding', () => {
+  for (let i = 0; i < 841; i++) {
+    const scale = headNeckScale(i, 29), offset = headNeckOffset(i, 29)
+    assert.deepEqual(neckGeometry(624, scale, offset), { y: 624, scale: 1, x: 0 })
+    assert.deepEqual(neckGeometry(512, scale, offset), {
+      y: 512 + offset.y, scale, x: 384 * (1 - scale) + offset.x,
+    })
+    for (const [y, slope] of [[512, scale], [624, 1]]) {
+      const left = neckGeometry(y - 0.001, scale, offset)
+      const right = neckGeometry(y + 0.001, scale, offset)
+      assert.ok(Math.abs((right.y - left.y) / 0.002 - slope) < 0.001)
+    }
+    for (let y = 512; y < 624; y++) {
+      const a = neckGeometry(y, scale, offset), b = neckGeometry(y + 1, scale, offset)
+      assert.ok(b.y - a.y > 0.8 && b.y - a.y < 1.3)
+      assert.ok(b.scale <= a.scale && b.scale >= 1)
+    }
+  }
+})
+
+test('head stays uniformly scaled and neck rows sample one image without overlay blocks or gaps', () => {
   const calls = []
   const context = Object.fromEntries(['save', 'fillRect', 'translate', 'scale', 'drawImage', 'restore']
     .map(name => [name, (...args) => calls.push([name, ...args])]))
-  const image = {}, neck = {}
-  const scale = drawAlignedHeadNeck(context, image, neck, 812, 29, 768, () => calls.push(['neck']))
+  const image = { width: 768, height: 768 }
+  const scale = drawAlignedHeadNeck(context, image, true, 812, 29, 768)
   assert.equal(scale, 1.075)
   assert.deepEqual(calls.find(call => call[0] === 'scale'), ['scale', scale, scale])
-  assert.ok(calls.findIndex(call => call[0] === 'drawImage') < calls.findIndex(call => call[0] === 'neck'))
-  assert.equal(calls.at(-1)[0], 'restore')
+  const draws = calls.filter(call => call[0] === 'drawImage')
+  assert.ok(draws.every(call => call[1] === image))
+  const rows = draws.slice(1, -1)
+  assert.equal(rows.length, 112)
+  for (let i = 0; i < rows.length; i++) {
+    assert.equal(rows[i][7], 512 + i)
+    assert.equal(rows[i][9], 1)
+    assert.ok(rows[i].slice(2).every(Number.isFinite))
+    assert.ok(rows[i][5] > 0)
+  }
+  assert.deepEqual(draws.at(-1), ['drawImage', image, 0, 624, 768, 144, 0, 624, 768, 144])
   calls.length = 0
-  drawAlignedHeadNeck(context, image, neck, 0, 29, 384, () => {})
+  drawAlignedHeadNeck(context, image, true, 0, 29, 384)
   assert.deepEqual(calls.find(call => call[0] === 'translate'), ['translate', -5, -4])
   assert.deepEqual(calls[1], ['fillRect', 0, 0, 384, 384])
-  assert.equal(drawAlignedHeadNeck(context, image, null, 812, 29, 768, () => {}), 1)
+  assert.equal(drawAlignedHeadNeck(context, image, false, 812, 29, 768), 1)
 })
 
 test('dense grid reaches every direction and preserves the 25 anchor coordinates', () => {

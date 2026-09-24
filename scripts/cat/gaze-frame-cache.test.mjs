@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { setImmediate } from 'node:timers/promises'
 import { createGazeFrameCache, nearbyFrames } from '../../src/components/cat/gazeFrameCache.js'
 import { advanceGaze, atlasIndex } from '../../src/components/cat/gazeMotion.js'
-import { headNeckScale, drawAlignedHeadNeck } from '../../src/components/cat/headNeckAlignment.js'
+import { headNeckScale, headNeckOffset, drawAlignedHeadNeck } from '../../src/components/cat/headNeckAlignment.js'
 
 const flush = () => setImmediate()
 const frames = Array.from({ length: 841 }, (_, index) => String(index))
@@ -26,9 +26,25 @@ test('down-left size correction eases through adjacent poses and leaves center/r
   }
 })
 
+test('upper-left alignment moves only the intended directions with no translation step', () => {
+  assert.deepEqual(headNeckOffset(0, 29), { x: -10, y: -8 })
+  assert.deepEqual(headNeckOffset(0, 1), { x: 0, y: 0 })
+  for (let r = 0; r < 29; r++) for (let c = 0; c < 29; c++) {
+    const p = headNeckOffset(r * 29 + c, 29)
+    assert.ok(p.x >= -10 && p.x <= 0 && p.y >= -8 && p.y <= 0)
+    if (r >= 17 || c >= 14) assert.deepEqual(p, { x: 0, y: 0 })
+    for (const [nr, nc] of [[r + 1, c], [r, c + 1]]) {
+      if (nr >= 29 || nc >= 29) continue
+      const q = headNeckOffset(nr * 29 + nc, 29)
+      assert.ok(q.x >= p.x && q.y >= p.y)
+      assert.ok(q.x - p.x < 1.4 && q.y - p.y < 1.2)
+    }
+  }
+})
+
 test('head and neck receive one uniform transform without stretching facial proportions', () => {
   const calls = []
-  const context = Object.fromEntries(['save', 'translate', 'scale', 'drawImage', 'restore']
+  const context = Object.fromEntries(['save', 'fillRect', 'translate', 'scale', 'drawImage', 'restore']
     .map(name => [name, (...args) => calls.push([name, ...args])]))
   const image = {}, neck = {}
   const scale = drawAlignedHeadNeck(context, image, neck, 812, 29, 768, () => calls.push(['neck']))
@@ -36,6 +52,10 @@ test('head and neck receive one uniform transform without stretching facial prop
   assert.deepEqual(calls.find(call => call[0] === 'scale'), ['scale', scale, scale])
   assert.ok(calls.findIndex(call => call[0] === 'drawImage') < calls.findIndex(call => call[0] === 'neck'))
   assert.equal(calls.at(-1)[0], 'restore')
+  calls.length = 0
+  drawAlignedHeadNeck(context, image, neck, 0, 29, 384, () => {})
+  assert.deepEqual(calls.find(call => call[0] === 'translate'), ['translate', -5, -4])
+  assert.deepEqual(calls[1], ['fillRect', 0, 0, 384, 384])
   assert.equal(drawAlignedHeadNeck(context, image, null, 812, 29, 768, () => {}), 1)
 })
 

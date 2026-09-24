@@ -108,3 +108,12 @@ keeping every upper-neck pixel fixed.
   It is not an acceptance criterion for this new, intentionally enlarged pose.
 - Original photos, atlas frames and hashes remain unchanged. Local comparison,
   interaction checks and build output are in `output/cat-alignment/`.
+
+## Upper-left edge alignment
+
+The upper-left moving head/neck group is shifted by up to (-10,-8) atlas pixels
+at 768px, correcting its join with the fixed shoulders. `headNeckOffset` tapers
+this translation smoothly through nearby directions; center/right/down remain
+unshifted and the down-left enlargement is retained. The fixed chest/torso stay
+in place. The canvas is cleared before translated drawing so exposed strips
+cannot retain pixels from a prior frame.

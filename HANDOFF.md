@@ -237,3 +237,9 @@ Webflow /gallery 的重设计版：scatter hero（Claude startups 风格，作�
   hash未变，新841帧hash通过。构建/相关lint通过；全仓既存lint问题未改。
   本地响应对比日志在 `latency-before.json` / `latency-final.json`；不是远程网络保证。
   无 Figma，继续按用户视频/猫图的白底居中布局，新增修正版用于直接比较。
+
+### Cat hold when pointer stops — 2026-09-23
+
+- 用户最新偏好覆盖此前空闲模式方案：鼠标停止后保持最后方向，不再自动东张西望。
+  `CatPage` 四种版本统一传 `idle={false}`；触屏松手、鼠标离开窗口也保持姿态。
+  主动跟随的短缓冲保持，组件仍支持其他场景显式启用 idle。

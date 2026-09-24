@@ -22,10 +22,11 @@ export default function CatPage() {
   return (
     <main className="cat-page" aria-label="Margo follows your gaze">
       <a className="cat-page__home" href="#/">← Home</a>
-      {version === 'refined' ? <CatGazeAtlas key={version} /> : version === 'interpolated'
-        ? <CatGazeAtlas key={version} frames={GAZE_ATLAS} responsive={false} sensitivity={1} /> : <CatGaze
+      {version === 'refined' ? <CatGazeAtlas key={version} idle={false} /> : version === 'interpolated'
+        ? <CatGazeAtlas key={version} frames={GAZE_ATLAS} responsive={false} sensitivity={1} idle={false} /> : <CatGaze
         key={version}
         frames={CAT_FRAMES}
+        idle={false}
         smooth={version !== 'original'}
       />}
       <div className="cat-page__comparison" lang="zh-CN">

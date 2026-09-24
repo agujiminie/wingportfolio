@@ -3,13 +3,14 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import ProjectPage from './ProjectPage'
 import GalleryPage from './GalleryPage'
+import CatPage from './CatPage'
 import { getProjectFromHash } from './projects'
 import { isGalleryHash } from './projects/gallery'
 import './index.css'
 
 /**
  * Hash router: "#/project/<slug>" renders that case study, "#/gallery" the
- * analog gallery; anything else renders the landing App. Hash routes need no
+ * analog gallery, and "#/cat" the cat gaze experiment. Hash routes need no
  * host rewrite rules, so the built site keeps working on any static host.
  */
 function Root() {
@@ -24,13 +25,18 @@ function Root() {
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
 
+  if (route.cat) return <CatPage />
   if (route.gallery) return <GalleryPage />
   if (route.project) return <ProjectPage key={route.project.slug} project={route.project} />
   return <App />
 }
 
 function parseRoute(hash) {
-  return { gallery: isGalleryHash(hash), project: getProjectFromHash(hash) }
+  return {
+    cat: /^#\/cat\/?$/.test(hash),
+    gallery: isGalleryHash(hash),
+    project: getProjectFromHash(hash),
+  }
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(

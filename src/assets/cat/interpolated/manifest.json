@@ -1,0 +1,166 @@
+{
+  "engine": "rife-ncnn-vulkan",
+  "release": "20221029",
+  "model": "rife-v4.6",
+  "source": "https://github.com/nihui/rife-ncnn-vulkan",
+  "dimensions": [
+    1400,
+    1400
+  ],
+  "webpQuality": 80,
+  "frames": [
+    {
+      "file": "h00.webp",
+      "source": "r2-c1.webp",
+      "original": true,
+      "sha256": "c15585e6ae7b14cbc3c37090df05329e44dbca0ae962db8c040bf456f34f33ca",
+      "bytes": 109268
+    },
+    {
+      "file": "h01.webp",
+      "between": [
+        "r2-c1.webp",
+        "r2-c2.webp"
+      ],
+      "t": 0.14285714285714285,
+      "original": false,
+      "sha256": "0096b9f3773561ff7a3d75649176b1e38c56d25c79eb6774e0fe266dd7608441",
+      "bytes": 90842
+    },
+    {
+      "file": "h02.webp",
+      "between": [
+        "r2-c1.webp",
+        "r2-c2.webp"
+      ],
+      "t": 0.2857142857142857,
+      "original": false,
+      "sha256": "5203b4e112c97a3480c262dbe20d7ca57bd8757e2de21006a678e8517c14955f",
+      "bytes": 87320
+    },
+    {
+      "file": "h03.webp",
+      "between": [
+        "r2-c1.webp",
+        "r2-c2.webp"
+      ],
+      "t": 0.42857142857142855,
+      "original": false,
+      "sha256": "8b4f70818791634dbbd39408c6606785b19ba3ddea0d8b79ac756b59cb7e2adf",
+      "bytes": 84248
+    },
+    {
+      "file": "h04.webp",
+      "between": [
+        "r2-c1.webp",
+        "r2-c2.webp"
+      ],
+      "t": 0.5714285714285714,
+      "original": false,
+      "sha256": "c9e1890e3856178ba4ba3ec52997a0c071da6d12f703197848c495f9725f72d1",
+      "bytes": 89498
+    },
+    {
+      "file": "h05.webp",
+      "between": [
+        "r2-c1.webp",
+        "r2-c2.webp"
+      ],
+      "t": 0.7142857142857143,
+      "original": false,
+      "sha256": "28523ff02393efb0d49ae4dbb06919f9e56cb16246b0dd951adb1f384cee8642",
+      "bytes": 96688
+    },
+    {
+      "file": "h06.webp",
+      "between": [
+        "r2-c1.webp",
+        "r2-c2.webp"
+      ],
+      "t": 0.8571428571428571,
+      "original": false,
+      "sha256": "e08a1726d1c5595d7440e9b252e3f2b38fdb2bc27a6a70e3b2701b06854c401d",
+      "bytes": 104910
+    },
+    {
+      "file": "h07.webp",
+      "source": "r2-c2.webp",
+      "original": true,
+      "sha256": "03d23be33c2628cb057df21f918fec91176acaea3739a0af064882ae30c35609",
+      "bytes": 128514
+    },
+    {
+      "file": "h08.webp",
+      "between": [
+        "r2-c2.webp",
+        "r2-c3.webp"
+      ],
+      "t": 0.14285714285714285,
+      "original": false,
+      "sha256": "91fb815491192ec50eb4ecc195ec0bcee50e5c8439aba30ee270f5dddaf55d1c",
+      "bytes": 102926
+    },
+    {
+      "file": "h09.webp",
+      "between": [
+        "r2-c2.webp",
+        "r2-c3.webp"
+      ],
+      "t": 0.2857142857142857,
+      "original": false,
+      "sha256": "8caf4a4cd78dd20c0902254e6dd446dab862c58650107e03e77c38a15795dac0",
+      "bytes": 96382
+    },
+    {
+      "file": "h10.webp",
+      "between": [
+        "r2-c2.webp",
+        "r2-c3.webp"
+      ],
+      "t": 0.42857142857142855,
+      "original": false,
+      "sha256": "3fb4127b3c19995970123ea80b31b06c715da443614f11339d14088c6286cc69",
+      "bytes": 89068
+    },
+    {
+      "file": "h11.webp",
+      "between": [
+        "r2-c2.webp",
+        "r2-c3.webp"
+      ],
+      "t": 0.5714285714285714,
+      "original": false,
+      "sha256": "8e8621f04702b31cec427e8d7721954fe53cf4edd3aa9f11c43974d7d2b0f649",
+      "bytes": 86118
+    },
+    {
+      "file": "h12.webp",
+      "between": [
+        "r2-c2.webp",
+        "r2-c3.webp"
+      ],
+      "t": 0.7142857142857143,
+      "original": false,
+      "sha256": "1adb4fc441411b6a3efed159833fd5a543d52d3d5acc83e6e50ec656b2d33dfb",
+      "bytes": 88738
+    },
+    {
+      "file": "h13.webp",
+      "between": [
+        "r2-c2.webp",
+        "r2-c3.webp"
+      ],
+      "t": 0.8571428571428571,
+      "original": false,
+      "sha256": "c1d3c1c45a0ec00e2628ce28c65e85299b1b53b8923d909dca04840d356a1524",
+      "bytes": 91506
+    },
+    {
+      "file": "h14.webp",
+      "source": "r2-c3.webp",
+      "original": true,
+      "sha256": "2da45a2d4a46fec6529d7d4453bd58c0b52d76788d15e8b71e756c2f78c61bc9",
+      "bytes": 112034
+    }
+  ]
+}

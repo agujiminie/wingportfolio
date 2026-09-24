@@ -1,0 +1,39 @@
+.cat-gaze {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  max-height: 100dvh;
+  margin: 0;
+  overflow: hidden;
+  background: #fff;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cat-gaze:focus { outline: none; }
+.cat-gaze:focus-visible { outline: 1px dashed #aaa; outline-offset: 8px; }
+
+.cat-gaze__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  /* Visibility changes are deliberately immediate: no crossfade or movement. */
+  transition: none;
+  animation: none;
+}
+
+.cat-gaze__help {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

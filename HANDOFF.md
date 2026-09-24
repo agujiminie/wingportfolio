@@ -122,3 +122,118 @@ Webflow /gallery 的重设计版：scatter hero（Claude startups 风格，作�
 - 中英混用，回复跟随用户语言。
 - 重视：responsive、accessibility、与参考截图的比例一致（如"上下留白相等"）。
 - 大文件/构建产物不进 git（.gitignore 已配好 root-level export 的忽略规则）。
+
+## Cat gaze page (#/cat) — 2026-09-23
+
+- 用户本轮要求：先用已生成的 25 张 Margo 图片做一个可看的独立页面。
+  页面为 `#/cat`（也接受 `#/cat/`），白底、居中近景猫、左上角 `← Home`。
+  当前先本地预览，尚未部署或发布 PR。
+- `src/CatPage.jsx` / `src/cat-page.css` 提供页面壳和标题；hash 路由在
+  `src/main.jsx` 中注册，无需修改静态托管 rewrite。
+- 核心组件：`src/components/cat/CatGaze.jsx`、`useGazeCell.js`、
+  `catFrames.js`、`cat-gaze.css`。默认导入真实 5×5 帧表，也接受自定义 `frames`、
+  `faceAnchor`、像素单位的 `reach`、`idle`、`className` 和 `aspectRatio`。
+  以后在任意 section 中使用：
+
+  ```jsx
+  import CatGaze from './components/cat/CatGaze'
+  import { CAT_FRAMES } from './components/cat/catFrames'
+
+  <CatGaze frames={CAT_FRAMES} />
+  ```
+
+- 25 张真实 `<img>` 叠放，先显示中间帧，所有图片 `decode()` 完成后启用跟随；
+  只改变 `visibility`，无 transition、淡入淡出、3D 或视频拖动。
+  缺文件补最近邻；加载失败使用已成功解码的邻居；全空时使用 SVG 占位图。
+- 鼠标在窗口中跟随；触屏从猫的 stage 开始拖动，使用 pointer capture，
+  `touch-action: none`。第二根手指忽略，手指按住时不启动空闲动作。
+  方向计算以 stage 的 `getBoundingClientRect()` 和脸部锚点为准；
+  默认 reach 是视口短边的 0.45 倍。rAF 合并事件，归一化坐标加 ±0.06 滞回。
+- 无输入 2.5 秒或离开窗口进入空闲，每 1.2–3 秒走到一个相邻方向，偏向回正。
+  页面隐藏时暂停；减少动态效果偏好启用时不自动转头，但保留主动跟随。
+  键盘聚焦猫后，方向键可切换方向，Home 回正中。
+- 素材在 `src/assets/cat/`：25 张 1400×1400 WebP，合计约 2.72 MB。
+  源自 `output/imagegen/margo-gaze-v3/frames`，不是新拍的 25 张真照片。
+  `r0` 朝上、`r4` 朝下；`c0` 观众左、`c4` 观众右；`r2-c2` 正面。
+  生成图毛纹、胸口轮廓和方向间隔有小幅差异，硬切时仍可观察到。
+- 无 Figma 稿。本页面参考用户的 `1000039656.mov` 与明确描述：保留纯白背景、
+  居中单猫和硬切跟随。当前展示 Margo 完整耳朵和半身原图，四周留白；
+  视频中的原猫头部裁切更近，因此不声称逐像素复刻。Home 链接按用户方案添加。
+- 本地验证记录、桌面/390px 截图放在 git 忽略的 `output/cat-preview/`。
+  `npm run build` 通过。新增猫组件 lint 无错误；全仓 lint 仍有既存的
+  UI 组件 props 验证、Dither/Curie hooks 等错误，不能报告全仓 lint 通过。
+
+### Cat smoothing comparison — 2026-09-23
+
+- 用户试玩认为硬切不够顺滑，调研后批准三个可切换小样。`#/cat` 底部现在有
+  `原版` / `柔和跟随` / `补帧试验`，默认补帧试验。页面提示该版仅左右，暂无上下。
+  控件是本轮用户批准的对比功能，仍无 Figma 参考。
+- `CatGaze` 新增 `smooth`（默认 false，保留原组件行为）、`sequence`（可选的一维
+  水平帧列）props。页面切换时按版本 key 重建，清理旧监听和动画。
+- `gazeMotion.js` 使用按 elapsed time 计算的指数缓动（65ms 时间常数）和速度上限
+  0.012 归一化单位/ms，每次积分最大 32ms。快速移动时经过邻近姿势；新输入直接
+  替换目标，无动画排队或过冲。静止后停止 rAF；reduced-motion 下主动输入直接定位。
+- `interpolatedFrames.js` 只读取 `assets/cat/interpolated/h*.webp` 并按顺序排列。
+  RIFE v4.6 离线生成 12 张中间帧，两组各 6 张，原图 r2-c1 / r2-c2 / r2-c3
+  原样保留为 h00 / h07 / h14，共 15 张、约 1.46 MB。模型不进入前端依赖。
+  指针映射比例与原版相同，但范围限制在原来的 c1–c3；垂直方向不改变姿态。
+- 素材来源和 hashes 见 `src/assets/cat/interpolated/{README.md,manifest.json}`。
+  补帧消除了部分大幅姿态跳变，但毛纹和胸口形状差异可能表现为轻微拉伸/变软，
+  未宣称能完全修复身份和身体一致性。此阶段先保留左右小样，后续批准见下一节。
+- 构建、新增/修改猫组件 lint 通过。浏览器实测三模式、原版 25 个方向；扩展回归
+  覆盖快速反向、平滑邻近姿势、补帧 15 个角度、水平范围、触屏事件、reduced-motion、
+  空闲和图片加载失败回退。真实手机硬件触控未测，触屏路径用模拟 pointer 事件。
+  对比截图和测试记录保存在 `output/cat-interpolation/`。
+
+### Full 2D interpolated cat gaze — 2026-09-23
+
+- 用户认为补帧改善明显，明确要求继续。已将同一方法扩展到上下和斜向，
+  默认显示 `补帧版`，保留 `原版` / `柔和跟随` 供对比。
+- `src/assets/cat/atlas/` 包含 29×29、共 841 张 768px WebP（27.87 MB）。
+  每两个原方向之间补 6 张：先水平 RIFE，再垂直 RIFE；原 5×5 对应新网格
+  0/7/14/21/28。原始 25 张和先前左右小样未修改。素材来源、导出方法、
+  体积、hashes 和限制见 atlas README / manifest；生成脚本在 `scripts/cat/`。
+- `CatGazeAtlas.jsx` 复用 `useGazeCell` 的触控、空闲、键盘和减少动态效果逻辑，
+  新增 `gridSize` 映射两轴连续角度。`gazeMotion.js` 中 65ms 缓动时间常数不变，
+  完整补帧版速度上限 0.006 归一化单位/ms；输入可随时打断，无排队或过冲。
+- 用单 canvas 直接绘制姿态，没有交叉淡化；中心照片作为加载后备。
+  `gazeFrameCache.js` 按当前方向及运动方向预取邻近图，最多持有 36 个已解码
+  ImageBitmap（约 81 MiB 像素数据），4 个并发请求。HTTP 缓存复用已访问图片。
+  超出范围释放 bitmap，反向运动取消不相关下载，过期解码不能回写旧方向；
+  页面隐藏暂停下载，切换模式清理缓存。没有一次性解码或下载全部 841 张。
+- 首次访问某个方向、网络较慢时保持上一张图直到加载完成，失败也保留完整图。
+  插帧仍会有轻微毛纹/胸口拉伸，768px 导出比原图柔和，不声称修复所有素材差异。
+- 完整版本可嵌入任意 section：`<CatGazeAtlas />`；支持 `faceAnchor`、`reach`、
+  `idle` 和 `className`，以组件自身边界计算方向。原 `CatGaze` API 保持可用。
+- 验证：841 张尺寸/hash、25 张源图未改、25 个锚点映射均通过；7 项自动测试
+  覆盖方向数学、缓动反向、内存上限、过期解码、失败和暂停。浏览器回归覆盖
+  原有 37 项及完整网格的九方向、29 个垂直角度、实际绘制的斜向中间帧、触控、
+  空闲、减少动态效果、键盘、加载失败和模式切换。触屏为模拟 pointer 事件，
+  未在真实手机上验证。记录与桌面/390px 截图在 `output/cat-atlas/`。
+- 构建和猫组件 lint 通过；全仓旧 lint 问题仍存在。无 Figma 稿，参考仍是视频和
+  用户确认的猫图；白底居中布局与上一版一致，保留用户批准的对比控件。
+
+### Cat deformation / responsiveness refinement — 2026-09-23
+
+- 用户反馈低头时头部鼓动、脸/身体大小变化、跟随迟缓和局部卡顿。已全量测量
+  旧/新两组各 841 帧，放大检查异常帧和连续垂直扫视；记录在
+  `output/cat-refinement/frame-audit.json` 及对比图。正中低头段头宽范围从
+  7px 降到 2px（768px 素材测量），并非声称所有非刚性变形消失。
+- `atlas-stable/` 是默认修正版：选原 25 张中的 9 个关键方向，用整体等比缩放和平移
+  校正同一水平角度的头部尺寸/位置；固定躯干，颈部在 y=520–624 空间融合。
+  RIFE 从 3×3 姿态重新生成 29×29，跳过原图中不一致的中间姿态。原 25 图与旧
+  atlas 保留不动。生成脚本 `scripts/cat/refine_gaze_atlas.py`，详细来源和限制见
+  `src/assets/cat/atlas-stable/README.md` / manifest。
+- 下方 144px 使用独立固定 torso 图，每帧同样绘制，消除该区域有损编码的毛纹闪动。
+  颈部与面部内部仍可能有少量柔化。新帧合计 32.36 MB，torso 83KB；按需加载。
+- 主动跟随改用 30ms 缓动时间常数、0.018 units/ms 上限，空闲仍保持旧慢速；
+  sensitivity 默认 1.25（显式 `reach` 优先）。绘制在 pointer rAF 内直接触发，
+  不等待 React effect；邻近下载尽量完成、优先预取前进方向，缺帧时可用一个
+  已解码的相邻角度临时代替，过期完成不能回跳。缓存仍 36 帧/4 并发。
+- 默认按钮 `修正版`，也保留 `原版` / `柔和跟随` / `上版补帧`。上一版使用旧图和
+  旧缓动/灵敏度参数，但共享改进后的安全缓存。切换会清理旧实例。
+- 验证：10 项自动测试、52 项浏览器断言通过，包括下半身逐像素不变、完整29方向、
+  快速反向、模拟触控、空闲、减少动态效果、错误回退、缓存上限。原25图与旧atlas
+  hash未变，新841帧hash通过。构建/相关lint通过；全仓既存lint问题未改。
+  本地响应对比日志在 `latency-before.json` / `latency-final.json`；不是远程网络保证。
+  无 Figma，继续按用户视频/猫图的白底居中布局，新增修正版用于直接比较。

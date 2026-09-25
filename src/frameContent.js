@@ -23,7 +23,7 @@ export const HEADLINES = {
   analogue: ['Make it tangible.', 'Make it beautiful.', 'Make it.'],
 }
 
-// Top-right icon buttons. `external: true` renders with target="_blank".
+// Contact buttons beside the brand. `external: true` renders with target="_blank".
 // Email hidden for now — mailto: does nothing on machines with no default
 // mail client, which reads as a broken button. Restore once there's a
 // reliable contact path (e.g. Gmail compose link or a contact form).

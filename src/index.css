@@ -124,6 +124,12 @@ video {
   pointer-events: none;
 }
 
+/* Only the hero turns white. The persistent Retro background still appears
+   through the original cutouts in the portfolio sections below. */
+.landing[data-hero-style='cat'] > .landing__spacer {
+  background: #fff;
+}
+
 .landing::before {
   display: none;
 }
@@ -236,13 +242,18 @@ html::after {
 /* Top-left brand — vertically centered on the bar mid-line. Rendered as a
    <button> (go-home action) so it needs its own reset from browser button
    chrome. */
-.frame__brand {
+.frame__identity {
   top: calc(var(--bar-h) / 2);
   left: var(--frame-margin);
   transform: translateY(-50%);
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.frame__brand {
+  display: flex;
+  align-items: center;
   border: 0;
   background: none;
   padding: 0;
@@ -253,11 +264,6 @@ html::after {
 
 .frame__brand:hover .frame__brand-name {
   color: #111;
-}
-
-.frame__brand-mark {
-  display: flex;
-  color: #363636;
 }
 
 .frame__brand-name {
@@ -295,6 +301,27 @@ html::after {
   color: #111;
   background: rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
+}
+
+.frame__style-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(0, 0, 0, 0.8);
+  font: 600 14px/1.4 'Kode Mono', monospace;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.frame__style-btn:hover { background: rgba(0, 0, 0, 0.06); }
+.frame__style-btn:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.4);
+  outline-offset: 2px;
 }
 
 .frame__cta-btn:focus-visible {
@@ -402,7 +429,8 @@ html::after {
 
 /* Tablet / mobile — clear the side panels off the canvas */
 @media (max-width: 1024px) {
-  .morph-stage {
+  .morph-stage,
+  .landing__cat-stage {
     --morph-side-reserve: 64px;
     --morph-max-size: 560px;
   }
@@ -412,7 +440,7 @@ html::after {
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
   /* Nav drops to the bottom; headline sits just above it. Reset the vertical
      centering transform (only horizontal centering applies at the bottom). */
   .frame__nav-panel {
@@ -425,14 +453,25 @@ html::after {
     bottom: calc(var(--frame-margin) + 64px);
     max-width: calc(100vw - 2 * var(--frame-margin));
   }
+}
 
+@media (max-width: 600px) {
   .frame__headline {
     font-size: clamp(21px, 6.4vw, 37px);
   }
 }
 
+@media (max-width: 380px) {
+  .frame__identity { gap: 4px; }
+  .frame__style-btn { padding-inline: 8px; font-size: 12px; }
+  .frame__nav { gap: 2px; }
+  .frame__nav-item { padding-inline: 10px; }
+  .frame__nav-item.is-active { padding-inline: 16px; }
+}
+
 /* Morph canvas under nav (category pills drive scrub) */
-.morph-stage {
+.morph-stage,
+.landing__cat-stage {
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -449,6 +488,35 @@ html::after {
     ),
     var(--morph-max-size)
   );
+}
+
+.landing__cat-stage {
+  display: grid;
+  place-items: center;
+  --cat-title-reserve: calc(clamp(27px, 4vw, 64px) * 3.15 + clamp(20px, 3.2vw, 60px) + 12px);
+}
+
+.landing__cat-stage > .cat-gaze {
+  /* Match MorphStage's 0.8 artwork scale, keeping the same clear space above
+     the existing headline instead of extending the cat over the text. */
+  width: min(calc(var(--morph-view-size) * 0.8), max(120px, calc(100dvh - 2 * var(--cat-title-reserve))));
+  max-width: calc(100% - 32px);
+  pointer-events: auto;
+  /* Keep the landing page's vertical touch scrolling. Horizontal drags still
+     aim the cat; pointercancel releases the drag when native scrolling starts. */
+  touch-action: pan-y pinch-zoom;
+}
+
+@media (max-width: 700px) {
+  .landing__cat-stage {
+    --cat-title-reserve: calc(clamp(27px, 4vw, 64px) * 3.15 + 96px);
+  }
+}
+
+@media (max-width: 600px) {
+  .landing__cat-stage {
+    --cat-title-reserve: calc(clamp(21px, 6.4vw, 37px) * 3.15 + 96px);
+  }
 }
 
 .morph-demo__loading {

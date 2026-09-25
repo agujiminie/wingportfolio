@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Feather, Linkedin, Mail } from 'lucide-react'
+import { Linkedin, Mail } from 'lucide-react'
 import {
   BRAND,
   CTAS,
@@ -15,7 +15,7 @@ const CTA_ICONS = { linkedin: Linkedin, mail: Mail }
  * morph canvas reads as the central focal element. The left-edge nav drives the
  * active morph state, themed by the active section's accent color.
  */
-export default function FrameOverlay({ activeId, onSelect, onGoHome, scrolled = false }) {
+export default function FrameOverlay({ activeId, onSelect, onGoHome, scrolled = false, heroStyle, onChangeStyle }) {
   const activeState = STATE_BY_ID[activeId]
 
   const handleSelect = (id) => {
@@ -34,32 +34,16 @@ export default function FrameOverlay({ activeId, onSelect, onGoHome, scrolled = 
         aria-hidden="true"
       />
 
-      {/* Top-left — brand (click to go home) */}
-      <button
-        type="button"
-        className="frame__panel frame__brand"
-        onClick={onGoHome}
-        aria-label="Go to homepage"
-      >
-        <span className="frame__brand-mark" aria-hidden="true">
-          <Feather size={22} strokeWidth={1.6} />
-        </span>
-        <span className="frame__brand-name">{BRAND.name}</span>
-      </button>
-
-      {/* Bottom-left — hero headline (per-tab; re-mounts on switch to replay the fade) */}
-      <div className="frame__panel frame__headline-panel">
-        <h1 className="frame__headline" key={activeId}>
-          {(HEADLINES[activeId] ?? HEADLINES.work).map((line, i) => (
-            <span key={i} className="frame__headline-line">
-              {line}
-            </span>
-          ))}
-        </h1>
-      </div>
-
-      {/* Top-right — icon buttons */}
-      <div className="frame__panel frame__cta">
+      {/* Brand and contact stay together in both visual styles. */}
+      <div className="frame__panel frame__identity">
+        <button
+          type="button"
+          className="frame__brand"
+          onClick={onGoHome}
+          aria-label="Go to homepage"
+        >
+          <span className="frame__brand-name">{BRAND.name}</span>
+        </button>
         {CTAS.map((cta) => {
           const Icon = CTA_ICONS[cta.icon]
           return (
@@ -75,6 +59,30 @@ export default function FrameOverlay({ activeId, onSelect, onGoHome, scrolled = 
             </a>
           )
         })}
+      </div>
+
+      {/* Bottom-left — hero headline (per-tab; re-mounts on switch to replay the fade) */}
+      <div className="frame__panel frame__headline-panel">
+        <h1 className="frame__headline" key={activeId}>
+          {(HEADLINES[activeId] ?? HEADLINES.work).map((line, i) => (
+            <span key={i} className="frame__headline-line">
+              {line}
+            </span>
+          ))}
+        </h1>
+      </div>
+
+      {/* Global style switch: independent of the selected content tab. */}
+      <div className="frame__panel frame__cta">
+        <button
+          type="button"
+          className="frame__style-btn"
+          onClick={onChangeStyle}
+          aria-pressed={heroStyle === 'cat'}
+          title={heroStyle === 'cat' ? 'Cat Style → Retro' : 'Retro → Cat Style'}
+        >
+          Change Style
+        </button>
       </div>
 
       {/* Left edge — section nav */}

@@ -3,6 +3,7 @@ import LandingBackground from './LandingBackground'
 import MorphStage from './MorphStage'
 import FrameOverlay from './FrameOverlay'
 import SecondScreen from './SecondScreen'
+import CatGazeAtlas from './components/cat/CatGazeAtlas'
 import { STATE_BY_ID, TRANSITION_IMAGES } from './content'
 import { smoothScrollToTop } from './lib/smoothScroll'
 
@@ -39,6 +40,7 @@ const TOP_EPSILON = 2
 
 export default function App() {
   const [activeId, setActiveId] = useState(() => getInitialStateId())
+  const [heroStyle, setHeroStyle] = useState('retro')
   const [scrolled, setScrolled] = useState(false)
   const panelRef = useRef(null)
   // In-flight "snap to top" cancel fn + the tab to switch to once it lands.
@@ -138,14 +140,22 @@ export default function App() {
   }, [activeId, handleSelect])
 
   return (
-    <main className="landing">
+    <main className="landing" data-hero-style={heroStyle}>
       {/* Layer 0 — persistent background (image + Dither): revealed through the cutout */}
       <LandingBackground activeId={activeId} />
 
       {/* Layer 2 — morph canvas, centered via CSS; fades out on scroll (--fade) */}
-      <div className="landing__stage">
+      <div className="landing__stage landing__stage--retro" hidden={heroStyle !== 'retro'}>
         <MorphStage activeId={activeId} transitionImages={TRANSITION_IMAGES} />
       </div>
+
+      {heroStyle === 'cat' && (
+        <div className="landing__stage">
+          <div className="landing__cat-stage">
+            <CatGazeAtlas idle={false} />
+          </div>
+        </div>
+      )}
 
       {/* Layer 4 — viewport-framing overlay (nav/brand stay; headline fades with --fade) */}
       <FrameOverlay
@@ -153,6 +163,8 @@ export default function App() {
         onSelect={handleSelect}
         onGoHome={handleGoHome}
         scrolled={scrolled}
+        heroStyle={heroStyle}
+        onChangeStyle={() => setHeroStyle(style => style === 'retro' ? 'cat' : 'retro')}
       />
 
       {/* In-flow scroll content: one hero viewport, then the solid second screen */}

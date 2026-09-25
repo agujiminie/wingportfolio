@@ -436,3 +436,8 @@ Webflow /gallery 的重设计版：scatter hero（Claude startups 风格，作�
   因此文字会叠在猫上；本轮没有重新设计手机排版。截图与记录在
   `output/home-style/bottom-*`。相关lint和构建通过，仍有原有chunk提醒。
 - 无Figma，本轮按用户口述的贴底/比例/轻微偏右要求核对，未改变图片内容。
+
+### Bottom center correction — 2026-09-25
+
+- 用户取消偏右，明确要求bottom居中。首页猫图改为 `left:50%; bottom:0`，
+  保持130%大小及原有跟随行为；覆盖上节54%的定位。

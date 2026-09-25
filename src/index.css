@@ -500,10 +500,9 @@ html::after {
 }
 
 .landing__cat-stage > .cat-gaze {
-  /* Pin the photo's bottom edge to the viewport at every size; the center
-     sits four percent of the viewport to the right of the midline. */
+  /* Keep the photo centered horizontally and flush with the viewport bottom. */
   position: absolute;
-  left: 54%;
+  left: 50%;
   bottom: 0;
   transform: translateX(-50%);
   width: var(--cat-size);

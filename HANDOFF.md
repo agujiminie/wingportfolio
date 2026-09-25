@@ -456,3 +456,9 @@ Webflow /gallery 的重设计版：scatter hero（Claude startups 风格，作�
   `output/home-style/headline-scale-checks.json`；相关lint及构建通过（既存chunk提醒）。
 - 无新增Figma稿，本轮按用户标注截图和明确的调节需求验证；100%保留原版式，新增
   白色圆角紧凑控件沿用之前猫图调节器的样式。
+
+### Confirmed headline scale: 93% — 2026-09-25
+
+- 用户选定93%，要求收起临时控件。标题容器统一固定 `--headline-scale:0.93`，
+  桌面/手机基准字号均乘此比例，所有Tab及两种风格一致。移除Text Scale、Reset、
+  临时状态与localStorage读写，旧保存值不再影响结果；猫图仍为130%底部正居中。

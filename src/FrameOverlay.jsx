@@ -62,7 +62,7 @@ export default function FrameOverlay({ activeId, onSelect, onGoHome, scrolled = 
       </div>
 
       {/* Bottom-left — hero headline (per-tab; re-mounts on switch to replay the fade) */}
-      <HeroHeadline activeId={activeId} scrolled={scrolled} />
+      <HeroHeadline activeId={activeId} />
 
       {/* Global style switch: independent of the selected content tab. */}
       <div className="frame__panel frame__cta">

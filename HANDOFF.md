@@ -387,3 +387,9 @@ Webflow /gallery 的重设计版：scatter hero（Claude startups 风格，作�
   保留。控件仅在Cat Style出现，随Hero滚走，不覆盖下方作品；独立猫页不受影响。
 - 已验证滑块调到80%时显示80%，实测宽度按0.8变化且中心位置不变；切Tab、
   切换风格和刷新后数值均保留。相关lint与构建通过；仅按用户要求新增调节控件。
+
+### Confirmed cat scale: 85% — 2026-09-25
+
+- 用户最终选定85%（覆盖之前88%的选择），要求不再显示slider。首页猫容器固定 `--cat-scale: 0.85`，继续
+  使用原缩放中心和响应式基准。删除滑块、对应CSS、临时大小state以及sessionStorage
+  读写；旧的浏览器临时值不再影响结果。三个Tab的Cat Style均采用同一比例。

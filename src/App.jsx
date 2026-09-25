@@ -21,14 +21,6 @@ function getInitialStateId() {
   return 'work'
 }
 
-function getInitialCatSize() {
-  try {
-    const value = Number(window.sessionStorage.getItem('cat-hero-size'))
-    if (value >= 40 && value <= 100) return value
-  } catch { /* Storage may be unavailable; the slider still works. */ }
-  return 100
-}
-
 // The hero (morph canvas + headline) fades to 0 by the time the second screen's
 // top edge has risen to this fraction of the viewport height — i.e. once the
 // panel covers the bottom (1 - VANISH_AT) of the screen. Tune this single number.
@@ -49,17 +41,11 @@ const TOP_EPSILON = 2
 export default function App() {
   const [activeId, setActiveId] = useState(() => getInitialStateId())
   const [heroStyle, setHeroStyle] = useState('retro')
-  const [catSize, setCatSize] = useState(getInitialCatSize)
   const [scrolled, setScrolled] = useState(false)
   const panelRef = useRef(null)
   // In-flight "snap to top" cancel fn + the tab to switch to once it lands.
   const scrollCancelRef = useRef(null)
   const pendingTargetRef = useRef(null)
-
-  useEffect(() => {
-    try { window.sessionStorage.setItem('cat-hero-size', String(catSize)) }
-    catch { /* Keep the in-memory preference when storage is unavailable. */ }
-  }, [catSize])
 
   // Scroll-driven hero fade (Method B). Writes a single --fade custom property
   // on :root; CSS maps it onto the morph stage opacity and the headline opacity.
@@ -165,28 +151,9 @@ export default function App() {
 
       {heroStyle === 'cat' && (
         <div className="landing__stage">
-          <div className="landing__cat-stage" style={{ '--cat-scale': catSize / 100 }}>
+          <div className="landing__cat-stage">
             <CatGazeAtlas idle={false} />
           </div>
-        </div>
-      )}
-
-      {heroStyle === 'cat' && (
-        <div className="cat-size-control" lang="zh-CN">
-          <div className="cat-size-control__label">
-            <label htmlFor="cat-hero-size">猫咪大小</label>
-            <output htmlFor="cat-hero-size">{catSize}%</output>
-          </div>
-          <input
-            id="cat-hero-size"
-            type="range"
-            min="40"
-            max="100"
-            step="1"
-            value={catSize}
-            aria-valuetext={`${catSize}%`}
-            onChange={event => setCatSize(Number(event.target.value))}
-          />
         </div>
       )}
 

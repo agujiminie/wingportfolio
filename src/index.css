@@ -472,6 +472,8 @@ html::after {
 /* Morph canvas under nav (category pills drive scrub) */
 .morph-stage,
 .landing__cat-stage {
+  /* Final size selected by the user with the preview slider. */
+  --cat-scale: 0.85;
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -494,7 +496,7 @@ html::after {
   --cat-title-reserve: calc(clamp(27px, 4vw, 64px) * 3.15 + clamp(20px, 3.2vw, 60px) + 12px);
   --cat-top-reserve: 64px;
   --cat-base-size: min(var(--morph-view-size), max(120px, calc(100dvh - var(--cat-title-reserve) - var(--cat-top-reserve))));
-  --cat-size: calc(var(--cat-base-size) * var(--cat-scale, 1));
+  --cat-size: calc(var(--cat-base-size) * var(--cat-scale));
   --cat-base-top: clamp(var(--cat-top-reserve), calc(50% - var(--cat-base-size) / 2), calc(100% - var(--cat-title-reserve) - var(--cat-base-size)));
 }
 
@@ -513,41 +515,6 @@ html::after {
   /* Keep the landing page's vertical touch scrolling. Horizontal drags still
      aim the cat; pointercancel releases the drag when native scrolling starts. */
   touch-action: pan-y pinch-zoom;
-}
-
-.cat-size-control {
-  position: absolute;
-  z-index: 5;
-  top: 72px;
-  right: clamp(20px, 3.2vw, 60px);
-  width: 200px;
-  padding: 12px 14px;
-  border: 1px solid #e6e6e6;
-  border-radius: 12px;
-  background: #fff;
-  color: #535353;
-  font: 12px/1.4 'Kode Mono', system-ui, sans-serif;
-}
-
-.cat-size-control__label {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.cat-size-control output { font-variant-numeric: tabular-nums; }
-.cat-size-control input {
-  display: block;
-  width: 100%;
-  height: 28px;
-  margin: 6px 0 0;
-  accent-color: #77715c;
-  cursor: pointer;
-}
-
-.cat-size-control input:focus-visible {
-  outline: 2px solid #77715c;
-  outline-offset: 3px;
 }
 
 @media (max-width: 700px) {

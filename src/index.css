@@ -497,17 +497,14 @@ html::after {
   --cat-top-reserve: 64px;
   --cat-base-size: min(var(--morph-view-size), max(120px, calc(100dvh - var(--cat-title-reserve) - var(--cat-top-reserve))));
   --cat-size: calc(var(--cat-base-size) * var(--cat-scale));
-  --cat-base-top: clamp(var(--cat-top-reserve), calc(50% - var(--cat-base-size) / 2), calc(100% - var(--cat-title-reserve) - var(--cat-base-size)));
 }
 
 .landing__cat-stage > .cat-gaze {
-  /* Cat photos already contain white margins. Use the full Retro canvas size
-     rather than applying its internal 0.8 artwork scale a second time.
-     Keep the viewport center when it fits; otherwise lift the cat above the
-     headline, using the actual space between the navigation and the title. */
+  /* Keep the approved 85% scale, with exactly 4px between the photo bottom
+     and the measured title box. The fallback covers the initial layout. */
   position: absolute;
   left: 50%;
-  top: calc(var(--cat-base-top) + (var(--cat-base-size) - var(--cat-size)) / 2);
+  top: calc(var(--cat-title-top, calc(100dvh - var(--cat-title-reserve) + 12px)) - 4px - var(--cat-size));
   transform: translateX(-50%);
   width: var(--cat-size);
   max-width: calc(100% - 32px);

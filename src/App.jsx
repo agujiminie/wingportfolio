@@ -54,12 +54,18 @@ export default function App() {
     // Stable for the app's lifetime; its height is re-read each frame to stay
     // correct across viewport resizes.
     const bar = document.querySelector('.frame__topbar')
+    const headline = document.querySelector('.frame__headline-panel')
     let ticking = false
 
     const update = () => {
       ticking = false
       const panel = panelRef.current
       if (!panel) return
+      // Anchor the cat to the actual title box, including responsive layout
+      // and loaded font metrics, without changing its user-selected size.
+      if (headline) {
+        root.style.setProperty('--cat-title-top', `${headline.getBoundingClientRect().top}px`)
+      }
       const vh = window.innerHeight
       const top = panel.getBoundingClientRect().top
       // 1 when the panel enters at the bottom (top = vh); 0 at top = VANISH_AT*vh.
@@ -83,13 +89,17 @@ export default function App() {
     }
 
     update()
+    const headlineObserver = new ResizeObserver(onScroll)
+    if (headline) headlineObserver.observe(headline)
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll, { passive: true })
     return () => {
+      headlineObserver.disconnect()
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
       root.style.removeProperty('--fade')
       root.style.removeProperty('--title-fade')
+      root.style.removeProperty('--cat-title-top')
     }
   }, [])
 

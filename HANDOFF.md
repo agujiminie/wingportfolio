@@ -393,3 +393,11 @@ Webflow /gallery 的重设计版：scatter hero（Claude startups 风格，作�
 - 用户最终选定85%（覆盖之前88%的选择），要求不再显示slider。首页猫容器固定 `--cat-scale: 0.85`，继续
   使用原缩放中心和响应式基准。删除滑块、对应CSS、临时大小state以及sessionStorage
   读写；旧的浏览器临时值不再影响结果。三个Tab的Cat Style均采用同一比例。
+
+### Cat photo-to-title gap: 4px — 2026-09-25
+
+- 用户要求猫图下移，图片底边与标题顶部只留4px。保留已确认85%大小和水平居中，
+  用标题容器实测top定位猫图底边；ResizeObserver同步字体/标题高度变化，窗口尺寸
+  变化使用原有rAF调度更新。原文字、导航、Retro和下方作品位置不变，无slider。
+- 验证852×914、1280×720、390×844下三个栏目，共9组；实际间距4.00–4.01px
+  （子像素舍入），尺寸仍为85%。相关lint与生产构建通过；按用户截图调整，无Figma。

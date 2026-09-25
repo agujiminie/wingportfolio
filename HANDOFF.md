@@ -441,3 +441,18 @@ Webflow /gallery 的重设计版：scatter hero（Claude startups 风格，作�
 
 - 用户取消偏右，明确要求bottom居中。首页猫图改为 `left:50%; bottom:0`，
   保持130%大小及原有跟随行为；覆盖上节54%的定位。
+
+### Shared headline percentage control — 2026-09-25
+
+- 用户要求为左下角三行标题增加右上角Scale输入框，所有Tab统一字号。新增
+  `HeroHeadline`，100%等于当前响应式字号，Text Scale实时调整25–200%（支持小数），
+  Reset回100%。只将字号乘比例，沿用字体、颜色、字距、行高和左下锚点；不缩放
+  导航、正文或猫图。Work / AI Playground / Analog及Retro / Cat共用同一设置。
+- 设置保存在localStorage `hero-headline-scale-v1`，刷新恢复。输入中可暂时清空，
+  空值失焦恢复当前比例，越界失焦限幅。控件在Change Style下方，内容区滚至顶部
+  导航后隐藏；独立猫页不受影响。当前猫仍为130%、底部正居中。
+- 浏览器验证80%在三个Tab字号一致且左右/底部锚点与导航字号不变；125%不改变猫图
+  几何，刷新保留，空输入恢复。390×844下80%正确、控件完整可见。记录在
+  `output/home-style/headline-scale-checks.json`；相关lint及构建通过（既存chunk提醒）。
+- 无新增Figma稿，本轮按用户标注截图和明确的调节需求验证；100%保留原版式，新增
+  白色圆角紧凑控件沿用之前猫图调节器的样式。

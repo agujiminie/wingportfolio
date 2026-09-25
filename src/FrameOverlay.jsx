@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 import { Linkedin, Mail } from 'lucide-react'
+import HeroHeadline from './HeroHeadline'
 import {
   BRAND,
   CTAS,
-  HEADLINES,
   NAV_ITEMS,
 } from './frameContent'
 import { STATE_BY_ID } from './content'
@@ -62,15 +62,7 @@ export default function FrameOverlay({ activeId, onSelect, onGoHome, scrolled = 
       </div>
 
       {/* Bottom-left — hero headline (per-tab; re-mounts on switch to replay the fade) */}
-      <div className="frame__panel frame__headline-panel">
-        <h1 className="frame__headline" key={activeId}>
-          {(HEADLINES[activeId] ?? HEADLINES.work).map((line, i) => (
-            <span key={i} className="frame__headline-line">
-              {line}
-            </span>
-          ))}
-        </h1>
-      </div>
+      <HeroHeadline activeId={activeId} scrolled={scrolled} />
 
       {/* Global style switch: independent of the selected content tab. */}
       <div className="frame__panel frame__cta">

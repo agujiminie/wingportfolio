@@ -3,7 +3,7 @@ import LandingBackground from './LandingBackground'
 import MorphStage from './MorphStage'
 import FrameOverlay from './FrameOverlay'
 import SecondScreen from './SecondScreen'
-import CatGazeAtlas from './components/cat/CatGazeAtlas'
+import CatHeroEditor from './components/cat/CatHeroEditor'
 import { STATE_BY_ID, TRANSITION_IMAGES } from './content'
 import { smoothScrollToTop } from './lib/smoothScroll'
 
@@ -161,9 +161,7 @@ export default function App() {
 
       {heroStyle === 'cat' && (
         <div className="landing__stage">
-          <div className="landing__cat-stage">
-            <CatGazeAtlas idle={false} />
-          </div>
+          <CatHeroEditor />
         </div>
       )}
 

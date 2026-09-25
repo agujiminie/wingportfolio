@@ -472,8 +472,6 @@ html::after {
 /* Morph canvas under nav (category pills drive scrub) */
 .morph-stage,
 .landing__cat-stage {
-  /* Final size selected by the user with the preview slider. */
-  --cat-scale: 0.85;
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -493,25 +491,77 @@ html::after {
 }
 
 .landing__cat-stage {
+  --cat-scale: 0.85;
   --cat-title-reserve: calc(clamp(27px, 4vw, 64px) * 3.15 + clamp(20px, 3.2vw, 60px) + 12px);
   --cat-top-reserve: 64px;
   --cat-base-size: min(var(--morph-view-size), max(120px, calc(100dvh - var(--cat-title-reserve) - var(--cat-top-reserve))));
   --cat-size: calc(var(--cat-base-size) * var(--cat-scale));
 }
 
-.landing__cat-stage > .cat-gaze {
-  /* Keep the approved 85% scale, with exactly 4px between the photo bottom
-     and the measured title box. The fallback covers the initial layout. */
+.cat-hero-editor__canvas {
+  /* Start at the approved 85% / 4px position. Scale around this stable center
+     so changing the percentage doesn't undo the user's placement. */
   position: absolute;
-  left: 50%;
-  top: calc(var(--cat-title-top, calc(100dvh - var(--cat-title-reserve) + 12px)) - 4px - var(--cat-size));
-  transform: translateX(-50%);
+  left: calc(50% + var(--cat-offset-x, 0px));
+  top: calc(var(--cat-title-top, calc(100dvh - var(--cat-title-reserve) + 12px)) - 4px - var(--cat-base-size) * 0.425 + var(--cat-offset-y, 0px));
+  transform: translate(-50%, -50%);
   width: var(--cat-size);
-  max-width: calc(100% - 32px);
   pointer-events: auto;
-  /* Keep the landing page's vertical touch scrolling. Horizontal drags still
-     aim the cat; pointercancel releases the drag when native scrolling starts. */
-  touch-action: pan-y pinch-zoom;
+  touch-action: none;
+  cursor: grab;
+  outline: 1px dashed transparent;
+  outline-offset: 3px;
+}
+
+.cat-hero-editor__canvas:hover,
+.cat-hero-editor__canvas:focus-visible,
+.cat-hero-editor__canvas.is-dragging {
+  outline-color: #bbb;
+}
+
+.cat-hero-editor__canvas.is-dragging { cursor: grabbing; }
+.cat-hero-editor__canvas > .cat-gaze { max-height: none; }
+
+.cat-hero-editor__controls {
+  position: absolute;
+  top: 68px;
+  right: clamp(20px, 3.2vw, 60px);
+  padding: 10px 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #555;
+  font: 12px/1.4 "Kode Mono", monospace;
+  pointer-events: auto;
+}
+
+.cat-hero-editor__row { display: flex; align-items: center; gap: 10px; }
+.cat-hero-editor__percentage { display: flex; align-items: center; gap: 4px; }
+.cat-hero-editor__percentage input {
+  width: 58px;
+  padding: 5px 4px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff;
+  color: #222;
+  font: inherit;
+  text-align: right;
+}
+.cat-hero-editor__controls button {
+  padding: 5px 0;
+  border: 0;
+  background: transparent;
+  color: #666;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.cat-hero-editor__controls :focus-visible { outline: 2px solid #8b773e; outline-offset: 2px; }
+.cat-hero-editor__hint { display: block; margin-top: 6px; color: #777; }
+
+@media (max-width: 700px) {
+  .cat-hero-editor__controls { top: 64px; }
 }
 
 @media (max-width: 700px) {

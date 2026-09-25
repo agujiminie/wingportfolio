@@ -17,48 +17,33 @@ unchanged by the runtime alignment revisions below.
   Pillow, NumPy and OpenCV. Review outputs in `output/cat-refinement/` before
   copying exports here. Changed source/settings require a fresh work folder.
 
-## Current runtime: one continuous neck surface
+## Current runtime: identical geometry for both halves
 
-The former runtime neck/chest reference overlays were removed on 2026-09-24.
-Scaling a second neck silhouette over the pose, then covering it with a fixed
-chest, created the block-shaped protrusion reported by the user. Matching a few
-outline widths did not validate the perceived anatomy or the join.
+As of 2026-09-25, every direction paints its full source bitmap into the same
+canvas bounds, followed by the shared opaque torso at y=624. This is the renderer
+previously used on the approved right half, now applied to the left half too.
 
-`headNeckAlignment.js` now renders directly from **one pose image**:
+The left-only 7.5% down-left enlargement, (-10,-8) upper-left translation, and
+512–624 scanline neck deformation have been removed along with
+`headNeckAlignment.js` and the `fixedNeck` prop. These corrections caused the
+left head to change size and the neck/chest to twist as the pointer moved.
+There are no runtime pose-dependent scaling, translations, warps, or neck layers.
+`data-frame-geometry="source"` identifies the direct rendering path.
 
-- Keep the approved direction-dependent face correction: up to 7.5% uniform
-  enlargement down-left; up to (-10,-8) pixels of upper-left translation.
-- Above source y=512, retain that full rigid transform. Through y=512–624,
-  smoothly reduce scale/translation to the unchanged body geometry. The mapping
-  and its first derivative match at both endpoints; it stays monotonic, so
-  no source rows fold or overlap as a second silhouette.
-- Render the join into integer destination scanlines, then copy the untransformed
-  lower body. This is spatial coordinate interpolation, not a dissolve between
-  poses or a superimposed neck photo. Each row samples the same source bitmap.
-- Retain the single opaque bottom torso patch at y=624 to remove codec shimmer.
-  The two extra reference canvases, their ~4.5 MiB storage, and their startup
-  reference requests are gone. `fixedNeck` remains the compatibility flag for
-  enabling this continuous attachment; `data-neck-join="continuous"` identifies it.
-
-All coordinates describe the 768px atlas and scale with canvas resolution.
-The exact face corrections fade smoothly across neighboring directions. Center,
-right and upper poses retain their previously specified scale/offset behavior.
-Pointer motion, reduced-motion behavior, cache bounds and idle=false are unchanged.
-
-## Verification and limits
-
-Local before/after comparisons for the user's r28-c00 crop, upper-left, and nearby
-poses are in `output/cat-continuous/`. Automated geometry checks cover all 841
-indices, endpoint continuity, monotonic sampling, no scanline gaps, and unchanged
-lower-body geometry. Browser checks cover actual rendering, pointer response,
-stationary input, cache bounds, mode switching and missing center-frame fallback.
-
-This does not promise invariant neck width or flawless anatomy in every generated
-source image. Source interpolation can still soften fur and whiskers; the neck
-join now uses mild spatial deformation, while the face above it keeps a uniform
-transform. The original photos and former atlases remain available for comparison.
+The shared torso remains fixed pixel-for-pixel. Source assets, approved right
+poses, pointer response, bounded frame cache and idle=false are unchanged.
+Source perspective and generated-image differences remain in the photos; using
+identical canvas bounds alone is not evidence of identical perceived anatomy.
 
 Playback keeps at most 36 decoded frames and four concurrent requests. It paints
 in the pointer rAF, keeps the last complete image on missing downloads, and
 ignores stale completions. User input uses the existing 30ms / 0.018 response
 profile and sensitivity 1.25. Very slow first downloads can still hold a pose.
+
+## Verification
+
+Review the bottom sweep and matching left/right directions in
+`output/cat-symmetric/`. Browser regression checks compare rendered pixels with
+the source at identical coordinates (including the previous right-side renderer),
+verify fixed lower-body pixels, and exercise response, hold, loading failure and
+mode switching. The retained unit tests cover cache and gaze motion behavior.

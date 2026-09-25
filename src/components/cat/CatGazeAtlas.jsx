@@ -4,7 +4,6 @@ import useGazeCell from './useGazeCell'
 import { CAT_FRAMES, PLACEHOLDER_FRAMES } from './catFrames'
 import { createGazeFrameCache, loadGazeBitmap } from './gazeFrameCache'
 import { STABLE_GAZE_ATLAS, STABLE_ATLAS_SIDE, STABLE_ATLAS_RESOLUTION, STABLE_TORSO } from './stableGazeAtlas'
-import { drawAlignedHeadNeck } from './headNeckAlignment'
 import './cat-gaze.css'
 
 const DEFAULT_ANCHOR = { x: 0.5, y: 0.42 }
@@ -13,7 +12,6 @@ export default function CatGazeAtlas({
   frames = STABLE_GAZE_ATLAS, gridSize = STABLE_ATLAS_SIDE, resolution = STABLE_ATLAS_RESOLUTION,
   faceAnchor = DEFAULT_ANCHOR, reach, idle = true, className = '', sensitivity = 1.25, responsive = true,
   fixedTorso = frames === STABLE_GAZE_ATLAS ? STABLE_TORSO : null,
-  fixedNeck = frames === STABLE_GAZE_ATLAS,
 }) {
   const stageRef = useRef(null)
   const canvasRef = useRef(null)
@@ -43,8 +41,7 @@ export default function CatGazeAtlas({
       context.drawImage(torsoBitmap, 0, top, resolution, resolution - top)
     }
     stage.dataset.fixedBody = 'false'
-    stage.dataset.fixedNeck = String(fixedNeck)
-    stage.dataset.neckJoin = fixedNeck ? 'continuous' : 'source'
+    stage.dataset.frameGeometry = 'source'
     if (fixedTorso) loadGazeBitmap(fixedTorso.url, torsoController.signal).then(bitmap => {
       if (disposed) { bitmap.close?.(); return }
       torsoBitmap = bitmap
@@ -54,13 +51,16 @@ export default function CatGazeAtlas({
     const cache = createGazeFrameCache({
       frames, side: gridSize,
       onFrame(index, bitmap) {
-        const scale = drawAlignedHeadNeck(context, bitmap, fixedNeck, index, gridSize, resolution)
+        // All directions use the same canvas bounds. Direction-dependent head
+        // transforms made the left side grow/shrink and warped the neck join.
+        context.fillStyle = '#fff'
+        context.fillRect(0, 0, resolution, resolution)
+        context.drawImage(bitmap, 0, 0, resolution, resolution)
         // A single shared patch also removes lossy-codec shimmer in static fur.
         drawTorso()
         canvas.style.visibility = 'visible'
         stage.dataset.displayedFrame = String(index)
         stage.dataset.cachedFrames = String(cache.size)
-        stage.dataset.headScale = scale.toFixed(5)
         setLoadedSource(frames)
       },
       onError(index) {
@@ -82,7 +82,7 @@ export default function CatGazeAtlas({
       cacheRef.current = null
       document.removeEventListener('visibilitychange', onVisibility)
     }
-  }, [frames, gridSize, resolution, fixedTorso, fixedNeck])
+  }, [frames, gridSize, resolution, fixedTorso])
 
   return (
     <div

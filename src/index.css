@@ -491,15 +491,21 @@ html::after {
 }
 
 .landing__cat-stage {
-  display: grid;
-  place-items: center;
   --cat-title-reserve: calc(clamp(27px, 4vw, 64px) * 3.15 + clamp(20px, 3.2vw, 60px) + 12px);
+  --cat-top-reserve: 64px;
+  --cat-size: min(var(--morph-view-size), max(120px, calc(100dvh - var(--cat-title-reserve) - var(--cat-top-reserve))));
 }
 
 .landing__cat-stage > .cat-gaze {
-  /* Match MorphStage's 0.8 artwork scale, keeping the same clear space above
-     the existing headline instead of extending the cat over the text. */
-  width: min(calc(var(--morph-view-size) * 0.8), max(120px, calc(100dvh - 2 * var(--cat-title-reserve))));
+  /* Cat photos already contain white margins. Use the full Retro canvas size
+     rather than applying its internal 0.8 artwork scale a second time.
+     Keep the viewport center when it fits; otherwise lift the cat above the
+     headline, using the actual space between the navigation and the title. */
+  position: absolute;
+  left: 50%;
+  top: clamp(var(--cat-top-reserve), calc(50% - var(--cat-size) / 2), calc(100% - var(--cat-title-reserve) - var(--cat-size)));
+  transform: translateX(-50%);
+  width: var(--cat-size);
   max-width: calc(100% - 32px);
   pointer-events: auto;
   /* Keep the landing page's vertical touch scrolling. Horizontal drags still

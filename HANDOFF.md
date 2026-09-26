@@ -469,3 +469,9 @@ Webflow /gallery 的重设计版：scatter hero（Claude startups 风格，作�
   Wing Zeng与按钮的现有间隙内加入20px高竖线，使用和Change Style边框共用的
   `1px solid rgba(0,0,0,0.16)`；绝对定位不挤动导航，窄屏随4px间距居中。
   两种风格和全部Tab共用；本轮视觉依据为用户标注，无新增Figma。
+
+### Balance the identity divider's visual spacing — 2026-09-25
+
+- 用户要求名字到竖线的留白与竖线到图标的留白对称。计算分隔线位置时加入
+  17.6px图标在40px按钮内的11.2px内缩，将竖线向右移5.6px，增加文字后的空隙。
+  桌面两侧约11.1px；保持名字、按钮点击范围和导航位置，窄屏同公式随间距调整。

@@ -269,7 +269,8 @@ html::after {
   content: "";
   position: absolute;
   top: 50%;
-  right: calc(var(--identity-gap) / -2 - 0.5px);
+  /* Center on the visible icon, including its inset inside the 40px button. */
+  right: calc((var(--identity-gap) + (40px - 17.6px) / 2) / -2 - 0.5px);
   height: 20px;
   border-left: var(--frame-control-border);
   transform: translateY(-50%);

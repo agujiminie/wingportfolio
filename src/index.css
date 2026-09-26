@@ -269,7 +269,7 @@ html::after {
   content: "";
   position: absolute;
   top: 50%;
-  /* Center on the visible icon, including its inset inside the 40px button. */
+  /* Center on the visible icon within its reserved 40px contact slot. */
   right: calc((var(--identity-gap) + (40px - 17.6px) / 2) / -2 - 0.5px);
   height: 20px;
   border-left: var(--frame-control-border);
@@ -302,8 +302,10 @@ html::after {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 24px;
+  height: 24px;
+  /* Keep the approved icon center and divider spacing; margins don't hover. */
+  margin-inline: 8px;
   border-radius: 999px;
   color: rgba(0, 0, 0, 0.72);
   text-decoration: none;

@@ -55,7 +55,7 @@ export default function FrameOverlay({ activeId, onSelect, onGoHome, scrolled = 
               target={cta.external ? '_blank' : undefined}
               rel={cta.external ? 'noopener noreferrer' : undefined}
             >
-              <Icon size={22} strokeWidth={1.6} aria-hidden="true" />
+              <Icon size={cta.id === 'linkedin' ? 17.6 : 22} strokeWidth={1.6} aria-hidden="true" />
             </a>
           )
         })}

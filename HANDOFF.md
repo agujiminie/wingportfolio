@@ -462,3 +462,10 @@ Webflow /gallery 的重设计版：scatter hero（Claude startups 风格，作�
 - 用户选定93%，要求收起临时控件。标题容器统一固定 `--headline-scale:0.93`，
   桌面/手机基准字号均乘此比例，所有Tab及两种风格一致。移除Text Scale、Reset、
   临时状态与localStorage读写，旧保存值不再影响结果；猫图仍为130%底部正居中。
+
+### LinkedIn icon and identity divider — 2026-09-25
+
+- 按用户标注将LinkedIn图标从22px缩为17.6px（小20%），40px按钮点击范围保留。
+  Wing Zeng与按钮的现有间隙内加入20px高竖线，使用和Change Style边框共用的
+  `1px solid rgba(0,0,0,0.16)`；绝对定位不挤动导航，窄屏随4px间距居中。
+  两种风格和全部Tab共用；本轮视觉依据为用户标注，无新增Figma。

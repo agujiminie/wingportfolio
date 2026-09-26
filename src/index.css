@@ -197,6 +197,7 @@ html::after {
   z-index: 4;
   pointer-events: none;
   --frame-margin: clamp(20px, 3.2vw, 60px);
+  --frame-control-border: 1px solid rgba(0, 0, 0, 0.16);
   /* Vertical inset for the top row. Tuned so the bar lands at the shadcn-style
      compact header height (~56px / h-14): inset on each side ≈ (56 - ~30)/2. */
   --frame-top: clamp(11px, 1vw, 14px);
@@ -243,15 +244,17 @@ html::after {
    <button> (go-home action) so it needs its own reset from browser button
    chrome. */
 .frame__identity {
+  --identity-gap: 12px;
   top: calc(var(--bar-h) / 2);
   left: var(--frame-margin);
   transform: translateY(-50%);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--identity-gap);
 }
 
 .frame__brand {
+  position: relative;
   display: flex;
   align-items: center;
   border: 0;
@@ -260,6 +263,17 @@ html::after {
   font: inherit;
   text-align: left;
   cursor: pointer;
+}
+
+.frame__brand::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: calc(var(--identity-gap) / -2 - 0.5px);
+  height: 20px;
+  border-left: var(--frame-control-border);
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .frame__brand:hover .frame__brand-name {
@@ -309,7 +323,7 @@ html::after {
   justify-content: center;
   min-height: 40px;
   padding: 8px 14px;
-  border: 1px solid rgba(0, 0, 0, 0.16);
+  border: var(--frame-control-border);
   border-radius: 999px;
   background: transparent;
   color: rgba(0, 0, 0, 0.8);
@@ -464,7 +478,7 @@ html::after {
 }
 
 @media (max-width: 380px) {
-  .frame__identity { gap: 4px; }
+  .frame__identity { --identity-gap: 4px; }
   .frame__style-btn { padding-inline: 8px; font-size: 12px; }
   .frame__nav { gap: 2px; }
   .frame__nav-item { padding-inline: 10px; }

@@ -485,3 +485,8 @@ Webflow /gallery 的重设计版：scatter hero（Claude startups 风格，作�
 
 - 后续用户要求删除LinkedIn hover背景色：已移除悬停/焦点的灰色背景和背景过渡，
   保留图标颜色变化、轻微上移及键盘焦点轮廓；尺寸和间距保持。
+
+### Borderless Change Style — 2026-09-25
+
+- 用户要求Change Style去边框并与LinkedIn共用hover效果。移除边框与灰色hover
+  背景，共用文字变深至#111、上移1px的200ms过渡；保留键盘焦点轮廓与切换功能。

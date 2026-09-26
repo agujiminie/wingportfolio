@@ -310,13 +310,12 @@ html::after {
   color: rgba(0, 0, 0, 0.72);
   text-decoration: none;
   cursor: pointer;
-  transition: color 200ms ease, background-color 200ms ease, transform 200ms ease;
+  transition: color 200ms ease, transform 200ms ease;
 }
 
 .frame__cta-btn:hover,
 .frame__cta-btn:focus-visible {
   color: #111;
-  background: rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
 }
 

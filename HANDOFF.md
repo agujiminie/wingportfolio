@@ -490,3 +490,7 @@ Webflow /gallery 的重设计版：scatter hero（Claude startups 风格，作�
 
 - 用户要求Change Style去边框并与LinkedIn共用hover效果。移除边框与灰色hover
   背景，共用文字变深至#111、上移1px的200ms过渡；保留键盘焦点轮廓与切换功能。
+
+- 最新调整：Change Style改为与中间Tabs共用hover/focus样式：6%黑色淡背景、
+  文字#111、上移1px；背景/颜色过渡280ms，上移200ms。按钮保持无边框，LinkedIn
+  继续保持无hover背景色。

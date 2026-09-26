@@ -314,9 +314,7 @@ html::after {
 }
 
 .frame__cta-btn:hover,
-.frame__cta-btn:focus-visible,
-.frame__style-btn:hover,
-.frame__style-btn:focus-visible {
+.frame__cta-btn:focus-visible {
   color: #111;
   transform: translateY(-1px);
 }
@@ -334,7 +332,7 @@ html::after {
   font: 600 14px/1.4 'Kode Mono', monospace;
   white-space: nowrap;
   cursor: pointer;
-  transition: color 200ms ease, transform 200ms ease;
+  transition: background-color 280ms ease, color 280ms ease, transform 200ms ease;
 }
 
 .frame__style-btn:focus-visible {
@@ -425,7 +423,9 @@ html::after {
 }
 
 .frame__nav-item:hover,
-.frame__nav-item:focus-visible {
+.frame__nav-item:focus-visible,
+.frame__style-btn:hover,
+.frame__style-btn:focus-visible {
   color: #111;
   background: rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);

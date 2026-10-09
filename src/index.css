@@ -511,8 +511,10 @@ html::after {
 }
 
 .landing__cat-stage {
-  /* Preserve the editor's 100% size basis and apply the chosen 130%. */
-  --cat-scale: 1.3;
+  /* Crop extra chest without making a focus-scrollable container. */
+  overflow: clip;
+  /* Shared 78% setting, using the same reference as the previous 88% / 85%. */
+  --cat-scale: calc(1.3 * 78 / 88);
   --cat-title-reserve: calc(clamp(27px, 4vw, 64px) * 3.15 + clamp(20px, 3.2vw, 60px) + 12px);
   --cat-top-reserve: 64px;
   --cat-base-size: min(var(--morph-view-size), max(120px, calc(100dvh - var(--cat-title-reserve) - var(--cat-top-reserve))));
@@ -530,6 +532,15 @@ html::after {
   max-height: none;
   pointer-events: auto;
   touch-action: pan-y pinch-zoom;
+}
+
+/* Match Yiko's eye line and head size to Magu's shared framing.
+   The source has a smaller head and more chest: enlarge uniformly, then let
+   the viewport crop the extra lower body. Apply identically to every pose.
+   Keep YIKO_GAZE.faceAnchor in sync with this framing. */
+.landing__cat-stage > .cat-gaze[data-character='yiko'] {
+  width: calc(var(--cat-size) * 1.17);
+  bottom: calc(var(--cat-size) * -0.179);
 }
 
 @media (max-width: 700px) {

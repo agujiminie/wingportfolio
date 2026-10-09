@@ -1,0 +1,161 @@
+{
+  "gridSize": 5,
+  "frameSize": 1254,
+  "frameCount": 25,
+  "generator": "built-in imagegen",
+  "approvedMaster": "yiko-fish-preview-v5/yiko-front-fish-subtle-tilt.png",
+  "quality": 90,
+  "totalBytes": 4262052,
+  "frames": [
+    {
+      "file": "r0-c0.webp",
+      "pngSha256": "ca3dce234fa175c560d2a3890970093d0b7d0e40a7c76416478d8aed99d6710d",
+      "sha256": "aaa6839347260b0a5d90febf16390d2a9ce0fb88c483a0349d61ea37a46cf045",
+      "bytes": 168518
+    },
+    {
+      "file": "r0-c1.webp",
+      "pngSha256": "8e2f51e61873acf0883522a8af0541d0c4279ccc8a615c9fd4c5bbd313b0af64",
+      "sha256": "7499e51766bbbfc451eb2fb7eeb40435d27d6427f57c6f7a6cdf523b0fdf8022",
+      "bytes": 168338
+    },
+    {
+      "file": "r0-c2.webp",
+      "pngSha256": "eca2edc86f774037c496efb9da9a6f50f8c6f1d26078a3c10b6f154d33ad9521",
+      "sha256": "db1cb0d267cd8fe6e4fcf8464eb3fa0db5d0c8ceb2f41a40990344a85332c14c",
+      "bytes": 160416
+    },
+    {
+      "file": "r0-c3.webp",
+      "pngSha256": "2d5a9f61b3ab5edeef6224f72e29c9ae85c731e4a5eba5102185eaf944f6b6f6",
+      "sha256": "5a585581c28ba88ee32afb248dff31db908248c96a5c81894fbe1215a62e809a",
+      "bytes": 172236
+    },
+    {
+      "file": "r0-c4.webp",
+      "pngSha256": "af59b38cd55fe3de59f693e1745d4ee755242c6ff8173a715e3cd8a213e705e6",
+      "sha256": "218cc7caf4d62d70ecd470901a4a0e97e26572807f651665d8c601a9ed337f34",
+      "bytes": 167914
+    },
+    {
+      "file": "r1-c0.webp",
+      "pngSha256": "16c8a62a8e27a004c8213c8f8732b3eb258a7ca84e90e83fecff4f4bcf8a19b8",
+      "sha256": "36529dd5bcffaf03467d6309ff7e98881250043e76d844796a625ae345e6269a",
+      "bytes": 180264
+    },
+    {
+      "file": "r1-c1.webp",
+      "pngSha256": "9f80d0e7875c9ba1800335b592dd09f5ec62c6dfa045f4b837407311f3c063ec",
+      "sha256": "938359487657f816882999ed95451c26074149eb5ecf4b572af8e84888e462dd",
+      "bytes": 159998
+    },
+    {
+      "file": "r1-c2.webp",
+      "pngSha256": "25a3eac5d79d1c352fd3ae8f6144940e689bb709805664a0dac3db09b786f003",
+      "sha256": "aa7c3a56cecd5fc41f1d9ad270fd3d48d9c649d5d108216bf2c22e0bd632b7e7",
+      "bytes": 175926
+    },
+    {
+      "file": "r1-c3.webp",
+      "pngSha256": "57ad6fa5708025e9a6f882ca2d208ca853cee009f7d8d3eeb37447330b884e23",
+      "sha256": "4def5ca748319291f100d25d5c89cebb0e16f4ab214ba0be9e5ccff743c4a817",
+      "bytes": 168798
+    },
+    {
+      "file": "r1-c4.webp",
+      "pngSha256": "abf2c8a021a6f74b885c80250b9e5e9c49b819699500e3719e50ebe563db316a",
+      "sha256": "e1a14cb82a78aca2081a9c93eadf5157859ac87e199599c9ba8e3da7c62e844e",
+      "bytes": 178000
+    },
+    {
+      "file": "r2-c0.webp",
+      "pngSha256": "325588a0e140379254f6fb18c9c12b63832d05d31dd78332d23a77a7cc0a61a5",
+      "sha256": "f0d89226142a31605b97ad9629d9ab53acf9d30742bd96c1acf1193dc72345ca",
+      "bytes": 170814
+    },
+    {
+      "file": "r2-c1.webp",
+      "pngSha256": "4293ea5c4d58fbba19e0db975a369ebce1e86149bb48e81536a6a5784d13e2a1",
+      "sha256": "b411db350fe19af9b981a1539f244f1eff069283be9c8f49f50dc348ad7dea67",
+      "bytes": 171972
+    },
+    {
+      "file": "r2-c2.webp",
+      "pngSha256": "2f5735e3623db12eff0d7e80659e03afae8409ae4b75fcf6a5df8529f1ca078c",
+      "sha256": "ded614eaf1a67a6808ee81e029fb1e830b80bce7380365470f8694458735641e",
+      "bytes": 172238
+    },
+    {
+      "file": "r2-c3.webp",
+      "pngSha256": "df8442f0a1b167f290fd220b9c0b24a5890654ffb3f65bb9dafe49067d2260f6",
+      "sha256": "fecf312164255d715261c11652bb48f11973bc42380b7acbc5641644943ac2d5",
+      "bytes": 165418
+    },
+    {
+      "file": "r2-c4.webp",
+      "pngSha256": "22b73029a300b2fd20f55fa6824f72cae3891a0081de1590745c3d07e6380197",
+      "sha256": "d8e297f90dc7ffdd8c6e33a05d9f721e223f074d5658e543d6dbe253725d2b0e",
+      "bytes": 173630
+    },
+    {
+      "file": "r3-c0.webp",
+      "pngSha256": "e9ab52d28aadb53ccde06e0b6eddc9dd45345a3dab9efd628eb913cec009239a",
+      "sha256": "bd915a62361bece86099a58a0308da53d528f0a4410c1ca9eadb63a70b20f52a",
+      "bytes": 175842
+    },
+    {
+      "file": "r3-c1.webp",
+      "pngSha256": "32533918543f0c657901ecdb0260e95da753a1094dd1fca9b7e8c6ce7a2c2b5f",
+      "sha256": "4ae8f7225d28c2a7609fa0723047ded1a106948d0f3f352f9e0ee21fc012b946",
+      "bytes": 172424
+    },
+    {
+      "file": "r3-c2.webp",
+      "pngSha256": "77880eb1e9fafbb35e73cb29709a5bb6b3c0d35ad34ace7cd8408b35e4707616",
+      "sha256": "0bb87113fa2d86b8693fd24fc2665c685be1010712deb87565bfc7ffea235daa",
+      "bytes": 166476
+    },
+    {
+      "file": "r3-c3.webp",
+      "pngSha256": "819014128e0cb3cb6f0c9ad39cb6e929dd0313fdee39842e2e94b05a8bbdbf5b",
+      "sha256": "e5ea3d579e419167811a15a10a15d698c9e94f4ee0947b2ad8899b2d6210094b",
+      "bytes": 168838
+    },
+    {
+      "file": "r3-c4.webp",
+      "pngSha256": "52cc23e042836c00164eada6a5cd11bc69965f7bee39c555ed8bd21fce3afb76",
+      "sha256": "b0687120abe2f11686fb06655ad9610d405c1b0dd05fbbd7c120590c190672e4",
+      "bytes": 169846
+    },
+    {
+      "file": "r4-c0.webp",
+      "pngSha256": "919fdc92a8c460956d0b43631403e6ee28681e0ced06cf728e33bbe899b9cd40",
+      "sha256": "6083a9f5b0c6c4f6665ef86e2e69042370317d3302e2e22a3a2399a292590395",
+      "bytes": 175896
+    },
+    {
+      "file": "r4-c1.webp",
+      "pngSha256": "08902267116cf801b5c095442c61a26914013fdbe9487d12004c35ad6c58112a",
+      "sha256": "790aec607d16da362da26d5ad69e5f3622b079ef082534375334639ef8ef78c1",
+      "bytes": 160868
+    },
+    {
+      "file": "r4-c2.webp",
+      "pngSha256": "344af1daa31d7f072bdaa50db4d42ae8fd4918dec629d7e8fd20575d30e49a7a",
+      "sha256": "3232f1d19ac170b59bd4aa992e184132626b20a373d3d8e34cdc7d542140cb53",
+      "bytes": 174784
+    },
+    {
+      "file": "r4-c3.webp",
+      "pngSha256": "084a9d4ff0129f968cfce0b062a6c8131f819933d5a310995ed459a4ebcc5a3b",
+      "sha256": "422fb866136f82481d82735a17914d93985cafdd9402817a454e76c4be6e834d",
+      "bytes": 177528
+    },
+    {
+      "file": "r4-c4.webp",
+      "pngSha256": "6da5dc38697663199641dfd15b02366a24b6baf3cf793e446495a9dd7da156a5",
+      "sha256": "8807e9baeafeb37f08eb758fc8843412ac61b98b948b1ee821bb08aab842cb1a",
+      "bytes": 165070
+    }
+  ]
+}

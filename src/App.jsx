@@ -4,6 +4,7 @@ import MorphStage from './MorphStage'
 import FrameOverlay from './FrameOverlay'
 import SecondScreen from './SecondScreen'
 import CatGazeAtlas from './components/cat/CatGazeAtlas'
+import { YIKO_GAZE } from './components/cat/yikoGazeAtlas'
 import { STATE_BY_ID, TRANSITION_IMAGES } from './content'
 import { smoothScrollToTop } from './lib/smoothScroll'
 
@@ -152,7 +153,11 @@ export default function App() {
       {heroStyle === 'cat' && (
         <div className="landing__stage">
           <div className="landing__cat-stage">
-            <CatGazeAtlas idle={false} />
+            <CatGazeAtlas
+              key={activeId === 'playground' ? 'yiko' : 'magu'}
+              {...(activeId === 'playground' ? YIKO_GAZE : {})}
+              idle={false}
+            />
           </div>
         </div>
       )}

@@ -12,6 +12,8 @@ export default function CatGazeAtlas({
   frames = STABLE_GAZE_ATLAS, gridSize = STABLE_ATLAS_SIDE, resolution = STABLE_ATLAS_RESOLUTION,
   faceAnchor = DEFAULT_ANCHOR, reach, idle = true, className = '', sensitivity = 1.25, responsive = true,
   fixedTorso = frames === STABLE_GAZE_ATLAS ? STABLE_TORSO : null,
+  characterName = 'Margo', characterDescription = 'an orange and white cat',
+  poster = frames === STABLE_GAZE_ATLAS ? CAT_FRAMES[2][2] : frames[Math.floor(gridSize / 2) * gridSize + Math.floor(gridSize / 2)],
 }) {
   const stageRef = useRef(null)
   const canvasRef = useRef(null)
@@ -90,7 +92,7 @@ export default function CatGazeAtlas({
       className={`cat-gaze ${className}`.trim()}
       style={{ aspectRatio: 1 }}
       role="img"
-      aria-label="Margo, an orange and white cat, looking toward your pointer"
+      aria-label={`${characterName}, ${characterDescription}, looking toward your pointer`}
       aria-describedby={helpId}
       aria-busy={!ready}
       tabIndex={0}
@@ -101,15 +103,16 @@ export default function CatGazeAtlas({
       data-grid-size={gridSize}
       data-sensitivity={sensitivity}
       data-rendering="interpolated"
+      data-character={characterName.toLowerCase()}
     >
       <img
-        src={CAT_FRAMES[2][2]} alt="" aria-hidden="true" draggable="false"
+        src={poster} alt="" aria-hidden="true" draggable="false"
         className="cat-gaze__frame" fetchPriority="high"
         onError={event => { event.currentTarget.src = PLACEHOLDER_FRAMES[2][2] }}
       />
       <canvas ref={canvasRef} width={resolution} height={resolution} className="cat-gaze__frame" aria-hidden="true" />
       <span className="cat-gaze__help" id={helpId}>
-        Move your pointer or drag across Margo to look around. You can also use the arrow keys. Home looks straight ahead.
+        Move your pointer or drag across {characterName} to look around. You can also use the arrow keys. Home looks straight ahead.
       </span>
     </div>
   )

@@ -21,7 +21,7 @@ function generateFramePaths(sequenceName, frameCount = 24) {
   const frames = []
   for (let i = 0; i < frameCount; i++) {
     const frameNum = i.toString().padStart(2, '0')
-    frames.push(`/morphing/${sequenceName}/${sequenceName}${frameNum}.png`)
+    frames.push(`${import.meta.env.BASE_URL}morphing/${sequenceName}/${sequenceName}${frameNum}.png`)
   }
   return frames
 }

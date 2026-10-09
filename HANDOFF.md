@@ -659,3 +659,25 @@ Webflow /gallery 的重设计版：scatter hero（Claude startups 风格，作�
   previous-web-atlas/；前后页面截图、环绕截图和检查JSON也保存在该目录。
   README补充复现步骤。78%尺寸、底部居中、Magu、导航与停留行为不变。
 - 本轮无Figma稿，按用户截图和已确认的右半圈进行比较，不宣称Figma相似度。
+
+### Independent Cat Style GitHub Pages preview — 2026-10-08
+
+- 用户要求把当前实验版本保存到GitHub分支并用GitHub Pages分享，测试完才合并
+  到main；正式Vercel网站不能受影响。当前分支保留Cat-Style，未合并或修改main。
+- 已核实远端main为62a7675ccf4d32bc1d58a876729a783067f61adf，最近Production
+  部署对应同一提交。原GitHub Pages由gh-pages发布，域名是
+  https://agujiminie.github.io/wingportfolio/，没有自定义域名。
+- Pages发布来源切到GitHub Actions，github-pages环境只允许Cat-Style；原
+  gh-pages分支保留。工作流cat-style-pages.yml仅监听Cat-Style，两个job也校验
+  完整分支ref，使用固定SHA的官方Actions，部署权限限于Pages与OIDC。
+- 新增npm run build:pages，在命令行传入/wingportfolio/前缀；普通build仍用/。
+  content.js的公共动图路径使用import.meta.env.BASE_URL，避免子目录404。
+  vercel.json直接沿用远端main的ignoreCommand和rewrites，非main跳过Vercel
+  构建，不改正式站设置、DNS或域名。README记录分享、更新与未来合并方式。
+- 当前Yiko素材、补帧/颈部修正脚本及页面调整已独立提交保存。未包含无关求职
+  文件；output下临时图、构建过程和工具不上传，网页所需源码和猫咪素材完整保留。
+- 本地Pages构建、普通根路径构建、相关ESLint与diff检查通过。Pages产物约369MB、
+  2099文件，小于1GiB；入口资源前缀及文件存在检查通过。浏览器1280×720验证
+  Retro/Cat切换、Magu/Yiko/Analog和指针跟随，无控制台错误。无Figma稿，本轮
+  是发布适配，依据既有页面验证，不改变视觉布局。
+- 本轮构建日志、页面截图及正式站发布前指纹记录在output/pages-preview/。

@@ -48,6 +48,46 @@ Then open **http://localhost:3000** in a browser. The port is fixed (`strictPort
 
 ## Hosting for real (production)
 
+### Cat Style preview on GitHub Pages
+
+- Preview: **https://agujiminie.github.io/wingportfolio/**
+- Preview source branch: **`Cat-Style`** (case-sensitive).
+- Production stays on **`main`**, published by Vercel at **https://www.wingzeng.design**.
+
+Commit and push changes to `Cat-Style` to refresh the preview automatically:
+
+```bash
+git switch Cat-Style
+# Commit the files you changed, then:
+git push origin Cat-Style
+```
+
+The `Cat Style preview (GitHub Pages)` workflow builds and publishes only that
+branch. GitHub Settings → Pages uses **GitHub Actions**; the `github-pages`
+environment allows only the `Cat-Style` branch. No custom domain is attached.
+The existing `gh-pages` branch is retained as a historical snapshot and no
+longer supplies the live preview.
+
+The site opens in Retro, as it does locally. Use **Change Style** to see Magu
+under Work and Yiko under AI Playground. Both styles and all portfolio content
+are included in the preview. Share the Pages URL, not a localhost URL.
+
+For a local check of the exact Pages build:
+
+```bash
+npm run build:pages
+npm run preview -- --port 4173 --base=/wingportfolio/
+# Open http://localhost:4173/wingportfolio/
+```
+
+`build:pages` supplies `/wingportfolio/` only at build time. The ordinary
+`npm run build` keeps the root path used by Vercel. `vercel.json` carries the
+same main-only build guard as production, so pushing this preview branch does
+not publish it on Vercel. When ready to release, review and merge `Cat-Style`
+into the latest `main`; do not force-push or replace `main` with this branch.
+The Pages workflow also checks the branch inside its jobs, so merging the
+workflow into `main` does not make `main` publish the preview.
+
 ### Build
 
 ```bash

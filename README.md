@@ -68,7 +68,7 @@ environment allows only the `Cat-Style` branch. No custom domain is attached.
 The existing `gh-pages` branch is retained as a historical snapshot and no
 longer supplies the live preview.
 
-The site opens in Retro, as it does locally. Use **Change Style** to see Magu
+The site opens in Retro, as it does locally. Use **Change Theme** to see Magu
 under Work and Yiko under AI Playground. Both styles and all portfolio content
 are included in the preview. Share the Pages URL, not a localhost URL.
 

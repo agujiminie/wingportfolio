@@ -73,7 +73,7 @@ export default function FrameOverlay({ activeId, onSelect, onGoHome, scrolled = 
           aria-pressed={heroStyle === 'cat'}
           title={heroStyle === 'cat' ? 'Cat Style → Retro' : 'Retro → Cat Style'}
         >
-          Change Style
+          Change Theme
         </button>
       </div>
 

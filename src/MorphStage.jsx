@@ -98,7 +98,7 @@ function drawFrame(ctx, composeCanvas, img) {
 /**
  * Morph canvas under nav: scrub driven by top category pills, full frame strip, 1s ring animation.
  */
-export default function MorphStage({ activeId, transitionImages }) {
+export default function MorphStage({ activeId, transitionImages, enabled = true }) {
   const canvasRef = useRef(null)
   const composeRef = useRef(null)
   const imagesRef = useRef([])
@@ -147,12 +147,18 @@ export default function MorphStage({ activeId, transitionImages }) {
   // Keep scrub target in sync when parent changes category (nav pills / URL).
   useEffect(() => {
     const target = idToProgress(activeId)
+    if (!enabled) {
+      if (animRef.current) cancelAnimationFrame(animRef.current)
+      animRef.current = null
+      progressRef.current = target
+      return
+    }
     const cur = progressRef.current
     if (Math.abs(cur - target) < 0.001) {
       return
     }
     startProgressAnimation(target)
-  }, [activeId, startProgressAnimation])
+  }, [activeId, enabled, startProgressAnimation])
 
   useEffect(() => {
     const urls = buildFlatFrameUrls(transitionImages)
@@ -174,7 +180,7 @@ export default function MorphStage({ activeId, transitionImages }) {
 
   // Init canvases + continuous render loop (same idea as demo requestAnimationFrame(render)).
   useEffect(() => {
-    if (!imagesLoaded) return
+    if (!imagesLoaded || !enabled) return
 
     const canvas = canvasRef.current
     if (!canvas) return
@@ -193,6 +199,7 @@ export default function MorphStage({ activeId, transitionImages }) {
     canvas.width = VIEW_SIZE
     canvas.height = VIEW_SIZE
     ctx.clearRect(0, 0, VIEW_SIZE, VIEW_SIZE)
+    lastDrawnIndexRef.current = -1
 
     let raf = 0
     const render = () => {
@@ -224,10 +231,10 @@ export default function MorphStage({ activeId, transitionImages }) {
         cancelAnimationFrame(animRef.current)
       }
     }
-  }, [imagesLoaded])
+  }, [imagesLoaded, enabled])
 
   return (
-    <div className="morph-stage" role="presentation">
+    <div className="morph-stage" role="presentation" data-animation-active={enabled}>
       {!imagesLoaded ? (
         <div className="morph-demo__loading" aria-live="polite">
           Loading frames…

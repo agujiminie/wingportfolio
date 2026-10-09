@@ -260,6 +260,7 @@ function DitheredWaves({
 }
 
 export default function Dither({
+  paused = false,
   waveSpeed = 0.05,
   waveFrequency = 3,
   waveAmplitude = 0.3,
@@ -273,6 +274,8 @@ export default function Dither({
   return (
     <Canvas
       className="dither-container"
+      data-animation-active={!paused}
+      frameloop={paused ? 'never' : 'always'}
       camera={{ position: [0, 0, 6] }}
       dpr={1}
       gl={{ alpha: true, antialias: true, preserveDrawingBuffer: true }}
@@ -286,7 +289,7 @@ export default function Dither({
         colorNum={colorNum}
         pixelSize={pixelSize}
         disableAnimation={disableAnimation}
-        enableMouseInteraction={enableMouseInteraction}
+        enableMouseInteraction={enableMouseInteraction && !paused}
         mouseRadius={mouseRadius}
       />
     </Canvas>

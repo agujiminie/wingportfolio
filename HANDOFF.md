@@ -681,3 +681,26 @@ Webflow /gallery 的重设计版：scatter hero（Claude startups 风格，作�
   Retro/Cat切换、Magu/Yiko/Analog和指针跟随，无控制台错误。无Figma稿，本轮
   是发布适配，依据既有页面验证，不改变视觉布局。
 - 本轮构建日志、页面截图及正式站发布前指纹记录在output/pages-preview/。
+
+### Online gaze loading and hidden animation performance — 2026-10-08
+
+- 用户在GitHub Pages的AI Playground转动Yiko时感觉卡顿。线上36点鼠标绕圈复现：
+  目标方向持续更新，画面多次停在旧帧；源码每次近距离移动取消预取、只允许一格
+  邻近帧代替目标，网络请求来不及完成时会冻结后跳帧。此问题不同于素材几何畸变。
+- 共用图帧缓存从36提高到64（768px RGBA约144MiB上限，不含解码在途图片），
+  并发上限从4提高到8，预取范围扩到五格并保留移动方向优先级。为最新目标保留
+  一个请求位置，不再为了普通转向取消有用的在途下载；大幅反向仍取消远处请求。
+  缺帧时采用更接近最新目标的已完成图，不再僵等一格范围内的图片。没有透明混合、
+  重新补帧或头部变形；841帧素材、固定身体、78%比例及鼠标停止行为保持原样。
+- Cat顶部白底完全挡住的Retro shader设为frameloop=never，同时移除其鼠标监听；
+  向下滚动露出作品区背景或切回Retro时恢复。隐藏的MorphStage暂停绘制与栏目
+  过渡，恢复时强制重绘当前栏目；保留已加载Retro图片。参考R3F官方性能文档：
+  https://r3f.docs.pmnd.rs/advanced/scaling-performance 。
+- 12项图帧测试通过，新增请求保留与90ms模拟网络绕圈回归。相同模拟输入下，
+  原版/新版平均方向误差2.76/0.81格，运动中的最长保持608/96ms，取消请求142/14。
+  这些是确定性加载模型结果，不是用户设备FPS；更大预取会增加首轮下载和内存。
+  对照与脚本保存在output/gaze-performance/。
+- Pages构建、diff检查与相关lint通过；Dither原有shader uniform的immutability
+  报错在HEAD也可复现，本轮仅对该文件检查时关闭这一规则，未改既有uniform逻辑。
+  浏览器验证Yiko36点跟随、Magu切换、Retro恢复、滚动760px背景恢复，无控制台
+  错误。无Figma参考，本轮针对用户观察做性能调整，未改变布局或素材。

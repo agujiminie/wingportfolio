@@ -43,6 +43,7 @@ export default function App() {
   const [activeId, setActiveId] = useState(() => getInitialStateId())
   const [heroStyle, setHeroStyle] = useState('retro')
   const [scrolled, setScrolled] = useState(false)
+  const [backgroundRevealed, setBackgroundRevealed] = useState(false)
   const panelRef = useRef(null)
   // In-flight "snap to top" cancel fn + the tab to switch to once it lands.
   const scrollCancelRef = useRef(null)
@@ -63,6 +64,9 @@ export default function App() {
       if (!panel) return
       const vh = window.innerHeight
       const top = panel.getBoundingClientRect().top
+      // In Cat's white hero the Retro shader is fully covered. Resume it as
+      // soon as the portfolio cutouts below can reveal the background.
+      setBackgroundRevealed(top < vh)
       // 1 when the panel enters at the bottom (top = vh); 0 at top = VANISH_AT*vh.
       const fade = clamp((top - VANISH_AT * vh) / (vh - VANISH_AT * vh), 0, 1)
       root.style.setProperty('--fade', fade.toFixed(3))
@@ -143,11 +147,11 @@ export default function App() {
   return (
     <main className="landing" data-hero-style={heroStyle}>
       {/* Layer 0 — persistent background (image + Dither): revealed through the cutout */}
-      <LandingBackground activeId={activeId} />
+      <LandingBackground activeId={activeId} animated={heroStyle === 'retro' || backgroundRevealed} />
 
       {/* Layer 2 — morph canvas, centered via CSS; fades out on scroll (--fade) */}
       <div className="landing__stage landing__stage--retro" hidden={heroStyle !== 'retro'}>
-        <MorphStage activeId={activeId} transitionImages={TRANSITION_IMAGES} />
+        <MorphStage activeId={activeId} transitionImages={TRANSITION_IMAGES} enabled={heroStyle === 'retro'} />
       </div>
 
       {heroStyle === 'cat' && (

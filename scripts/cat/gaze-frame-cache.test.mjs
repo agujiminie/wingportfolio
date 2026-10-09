@@ -37,7 +37,7 @@ test('prefetch never wraps rows or escapes the grid', () => {
     const nearby = nearbyFrames(i, Math.max(0, i - 1), 29)
     assert.equal(nearby[0], i)
     assert.equal(nearby.length, new Set(nearby).size)
-    assert.ok(nearby.length <= 36)
+    assert.ok(nearby.length <= 64)
     assert.ok(nearby.every(n => n >= 0 && n < 841 && Math.abs(n % 29 - i % 29) <= 5))
   }
 })
@@ -159,4 +159,70 @@ test('small retargets keep useful pending downloads alive', async () => {
  cache.aim(421);await flush()
  assert.equal(first.signal.aborted,false)
  cache.dispose()
+})
+
+test('a target can load immediately without cancelling useful speculative requests', async () => {
+  const pending = new Map()
+  const cache = createGazeFrameCache({frames, side: 29, concurrency: 4,
+    load: (url, signal) => new Promise(resolve => pending.set(url, {resolve, signal})),
+  })
+  cache.aim(420)
+  await flush()
+  const existing = [...pending.values()]
+  cache.aim(424)
+  await flush()
+  assert.ok(pending.has('424'), 'new direction has its own available download slot')
+  assert.ok(existing.every(request => !request.signal.aborted))
+  assert.ok(cache.pending <= 4)
+  cache.dispose()
+  for (const request of pending.values()) request.resolve({close(){}})
+  await flush()
+})
+
+test('continuous turns keep advancing with 90ms network latency', async () => {
+  let now = 0, displayed = 420, lastPaint = 0, maxHold = 0, error = 0, samples = 0
+  let created = 0, closed = 0
+  const pending = [], downloaded = new Set()
+  const cache = createGazeFrameCache({frames, side: 29,
+    load: (url, signal) => new Promise((resolve, reject) => {
+      const job = {at: now + (downloaded.has(url) ? 6 : 90), url, resolve, done: false}
+      pending.push(job)
+      signal.addEventListener('abort', () => {
+        if (!job.done) { job.done = true; reject(new Error('aborted')) }
+      }, {once:true})
+    }),
+    onFrame: index => {
+      displayed = index
+      if (now >= 608) maxHold = Math.max(maxHold, now - lastPaint)
+      lastPaint = now
+    },
+  })
+  const tick = async () => {
+    for (const job of pending) if (!job.done && job.at <= now) {
+      job.done = true
+      downloaded.add(job.url)
+      created++
+      job.resolve({close(){closed++}})
+    }
+    await flush()
+    assert.ok(cache.size <= 64)
+    assert.ok(cache.pending <= 8)
+  }
+  cache.aim(420)
+  for (now = 0; now < 608; now += 16) await tick()
+  lastPaint = now
+  for (; now < 6608; now += 16) {
+    const angle = (now - 608) / 2400 * Math.PI * 2
+    const row = Math.round(14 + 11 * Math.sin(angle))
+    const col = Math.round(14 + 11 * Math.cos(angle))
+    cache.aim(row * 29 + col)
+    await tick()
+    error += Math.hypot(row - Math.floor(displayed / 29), col - displayed % 29)
+    samples++
+  }
+  assert.ok(maxHold <= 200, `moving pose held for ${maxHold}ms`)
+  assert.ok(error / samples < 1.5, `average direction lag ${error / samples} cells`)
+  cache.dispose()
+  await flush()
+  assert.equal(created, closed)
 })

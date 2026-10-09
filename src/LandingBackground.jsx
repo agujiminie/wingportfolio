@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import bg3 from '../bg/bg3.png'
 import bg2 from '../bg/bg2.png'
 import bg1 from '../bg/bg1-replacement.png'
@@ -9,7 +10,7 @@ const BG_BY_STATE = {
   work: { image: bg1 },
 }
 
-function LandingBackground({ activeId }) {
+function LandingBackground({ activeId, animated = true }) {
   return (
     <div className="landing-bg" aria-hidden="true">
       {Object.entries(BG_BY_STATE).map(([id, background]) => (
@@ -26,6 +27,7 @@ function LandingBackground({ activeId }) {
 
       <div className="landing-bg__dither-shell">
         <Dither
+          paused={!animated}
           waveColor={[0.5, 0.5, 0.5]}
           disableAnimation={false}
           enableMouseInteraction

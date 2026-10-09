@@ -27,7 +27,7 @@ export function nearbyFrames(index, previous, side) {
   // Prepare the next visible poses before spending slots behind the pointer.
   for (let step = 1; step <= 5; step++) add(row + dr * step, col + dc * step)
   for (let r = -1; r <= 1; r++) for (let c = -1; c <= 1; c++) add(row + r, col + c)
-  for (let radius = 2; radius <= 3; radius++) {
+  for (let radius = 2; radius <= 5; radius++) {
     for (let r = -radius; r <= radius; r++) {
       for (let c = -radius; c <= radius; c++) {
         if (Math.abs(r) + Math.abs(c) === radius) add(row + r, col + c)
@@ -38,7 +38,7 @@ export function nearbyFrames(index, previous, side) {
 }
 
 export function createGazeFrameCache({
-  frames, side, capacity = 36, concurrency = 4, load = loadGazeBitmap,
+  frames, side, capacity = 64, concurrency = 8, load = loadGazeBitmap,
   onFrame = () => {}, onError = () => {},
 }) {
   const decoded = new Map()
@@ -69,11 +69,12 @@ export function createGazeFrameCache({
     }
   }
   const paint = () => {
-    // At most one neighboring angle can stand in while the exact frame loads.
-    // Judge late completions against the latest target, never their old request.
+    // Use the closest complete pose while loading. Restricting this to one
+    // neighbor froze the head throughout a fast turn, then skipped to its end.
+    // Late completions must still improve on the currently displayed pose.
     let nearest = decoded.has(target) ? target : null
     if (nearest === null) for (const index of decoded.keys()) {
-      if (distance(index, target) <= 2 && (nearest === null || distance(index, target) < distance(nearest, target))) nearest = index
+      if (nearest === null || distance(index, target) < distance(nearest, target)) nearest = index
     }
     if (nearest === null || nearest === displayed) return
     if (displayed !== null && distance(displayed, target) <= distance(nearest, target)) return
@@ -85,6 +86,9 @@ export function createGazeFrameCache({
     while (active.size < concurrency) {
       const index = priority.find(i => !decoded.has(i) && !active.has(i) && !failed.has(i))
       if (index === undefined) break
+      // Reserve a slot for a new pointer target. Previously every small move
+      // cancelled a speculative request; over a network none could finish.
+      if (index !== target && active.size >= Math.max(1, concurrency - 1)) break
       const controller = new AbortController()
       active.set(index, controller)
       Promise.resolve().then(() => load(frames[index], controller.signal)).then(bitmap => {
@@ -113,11 +117,6 @@ export function createGazeFrameCache({
       // Nearby work survives small pointer changes, so requests can finish.
       // A distant reversal still cancels stale work immediately.
       for (const [i, controller] of active) if (distance(i, index) > 64) controller.abort()
-      if (!decoded.has(index) && !active.has(index) && active.size >= concurrency) {
-        const expendable = [...active.keys()].filter(i => i !== index)
-          .sort((a, b) => distance(b, index) - distance(a, index))[0]
-        active.get(expendable)?.abort()
-      }
       paint()
       if (failed.has(index)) onError(index, new Error('Cat frame unavailable'))
       pump()

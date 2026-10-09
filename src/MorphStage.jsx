@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { createImageSequenceLoader } from './lib/imageSequenceLoader'
 
 /** Same order as concatenated transition clips (1-2, 2-3, 3-1). */
 const STATE_ORDER = ['work', 'playground', 'analogue']
@@ -38,28 +39,6 @@ function buildFlatFrameUrls(transitionImages) {
     }
   }
   return urls
-}
-
-function loadAllFrames(urls) {
-  return Promise.all(
-    urls.map(
-      (src) =>
-        new Promise((resolve) => {
-          const img = new Image()
-          img.onload = () => {
-            img
-              .decode()
-              .then(() => resolve(img))
-              .catch(() => resolve(img))
-          }
-          img.onerror = () => {
-            console.error('Failed to load:', src)
-            resolve(null)
-          }
-          img.src = src
-        }),
-    ),
-  ).then((imgs) => imgs.filter((img) => img && img.naturalWidth > 0))
 }
 
 function drawFrame(ctx, composeCanvas, img) {
@@ -102,6 +81,8 @@ export default function MorphStage({ activeId, transitionImages, enabled = true 
   const canvasRef = useRef(null)
   const composeRef = useRef(null)
   const imagesRef = useRef([])
+  const loaderRef = useRef(null)
+  const stageRef = useRef(null)
   const progressRef = useRef(idToProgress(activeId))
   const lastDrawnIndexRef = useRef(-1)
   const animRef = useRef(null)
@@ -162,21 +143,30 @@ export default function MorphStage({ activeId, transitionImages, enabled = true 
 
   useEffect(() => {
     const urls = buildFlatFrameUrls(transitionImages)
-    let cancelled = false
-
-    loadAllFrames(urls).then((imgs) => {
-      if (cancelled) return
-      imagesRef.current = imgs
-      setImagesLoaded(imgs.length > 0)
-      if (imgs.length < urls.length) {
-        console.warn(`Morph: loaded ${imgs.length}/${urls.length} frames`)
-      }
+    const loader = createImageSequenceLoader({ urls,
+      onComplete(imgs) {
+        imagesRef.current = imgs
+        setImagesLoaded(imgs.length > 0)
+        if (imgs.length < urls.length) console.warn(`Morph: loaded ${imgs.length}/${urls.length} frames`)
+      },
     })
-
+    loaderRef.current = loader
     return () => {
-      cancelled = true
+      loader.dispose()
+      loaderRef.current = null
     }
   }, [transitionImages])
+
+  useEffect(() => {
+    const update = () => {
+      const paused = !enabled || document.hidden
+      loaderRef.current?.setPaused(paused)
+      if (stageRef.current) stageRef.current.dataset.loadingActive = String(!paused)
+    }
+    update()
+    document.addEventListener('visibilitychange', update)
+    return () => document.removeEventListener('visibilitychange', update)
+  }, [enabled, transitionImages])
 
   // Init canvases + continuous render loop (same idea as demo requestAnimationFrame(render)).
   useEffect(() => {
@@ -234,7 +224,7 @@ export default function MorphStage({ activeId, transitionImages, enabled = true 
   }, [imagesLoaded, enabled])
 
   return (
-    <div className="morph-stage" role="presentation" data-animation-active={enabled}>
+    <div ref={stageRef} className="morph-stage" role="presentation" data-animation-active={enabled}>
       {!imagesLoaded ? (
         <div className="morph-demo__loading" aria-live="polite">
           Loading frames…

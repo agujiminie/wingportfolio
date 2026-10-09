@@ -37,6 +37,19 @@ export function nearbyFrames(index, previous, side) {
   return [...indices]
 }
 
+export function initialGazeFrames(index, side) {
+  const nearby = nearbyFrames(index, null, side)
+  const directions = new Set()
+  // Warm the whole turn as well as the front of the face. Filling all 64
+  // slots near the center made Magu's first wider turn wait for cold files.
+  for (let row = 0; row < 5; row++) for (let col = 0; col < 5; col++) {
+    directions.add(Math.round(row * (side - 1) / 4) * side + Math.round(col * (side - 1) / 4))
+  }
+  const distance = i => (Math.floor(i / side) - Math.floor(index / side)) ** 2 + (i % side - index % side) ** 2
+  const coverage = [...directions].sort((a, b) => distance(a) - distance(b))
+  return [...new Set([...nearby.slice(0, 9), ...coverage, ...nearby])]
+}
+
 export function createGazeFrameCache({
   frames, side, capacity = 64, concurrency = 8, load = loadGazeBitmap,
   onFrame = () => {}, onError = () => {},
@@ -112,7 +125,9 @@ export function createGazeFrameCache({
   return {
     aim(index) {
       if (disposed || !Number.isInteger(index) || index < 0 || index >= frames.length) return
-      if (index !== target) priority = nearbyFrames(index, target, side).slice(0, capacity)
+      if (index !== target) priority = (target === null
+        ? initialGazeFrames(index, side)
+        : nearbyFrames(index, target, side)).slice(0, capacity)
       target = index
       // Nearby work survives small pointer changes, so requests can finish.
       // A distant reversal still cancels stale work immediately.

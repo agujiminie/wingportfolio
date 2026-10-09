@@ -226,3 +226,28 @@ test('continuous turns keep advancing with 90ms network latency', async () => {
   await flush()
   assert.equal(created, closed)
 })
+
+test('first wide turns can use preloaded poses without waiting for more downloads', async () => {
+  const drawn = []
+  let initialWarmup = true
+  const cache = createGazeFrameCache({frames, side:29,
+    load: (url, signal) => initialWarmup ? Promise.resolve({close(){}}) : new Promise((resolve, reject) => {
+      signal.addEventListener('abort', () => reject(new Error('aborted')), {once:true})
+      if (signal.aborted) reject(new Error('aborted'))
+    }),
+    onFrame: index => drawn.push(index),
+  })
+  cache.aim(420)
+  await flush()
+  initialWarmup = false
+  // No further network request can finish: all 25 source directions should
+  // already be available, including those far from the starting center pose.
+  for (let row = 0; row < 5; row++) for (let col = 0; col < 5; col++) {
+    const index = row * 7 * 29 + col * 7
+    cache.aim(index)
+    assert.equal(drawn.at(-1), index)
+  }
+  assert.ok(cache.size <= 64)
+  cache.dispose()
+  await flush()
+})
